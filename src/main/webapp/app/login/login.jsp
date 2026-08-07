@@ -35,7 +35,7 @@
             <form action="loginProcess.jsp" method="post">
                 <h1><img src="/images/logo/logo-basic.svg"></h1>
                 <fieldset class="id-pw">
-                    <h2>Cosmetic Raw Material<br> Inventory System</h2>
+                    <h2>생산 재고관리 시스템</h2>
                     <input type="text" class="enter" placeholder="ID" name="user_id" value="<%= savedId %>" required>
                     <input type="password" class="enter" placeholder="PASSWORD" name="user_pw">
                     <div class="id_save">

@@ -40,7 +40,6 @@
                 session.setAttribute("userName", userName);
 %>
                 <script>
-                    alert("로그인 성공! <%= userName %>님 환영합니다.");
                     location.href = "/app/home/main.jsp"; // 로그인 후 이동할 페이지
                 </script>
 <%

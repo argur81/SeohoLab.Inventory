@@ -178,23 +178,6 @@ $(document).ready(function () {
         }
     });
     //모바일 타이틀
-    function imageMgmtTitle(){
-        if($(window).width() <= 780){
-            var pageTitle = $('.content .title_set h5').text();
-            $('header .logo .title').text(pageTitle);
-            $('header .logo > a').hide();
-            $('.content .title_set h5').hide();
-            if($('#container .content').hasClass('atndn_mgmt')){
-                $('header .logo .title').hide();
-                $('header .logo > a').show();
-                $('.content .title_set h5').show();
-            }
-        }else{
-            $('header .logo .title').hide();
-            $('header .logo > a').show();
-            $('.content .title_set h5').show();
-        }
-    }
     function viewportMobieDevice(){
         if($(window).width() <= 780){
             $('#container .content').addClass('for_mobile');
@@ -202,10 +185,8 @@ $(document).ready(function () {
             $('#container .content').removeClass('for_mobile');
         }
     }
-    imageMgmtTitle();
     viewportMobieDevice();
     $(window).resize(function(){
-        imageMgmtTitle();
         viewportMobieDevice();
     });
     //그리드 Hover 모바일용

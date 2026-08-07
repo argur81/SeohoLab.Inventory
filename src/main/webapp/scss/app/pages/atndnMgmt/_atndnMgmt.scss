@@ -26,24 +26,11 @@
             margin-top: -9px;
             padding: 10px 0;
             @include flexLayout(row, flex-start, stretch);
-            @media all and (max-width:1230px){
-                flex-direction: column;
-                padding:0 20px;
-                position: relative;
-            }
             .control {
                 width: 535px;
                 @include flexLayout(row, center, center);
                 gap: 10px;
                 border-right: 1px solid #e6e8eb;
-                @include mediaQuery(tablet) {
-                    width: 100%;
-                }
-                @media all and (max-width:1230px) {
-                    border-right: none;
-                    border-bottom: 1px solid #e6e8eb;
-                    padding: 30px 0;
-                }
                 ul {
                     @include flexLayout(row, center, center);
                     gap: 10px;
@@ -80,13 +67,6 @@
                 width: calc(100% - 535px);
                 padding: 0 25px;
                 position: relative;
-                @include mediaQuery(tablet) {
-                    width: 100%;
-                }
-                @media all and (max-width:1230px) {
-                    position: static;
-                    padding: 15px 0;
-                }
                 .raw {
                     @include positionLayout(absolute, x);
                     background-color: #fff;
@@ -96,13 +76,6 @@
                     bottom: 150px;
                     @include flexLayout(column, flex-start, stretch);
                     gap: 10px;
-                    @media all and (max-width:1230px) {
-                        left: inherit;
-                        right: 0;
-                        bottom: inherit;
-                        top: -80px;
-                        transform: none;
-                    }
                     > p {
                         font-size: 16px;
                         color: #595959;
@@ -115,9 +88,6 @@
                     > span {
                         color: #595959;
                         white-space: nowrap;
-                        @include mediaQuery(tablet) {
-                            display: none;
-                        }
                     }
                     &::after {
                         content: '';
@@ -228,7 +198,7 @@
 @include mediaQuery(mobile){
     .content {
         &.atndn_mgmt {
-            padding: 6rem 4rem 16rem 4rem !important;
+            padding: 6rem 4rem 16rem 4rem;
             .page_tit {
                 margin-bottom: 3rem;
             }

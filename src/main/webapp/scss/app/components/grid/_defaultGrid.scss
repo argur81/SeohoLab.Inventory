@@ -17,18 +17,8 @@
     }
     .grid {
         margin-top: 10px;
-        .scroll-x {
-            width: 100%;
-            @media all and (max-width:1640px) {
-                overflow-x: auto;
-                @include scrollbar();
-            }
-        }
         table {
             background-color: #fff;
-            @media all and (max-width:1640px) {
-                width: 1320px;
-            }
             thead {
                 tr {
                     border-top: 1px solid #d1d5d9;
@@ -131,17 +121,11 @@
             }
             .ctrl {
                 gap: 1rem;
-                .Select {
-                    &[data-width='78']{
-                        width: 14rem !important;
-                    }
-                }
             }
         }
         .grid {
             margin-top: 2rem;
             table {
-                width: 100%;
                 display: block;
                 thead {
                     display: none;
@@ -214,7 +198,6 @@
                                 }
                             }
                             .person {
-                                width: calc(100% - 17rem);
                                 &.view_info {
                                     @include flexLayout(column, flex-start, center);
                                     i {
