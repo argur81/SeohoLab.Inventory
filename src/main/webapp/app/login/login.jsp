@@ -1,4 +1,20 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+    // 저장된 쿠키에서 아이디 가져오기
+    String savedId = "";
+    boolean isRemembered = false;
+
+    Cookie[] cookies = request.getCookies();
+    if (cookies != null) {
+        for (Cookie cookie : cookies) {
+            if ("rememberedId".equals(cookie.getName())) {
+                savedId = cookie.getValue();
+                isRemembered = true;
+                break;
+            }
+        }
+    }
+%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -20,8 +36,11 @@
                 <h1><img src="/images/logo/logo-basic.svg"></h1>
                 <fieldset class="id-pw">
                     <h2>Cosmetic Raw Material<br> Inventory System</h2>
-                    <input type="text" class="enter" placeholder="ID" name="user_id">
+                    <input type="text" class="enter" placeholder="ID" name="user_id" value="<%= savedId %>" required>
                     <input type="password" class="enter" placeholder="PASSWORD" name="user_pw">
+                    <div class="id_save">
+                        <label class="checkBox"><input type="checkbox" id="remember_me" name="remember_me" value="true" <%= isRemembered ? "checked" : "" %>><i class="icon"></i> ID save</label>
+                    </div>
                     <button type="submit">로그인</button>
                 </fieldset>
             </form>

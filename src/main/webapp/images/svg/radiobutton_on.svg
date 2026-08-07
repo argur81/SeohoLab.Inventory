@@ -3,11 +3,11 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 19 19" style="enable-background:new 0 0 19 19;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill:#0086FF;}
+	.st0{fill:#612D44;}
 </style>
 <g>
-	<path class="st0" d="M9.5,1C14.19,1,18,4.81,18,9.5S14.19,18,9.5,18S1,14.19,1,9.5S4.81,1,9.5,1 M9.5,0C4.25,0,0,4.25,0,9.5
-		S4.25,19,9.5,19S19,14.75,19,9.5S14.75,0,9.5,0L9.5,0z"/>
+	<path class="st0" d="M9.5,1C14.2,1,18,4.8,18,9.5S14.2,18,9.5,18S1,14.2,1,9.5S4.8,1,9.5,1 M9.5,0C4.3,0,0,4.3,0,9.5S4.3,19,9.5,19
+		S19,14.8,19,9.5S14.8,0,9.5,0L9.5,0z"/>
 </g>
 <g>
 	<circle class="st0" cx="9.5" cy="9.5" r="5.5"/>

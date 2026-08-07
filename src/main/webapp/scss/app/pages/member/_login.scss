@@ -47,7 +47,20 @@
                     padding: 40px 0;
                     input {
                         &[type=password] {
-                            margin: 10px 0 25px 0;
+                            margin: 10px 0;
+                        }
+                    }
+                    .id_save {
+                        width: 320px;
+                        margin-bottom: 25px;
+                        margin-top: 10px;
+                        label {
+                            &.checkBox {
+                                justify-content: flex-start;
+                            }
+                            font-size: 16px;
+                            font-weight: 500;
+                            color: #292929;
                         }
                     }
                     button {
@@ -162,7 +175,7 @@
                 width: calc(100% - 8rem);
                 h1 {
                     img {
-                        width: 32.6rem;
+                        width: 40.6rem;
                     }
                 }
                 fieldset {
@@ -187,7 +200,14 @@
                         padding: 9rem 4rem 8rem 4rem;
                         input {
                             &[type=password] {
-                                margin: 2rem 0 4rem 0;
+                                margin: 2rem 0;
+                            }
+                        }
+                        .id_save {
+                            width: 100%;
+                            margin-bottom: 4rem;
+                            label {
+                                font-size: 2.8rem;
                             }
                         }
                         button {

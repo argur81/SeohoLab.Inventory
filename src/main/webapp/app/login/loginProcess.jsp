@@ -7,12 +7,11 @@
     String inputPw = request.getParameter("user_pw");
 
     // 2. 데이터베이스 연결 정보 설정
-    // (Cloudtype 등에 배포된 DB 주소, 포트, DB이름, 계정 정보를 입력하세요)
     String url = "jdbc:mariadb://svc.sel3.cloudtype.app:32170/seoholabdb";
-    String dbUser = "root";       // 본인의 DB 접속 아이디 (예: root)
+    String dbUser = "root";       
     String dbPass = System.getenv("DB_PASSWORD"); 
     if (dbPass == null) {
-        dbPass = "1234"; 
+        dbPass = "1234"; // 로컬 기본 비밀번호
     }
 
     Connection conn = null;
@@ -24,30 +23,32 @@
         Class.forName("org.mariadb.jdbc.Driver");
         conn = DriverManager.getConnection(url, dbUser, dbPass);
 
-        // 4. 입력한 아이디와 일치하는 사용자 조회 쿼리
-        String sql = "SELECT user_pw FROM users WHERE user_id = ?";
+        // 4. 입력한 아이디와 일치하는 사용자의 비밀번호와 이름(user_name) 조회
+        String sql = "SELECT user_pw, user_name FROM users WHERE user_id = ?";
         pstmt = conn.prepareStatement(sql);
         pstmt.setString(1, inputId);
         rs = pstmt.executeQuery();
 
         if (rs.next()) {
             String dbPw = rs.getString("user_pw");
+            String userName = rs.getString("user_name"); // DB의 user_name 컬럼 값 읽기
 
             // 5. 비밀번호 일치 여부 확인
             if (dbPw.equals(inputPw)) {
-                // 로그인 성공 시 세션에 아이디 저장 등 처리
+                // 로그인 성공 시 세션에 아이디와 이름 저장
                 session.setAttribute("userId", inputId);
+                session.setAttribute("userName", userName);
 %>
                 <script>
-                    alert("로그인 성공! 환영합니다, <%= inputId %>님.");
-                    location.href = "main.jsp"; // 로그인 후 이동할 페이지
+                    alert("로그인 성공! <%= userName %>님 환영합니다.");
+                    location.href = "/app/home/main.jsp"; // 로그인 후 이동할 페이지
                 </script>
 <%
             } else {
-                // 비밀번호 틀림
+                // 비밀번호 불일치
 %>
                 <script>
-                    alert("비밀번호가 일치하지 않습니다.");
+                    alert("비밀번호를 확인하세요.");
                     history.back();
                 </script>
 <%
@@ -56,7 +57,7 @@
             // 아이디 존재하지 않음
 %>
             <script>
-                alert("존재하지 않는 아이디입니다.");
+                alert("회원님의 계정을 찾을 수 없습니다.");
                 history.back();
             </script>
 <%
@@ -71,7 +72,7 @@
         </script>
 <%
     } finally {
-        // 6. 사용한 자원 닫기 (메모리 누수 방지)
+        // 6. 자원 해제
         if (rs != null) try { rs.close(); } catch(Exception e) {}
         if (pstmt != null) try { pstmt.close(); } catch(Exception e) {}
         if (conn != null) try { conn.close(); } catch(Exception e) {}
