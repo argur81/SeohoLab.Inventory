@@ -1,0 +1,17 @@
+@include mediaQuery(mobile) {
+    #container {
+        .content {
+            &.recipient_mgmt {
+                .default_girid {
+                    .top {
+                        .ctrl {
+                            button.bgGray {
+                                display: none;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

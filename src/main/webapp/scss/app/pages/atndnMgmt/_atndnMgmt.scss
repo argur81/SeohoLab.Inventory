@@ -1,0 +1,379 @@
+.content {
+    &.atndn_mgmt {
+        .page_tit {
+            margin-bottom: 40px;
+        }
+        .section_wrap {
+            @include flexLayout(column, flex-start, stretch);
+            gap: 24px;
+        }
+        .top_text {
+            @include flexLayout(column, flex-start, stretch);
+            gap: 15px;
+            h5 {
+                font-size: 20px;
+            }
+            h6 {
+                font-size: 16px;
+                color: #595959;
+                font-weight: 400;
+                br {
+                    display: none;
+                }
+            }
+        }
+        .viewer {
+            margin-top: -9px;
+            padding: 10px 0;
+            @include flexLayout(row, flex-start, stretch);
+            @media all and (max-width:1230px){
+                flex-direction: column;
+                padding:0 20px;
+                position: relative;
+            }
+            .control {
+                width: 535px;
+                @include flexLayout(row, center, center);
+                gap: 10px;
+                border-right: 1px solid #e6e8eb;
+                @include mediaQuery(tablet) {
+                    width: 100%;
+                }
+                @media all and (max-width:1230px) {
+                    border-right: none;
+                    border-bottom: 1px solid #e6e8eb;
+                    padding: 30px 0;
+                }
+                ul {
+                    @include flexLayout(row, center, center);
+                    gap: 10px;
+                    li {
+                        font-size: 24px;
+                        font-weight: 500;
+                        letter-spacing: -1px;
+                        button {
+                            width: 16px;
+                            height: 16px;
+                            border: none;
+                            background-color: transparent;
+                            @include flexLayout(row, center, center);
+                        }
+                    }
+                }
+                .week {
+                    width: 55px;
+                    height: 40px;
+                    border-radius: 10px;
+                    border: 1px solid #007afe;
+                    font-size: 14px;
+                    font-weight: 500;
+                    background-color: #007afe;
+                    color: #fff;
+                    transition: all .4s;
+                    &:hover {
+                        background-color: #fff;
+                        color: #007afe;
+                    }
+                }
+            }
+            .graph_wrap {
+                width: calc(100% - 535px);
+                padding: 0 25px;
+                position: relative;
+                @include mediaQuery(tablet) {
+                    width: 100%;
+                }
+                @media all and (max-width:1230px) {
+                    position: static;
+                    padding: 15px 0;
+                }
+                .raw {
+                    @include positionLayout(absolute, x);
+                    background-color: #fff;
+                    border-radius: 12px;
+                    border: 1px solid #e6e8eb;
+                    padding: 20px;
+                    bottom: 150px;
+                    @include flexLayout(column, flex-start, stretch);
+                    gap: 10px;
+                    @media all and (max-width:1230px) {
+                        left: inherit;
+                        right: 0;
+                        bottom: inherit;
+                        top: -80px;
+                        transform: none;
+                    }
+                    > p {
+                        font-size: 16px;
+                        color: #595959;
+                        font-weight: 700;
+                        @include flexLayout(row, flex-start, center);
+                        i {
+                            color: #007afe;
+                        }
+                    }
+                    > span {
+                        color: #595959;
+                        white-space: nowrap;
+                        @include mediaQuery(tablet) {
+                            display: none;
+                        }
+                    }
+                    &::after {
+                        content: '';
+                        width: 12px;
+                        height: 9px;
+                        background: url(/images/svg/icon_talk_arrow.svg) no-repeat center center;
+                        @include positionLayout(absolute, x);
+                        bottom: -9px;
+                    }
+                }
+                .graph {
+                    padding: 14px 0;
+                    h6 {
+                        margin-bottom: 20px;
+                        font-size: 18px;
+                        font-weight: 500;
+                    }
+                    .time {
+                        @include flexLayout(row, space-between, center);
+                        margin-bottom: 10px;
+                        > p {
+                            color: #c3c3c5;
+                            font-size: 16px;
+                            .total {
+                                font-size: 18px;
+                                font-weight: 700;
+                                color: #292929;
+                            }
+                        }
+                        > span {
+                            color: #595959;
+                            @include flexLayout(row, flex-start, center);
+                            gap: 5px;
+                            &::before {
+                                content: '';
+                                width: 10px;
+                                height: 10px;
+                                background-color: #4ca0fd;
+                                border-radius: 100%;
+                            }
+                        }
+                    }
+                    .chart {
+                        width: 100%;
+                        @include flexLayout(column, flex-start, stretch);
+                        gap: 5px;
+                        .bar {
+                            width: 100%;
+                            height: 13px;
+                            border-radius: 13px;
+                            background-color: #f4f4f4;
+                            overflow: hidden;
+                            position: relative;
+                            .data {
+                                height: 13px;
+                                background-color: #4ca0fd;
+                                transition: all .4s;
+                            }
+                        }
+                        .num {
+                            width: 100%;
+                            @include flexLayout(row, space-between, center);
+                            font-weight: 500;
+                            color: #c3c3c5;
+                        }
+                    }
+                }
+            }
+        }
+        .detail {
+            @include gridLayout(5, 0, 15px);
+            > ul {
+                height: 154px;
+                background-color: #fff;
+                border-radius: 12px;
+                border: 1px solid #e6e8eb;
+                padding: 25px;
+                @include flexLayout(column, flex-start, stretch);
+                gap: 25px;
+                position: relative;
+                .tit {
+                    font-size: 16px;
+                    font-weight: 500;
+                }
+                .data {
+                    color: #595959;
+                    > i {
+                        font-size: 32px;
+                        color: #292929;
+                        font-weight: 700;
+                    }
+                }
+                .icon {
+                    position: absolute;
+                    right: 20px;
+                    bottom: 20px;
+                    > img {
+                        width: 35px;
+                    }
+                }
+            }
+        }
+        .grid {
+            padding: 10px 20px;
+        }
+    }
+}
+@include mediaQuery(mobile){
+    .content {
+        &.atndn_mgmt {
+            padding: 6rem 4rem 16rem 4rem !important;
+            .page_tit {
+                margin-bottom: 3rem;
+            }
+            .section_wrap {
+                gap: 3rem;
+            }
+            .top_text {
+                @include flexLayout(column, flex-start, stretch);
+                gap: 15px;
+                h5 {
+                    display: none;
+                }
+                h6 {
+                    font-size: 2.6rem;
+                    line-height: 1.2;
+                    br {
+                        display: block;
+                    }
+                }
+            }
+            .viewer {
+                margin-top: 0;
+                padding: 0 3rem;
+                @include flexLayout(column, flex-start, stretch);
+                position: relative;
+                .control {
+                    width: 100%;
+                    @include flexLayout(row, space-between, center);
+                    gap: 0;
+                    border-right: none;
+                    border-bottom: 1px solid #e6e8eb;
+                    padding: 4rem 0;
+                    ul {
+                        @include flexLayout(row, center, center);
+                        gap: 1rem;
+                        li {
+                            font-size: 3rem;
+                            button {
+                                width: 3.4rem;
+                                height: 3.4rem;
+                            }
+                        }
+                    }
+                    .week {
+                        width: 10rem;
+                        height: 6rem;
+                        border-radius: 1rem;
+                        font-size: 2.4rem;
+                    }
+                }
+                .graph_wrap {
+                    width: 100%;
+                    padding: 0;
+                    position: static;
+                    .raw {
+                        left: inherit;
+                        right: 0;
+                        transform: none;
+                        border-radius: 2rem;
+                        padding: 2rem;
+                        bottom: inherit;
+                        top: -10rem;
+                        > p {
+                            width: 100%;
+                            font-size: 2.4rem;
+                        }
+                        > span {
+                            display: none;
+                        }
+                    }
+                    .graph {
+                        padding: 3rem 0 4rem 0;
+                        h6 {
+                            margin-bottom: 3rem;
+                            font-size: 2.8rem;
+                        }
+                        .time {
+                            margin-bottom: 2rem;
+                            > p {
+                                font-size: 2.8rem;
+                                .total {
+                                    font-size: 2.8rem;
+                                }
+                            }
+                            > span {
+                                gap: 1rem;
+                                font-size: 2.4rem;
+                                &::before {
+                                    content: '';
+                                    width: 2rem;
+                                    height: 2rem;
+                                }
+                            }
+                        }
+                        .chart {
+                            gap: 1.4rem;
+                            .bar {
+                                height: 2.4rem;
+                                border-radius: 2.4rem;
+                                .data {
+                                    height: 2.4rem;
+                                }
+                            }
+                            .num {
+                                font-size: 2.4rem;
+                            }
+                        }
+                    }
+                }
+            }
+            .detail {
+                @include gridLayout(1, 1.6rem, 0);
+                > ul {
+                    height: 11rem;
+                    padding: 0 3rem;
+                    @include flexLayout(row, space-between, center);
+                    gap: 0;
+                    border-radius: 2.4rem;
+                    .tit {
+                        font-size: 2.8rem;
+                        padding-left: 4rem;
+                    }
+                    .data {
+                        font-size: 2.8rem;
+                        > i {
+                            font-size: 4rem;
+                        }
+                    }
+                    .icon {
+                        position: absolute;
+                        right: inherit;
+                        bottom: inherit;
+                        left: 3rem;
+                        top: 50%;
+                        margin-top: -1.6rem;
+                        > img {
+                            width: 3.2rem;
+                        }
+                    }
+                }
+            }
+            .grid {
+                padding: 1rem 0 0 3rem;
+                overflow: hidden;
+            }
+        }
+    }
+}

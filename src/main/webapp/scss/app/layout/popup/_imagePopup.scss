@@ -1,0 +1,89 @@
+.layer_popup {
+    .pop_data {
+        &.image_pop {
+            .body {
+                position: relative;
+                .img_data {
+                    min-width: 360px;
+                    border: 1px solid #e6e8eb;
+                    border-radius: 10px;
+                    overflow: hidden;
+                    text-align: center;
+                    ul {
+                        li {
+                            img {
+                                max-height: 60vh;
+                            }
+                        }
+                    }
+                }
+                > button {
+                    width: 35px;
+                    height: 35px;
+                    border-radius: 100%;
+                    border: 1px solid #c4c4c4;
+                    @include positionLayout(absolute, y);
+                    background-color: #fff;
+                    z-index: 10;
+                    &.swiper-button-disabled {
+                        background-color: #e6e8eb;
+                        cursor: default;
+                        > img {
+                            opacity: 0.5;
+                        }
+                    }
+                    &.prev {
+                        left: -17px;
+                    }
+                    &.next {
+                        right: -17px;
+                    }
+                    > img {
+                        width: 8px;
+                    }
+                }
+            }
+            .foot {
+                @include flexLayout(row, space-between, center);
+                margin-top: 20px;
+                p {
+                    font-size: 16px;
+                    color: #595959;
+                }
+            }
+        }
+    }
+}
+@include mediaQuery(mobile) {
+    .layer_popup {
+        .pop_data {
+            &.image_pop {
+                .body {
+                    .img_data {
+                        min-width: 100%;
+                        border-radius: 3rem;
+                    }
+                    > button {
+                        width: 8rem;
+                        height: 8rem;
+                        &.prev {
+                            left: -3rem;
+                        }
+                        &.next {
+                            right: -3rem;
+                        }
+                        > img {
+                            width: 1.4rem;
+                        }
+                    }
+                }
+                .foot {
+                    margin-top: 4rem;
+                    p {
+                        font-size: 2.8rem;
+                    }
+                }
+            }
+        }
+    }
+}

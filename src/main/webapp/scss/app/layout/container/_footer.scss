@@ -1,0 +1,34 @@
+footer {
+    width: 100%;
+    height: 58px;
+    background-color: #333;
+    text-align: center;
+    color: #c3c3c5;
+    font-size: 12px;
+    line-height: 1.4;
+    position: relative;
+    z-index: 11;
+    @include flexLayout(column, center, center);
+    a {
+        color: #c3c3c5;
+    }
+}
+@include mediaQuery(mobile){
+    footer {
+        height: auto;
+        padding: 4rem;
+        font-size: 2.4rem;
+        @include flexLayout(column, flex-start, stretch);
+        gap: 4rem;
+        > p {
+            text-align: left;
+            &:first-child {
+                @include flexLayout(column, flex-start, stretch);
+                text-align: left;
+                > i {
+                    display: none;
+                }
+            }
+        }
+    }
+}

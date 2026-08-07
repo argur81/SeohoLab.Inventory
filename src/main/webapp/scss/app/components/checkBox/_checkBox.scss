@@ -1,0 +1,37 @@
+.checkBox {
+    position: relative;
+    @include flexLayout(row, center, center);
+    gap: 5px;
+    cursor: pointer;
+    > input {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1px;
+        height: 1px;
+        visibility: hidden;
+        &:checked {
+            +.icon {
+                background: url(/images/svg/checkbox_on.svg) no-repeat center center;
+            }
+        }
+    }
+    .icon {
+        width: 20px;
+        height: 20px;
+        transition: all .4s;
+        background: url(/images/svg/checkbox_off.svg) no-repeat center center;
+    }
+    span {
+        color: #595959;
+    }
+}
+@include mediaQuery(mobile) {
+    .checkBox {
+        gap: 1rem;
+        .icon {
+            width: 3.8rem;
+            height: 3.8rem;
+        }
+    }
+}

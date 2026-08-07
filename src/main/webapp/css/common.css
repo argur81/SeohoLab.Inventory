@@ -1,0 +1,27 @@
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  border-collapse: collapse;
+  min-width: 800px; /* 스크롤 발생용 */
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  white-space: nowrap;
+}
+
+.sticky {
+  position: sticky;
+  left: 0;
+  background: #fff;
+  z-index: 2;
+}
+
+/* 헤더가 가려지는 경우 */
+thead .sticky {
+  z-index: 3;
+}

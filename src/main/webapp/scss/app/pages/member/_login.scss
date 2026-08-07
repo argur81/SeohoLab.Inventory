@@ -1,0 +1,258 @@
+#container {
+    &.login {
+        width: 100%;
+        height: 100vh;
+        padding: 0;
+        > form {
+            @include positionLayout(absolute, center);
+            h1 {
+                width: 100%;
+                text-align: center;
+                img {
+                    width: 245px;
+                }
+            }
+            fieldset {
+                width: 576px;
+                background-color: #fff;
+                border-radius: 30px;
+                margin: 30px 0 25px 0;
+                box-shadow: 1px 1px 10px rgb(0 0 0 / 9%);
+                @include flexLayout(column, center, center);
+                border: 1px solid #e6e8eb;
+                h2 {
+                    color: #292929;
+                    font-size: 28px;
+                    font-weight: 700;
+                    margin-bottom: 30px;
+                    text-align: center;
+                }
+                input {
+                    &.enter {
+                        width: 320px;
+                        height: 48px;
+                        font-size: 16px;
+                        border-radius: 10px;
+                        padding: 0 13px;
+                        border: 1px solid #e6e8eb;
+                        @include placeholder(#c3c3c5);
+                        transition: all .4s;
+                        color: #612d44;
+                        &:focus {
+                            border: 1px solid #612d44;
+                        }
+                    }
+                }
+                &.id-pw {
+                    padding: 40px 0;
+                    input {
+                        &[type=password] {
+                            margin: 10px 0 25px 0;
+                        }
+                    }
+                    button {
+                        width: 320px;
+                        height: 58px;
+                        transition:all .4s;
+                        background-color: #612d44;
+                        color: #fff;
+                        font-size: 16px;
+                        font-weight: 700;
+                        border-radius: 10px;
+                        border: 1px solid #612d44;
+                        &:hover {
+                            background-color: #fff;
+                            border: 1px solid #612d44;
+                            color: #612d44;
+                        }
+                    }
+                }
+                &.cert_wrap {
+                    height: auto;
+                    padding: 70px 0 60px 0;
+                    .phone_num {
+                        @include flexLayout(column, center, center);
+                        button {
+                            margin-top: 10px;
+                            width: 320px;
+                            height: 48px;
+                            transition: all .4s;
+                            border: 1px solid #612d44;
+                            color: #612d44;
+                            font-size: 16px;
+                            font-weight: 700;
+                            border-radius: 10px;
+                            background-color: #fff;
+                            &:hover {
+                                border: 1px solid #612d44;
+                                color: #612d44;
+                            }
+                        }
+                    }
+                    .enter_num {
+                        width: 320px;
+                        margin-top: 15px;
+                        .num {
+                            @include flexLayout(row, flex-start, center);
+                            gap: 4px;
+                            > p {
+                                width: 185px;
+                                height: 48px;
+                                border-radius: 10px;
+                                padding: 0 15px;
+                                border: 1px solid #e6e8eb;
+                                @include flexLayout(row, space-between, center);
+                                > input {
+                                    width: 100%;
+                                    height: 46px;
+                                    border: none;
+                                    font-size: 16px;
+                                    @include placeholder(#c3c3c5);
+                                }
+                                > .count {
+                                    color: #612d44;
+                                    font-weight: 700;
+                                }
+                            }
+                            > button {
+                                width: 130px;
+                                height: 48px;
+                                border-radius: 10px;
+                                border: none;
+                                background-color: #e5e8ec;
+                                font-size: 16px;
+                                color: #595959;
+                            }
+                        }
+                        ul {
+                            margin-top: 10px;
+                            li {
+                                line-height: 1.4;
+                                color: #595959;
+                                letter-spacing: -1px;
+                            }
+                        }
+                        .log {
+                            width: 320px;
+                            height: 48px;
+                            transition: all .4s;
+                            background-color: #612d44;
+                            color: #fff;
+                            font-size: 16px;
+                            font-weight: 700;
+                            border-radius: 10px;
+                            border: 1px solid #612d44;
+                            margin-top: 25px;
+                            &:hover {
+                                background-color: #612d44;
+                                border: 1px solid #612d44;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+@include mediaQuery(mobile){
+    #container {
+        &.login {
+            height: 100vh;
+            > form {
+                width: calc(100% - 8rem);
+                h1 {
+                    img {
+                        width: 32.6rem;
+                    }
+                }
+                fieldset {
+                    width: 100%;
+                    border-radius: 2.4rem;
+                    margin: 6rem 0 0 0;
+                    h2 {
+                        font-size: 4.6rem;
+                        margin-bottom: 3rem;
+                    }
+                    input {
+                        &.enter {
+                            width: 100%;
+                            height: 9.6rem;
+                            font-size: 2.8rem;
+                            border-radius: 2rem;
+                            padding: 0 3rem;
+                        }
+                    }
+                    &.id-pw {
+                        height: auto;
+                        padding: 9rem 4rem 8rem 4rem;
+                        input {
+                            &[type=password] {
+                                margin: 2rem 0 4rem 0;
+                            }
+                        }
+                        button {
+                            width: 100%;
+                            height: 10rem;
+                            font-size: 2.8rem;
+                            border-radius: 2rem;
+                        }
+                    }
+                    &.cert_wrap {
+                        padding: 10rem 4rem 8rem 4rem;
+                        margin-bottom: 2rem;
+                        .phone_num {
+                            width: 100%;
+                            button {
+                                margin-top: 2rem;
+                                width: 100%;
+                                height: 10rem;
+                                font-size: 2.8rem;
+                                border-radius: 2rem;
+                            }
+                        }
+                        .enter_num {
+                            width: 100%;
+                            margin-top: 5rem;
+                            .num {
+                                gap: 0.8rem;
+                                > p {
+                                    width: 100%;
+                                    height: 9.6rem;
+                                    padding: 0 3rem;
+                                    border-radius: 2rem;
+                                    > input {
+                                        height: 100%;
+                                        font-size: 2.8rem;
+                                    }
+                                    > .count {
+                                        font-size: 2.8rem;
+                                    }
+                                }
+                                > button {
+                                    width: 100%;
+                                    height: 9.6rem;
+                                    border-radius: 2rem;
+                                    font-size: 2.8rem;
+                                    white-space: nowrap;
+                                }
+                            }
+                            ul {
+                                margin-top: 2rem;
+                                li {
+                                    font-size: 2.4rem;
+                                }
+                            }
+                            .log {
+                                width: 100%;
+                                height: 10rem;
+                                font-size: 2.8rem;
+                                border-radius: 2rem;
+                                margin-top: 5rem;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

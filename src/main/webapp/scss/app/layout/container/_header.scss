@@ -1,0 +1,313 @@
+header {
+    width: 280px;
+    height: 100%;
+    background-color: #fff;
+    padding: 0 20px;
+    border-right: 1px solid #dde1e6;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 10;
+    @media all and (max-width:1024px) {
+        width: 100%;
+        height: auto;
+        padding: 20px 2%;
+        border-right: none;
+        border-bottom: 1px solid #dde1e6;
+        z-index: 15;
+    }
+    .logo {
+        width: 100%;
+        height: 112px;
+        border-bottom: 1px solid #f6f7f9;
+        @include flexLayout(row, center, center);
+        @media all and (max-width:1024px) {
+            border: none;
+            height: auto;
+            @include flexLayout(row, flex-start, center);
+        }
+        .mo_menu {
+            display: none;
+            @media all and (max-width:1024px) {
+                display: block;
+                >img {
+                    width: 30px;
+                }
+            }
+        }
+        .title {
+            display: none;
+            @media all and (max-width:1024px) {
+                font-size: 20px;
+            }
+        }
+        a {
+            width: 175px;
+            @media all and (max-width:1024px) {
+                @include positionLayout(absolute, center);
+            }
+            img {
+                width: 100%;
+            }
+        }
+    }
+    .menu {
+        @media all and (max-width:1024px) {
+            width: 100%;
+            height: 100vh;
+            background-color: #fff;
+            position: fixed;
+            left: -100%;
+            top: 0;
+            padding: 0 20px;
+        }
+        .mobile_ctrl {
+            display: none;
+            @media all and (max-width:1024px) {
+                @include flexLayout(row, space-between, center);
+                padding: 15px 0;
+                border-bottom: 1px solid #f6f7f9;
+                >img {
+                    width: 145px;
+                }
+                .close {
+                    width: 20px;
+                    >img {
+                        width: 100%;
+                    }
+                }
+            }
+        }
+    }
+    .user_wrap {
+        width: 100%;
+        height: 98px;
+        border-bottom: 1px solid #f6f7f9;
+        @include flexLayout(row, space-between, center);
+        padding-left: 20px;
+        .user {
+            @include flexLayout(row, flex-start, center);
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            i {
+                width: 18px;
+                height: 18px;
+                @include flexLayout(row, center, center);
+                background-color: #007afe;
+                font-size: 10px;
+                color: #fff;
+                border-radius: 2px;
+            }
+        }
+        button {
+            width: 60px;
+            height: 32px;
+            color: #595959;
+            background-color: #f6f7f9;
+            border: none;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 700;
+            transition: all .4s;
+            &:hover {
+                background-color: #007afe;
+                color: #fff;
+            }
+        }
+    }
+    .gnb {
+        padding-top: 24px;
+        li {
+            border-radius: 10px;
+            padding: 15px 20px;
+            img {
+                width: 18px;
+            }
+            &.on {
+                background-color: #f6f7f9;
+            }
+            &.no_depth {
+                a {
+                    @include flexLayout(row, flex-start, center);
+                    gap: 10px;
+                    color: #595959;
+                    font-weight: 700;
+                    font-size: 16px;
+                    width: 100%;
+                }
+                &.on {
+                    a {
+                        color: #292929;
+                    }
+                }
+            }
+            &.has_depth {
+                p {
+                    @include flexLayout(row, flex-start, center);
+                    gap: 10px;
+                    position: relative;
+                    color: #595959;
+                    font-weight: 700;
+                    font-size: 16px;
+                    width: 100%;
+                    cursor: pointer;
+                    &::after {
+                        content: '';
+                        width: 10px;
+                        height: 6px;
+                        @include positionLayout(absolute, y);
+                        right: 0;
+                        background: url(/images/svg/menu_arrow.svg) no-repeat;
+                        transition: all .4s;
+                    }
+                }
+                &.on {
+                    p {
+                        color: #292929;
+                        &::after {
+                            transform: rotate(180deg);
+                        }
+                    }
+                }
+                .depth {
+                    display: none;
+                    > div {
+                        width: 100%;
+                        @include flexLayout(column, flex-start, stretch);
+                        padding-left: 28px;
+                        gap: 20px;
+                        padding-top: 25px;
+                        padding-bottom: 5px;
+                    }
+                    a {
+                        font-weight: 500;
+                        color: #909090;
+                        font-size: 16px;
+                        &.on,
+                        &:hover {
+                            color: #292929;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+@include mediaQuery(mobile) {
+    header {
+        width: 100%;
+        height: 12rem;
+        border-left: none;
+        border-bottom: 1px solid #dde1e6;
+        border-right: none;
+        z-index: 15;
+        .logo {
+            width: 100%;
+            height: 100%;
+            border-bottom: 1px solid #f6f7f9;
+            @include flexLayout(row, flex-start, center);
+            position: relative;
+            gap: 3rem;
+            border-bottom: none;
+            .mo_menu {
+                display: block;
+                > img {
+                    width: 4.8rem;
+                }
+            }
+            .title {
+                display: block;
+                height: 3rem;
+                font-size: 4rem;
+                font-weight: 500;
+            }
+            a {
+                width: 27.6rem;
+                @include positionLayout(absolute, center);
+            }
+        }
+        .menu {
+            width: 100%;
+            height: 100vh;
+            background-color: #fff;
+            position: fixed;
+            left: -100%;
+            top: 0;
+            padding: 0 4rem;
+            .mobile_ctrl {
+                @include flexLayout(row, space-between, center);
+                padding: 3.4rem 0;
+                border-bottom: 1px solid #f6f7f9;
+                > img {
+                    width: 27.6rem;
+                }
+                .close {
+                    width: 2.8rem;
+                    > img {
+                        width: 100%;
+                    }
+                }
+            }
+        }
+        .user_wrap {
+            height: auto;
+            padding: 6rem 0;
+            .user {
+                gap: 2rem;
+                font-size: 4rem;
+                i {
+                    width: 4rem;
+                    height: 4rem;
+                    font-size: 2.4rem;
+                    border-radius: 0.4rem;
+                }
+            }
+            button {
+                width: auto;
+                height: 6.4rem;
+                border-radius: 1rem;
+                font-size: 2.4rem;
+                padding: 0 2rem;
+            }
+        }
+        .gnb {
+            padding-top: 5rem;
+            li {
+                border-radius: 2rem;
+                padding: 3rem 4rem;
+                img {
+                    width: 3.2rem;
+                }
+                &.no_depth {
+                    a {
+                        gap: 2rem;
+                        font-size: 3.6rem;
+                    }
+                }
+                &.has_depth {
+                    p {
+                        gap: 2rem;
+                        font-size: 3.6rem;
+                        &::after {
+                            width: 2rem;
+                            height: 1.2rem;
+                            background-size: 2rem;
+                        }
+                    }
+                    .depth {
+                        > div {
+                            padding-left: 5.2rem;
+                            gap: 3rem;
+                            padding-top: 4rem;
+                            padding-bottom: 1rem;
+                        }
+                        a {
+                            font-size: 2.8rem;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

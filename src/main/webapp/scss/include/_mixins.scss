@@ -1,0 +1,115 @@
+//Device: @include mediaQuery(mobile){}
+@mixin mediaQuery($point) {
+    @if $point==tablet {
+        @media screen and (max-width: $screen-tablet) {
+            @content;
+        }
+    }
+    @else if $point==mobile {
+        @media screen and (max-width: $screen-mobile) {
+            @content;
+        }
+    }
+}
+
+//Layout(flex): @include flexLayout(direction, justify, align);
+//---direction: [row] [column] [row-reverse] [column-reverse]
+//---justify: [flex-start] [flex-end] [center] [space-between] [space-around]
+//---align: [stretch] [flex-start] [flex-end] [center] [baseline]
+@mixin flexLayout($direction, $justify, $align) {
+    display: flex;
+    flex-direction: $direction;
+    justify-content: $justify;
+    align-items: $align;
+}
+
+//Layout(grid) : @include gridLayout(2, 상하gap, 좌우gap);
+@mixin gridLayout($count, $rowGap, $colGap) {
+    display: grid;
+    grid-template-columns: repeat($count, 1fr);
+    row-gap: $rowGap;
+    column-gap: $colGap;
+}
+
+//Layout(position): @include positionLayout($value, $direction);
+//---position: [relative] [absolute] [fixed]
+@mixin positionLayout($value,$direction) {
+    position: $value;
+    @if($direction == x) {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    @if($direction == y) {
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    @if($direction == center) {
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
+
+//가상요소(라인): @include virtualLine(1px, 100%, #222);
+@mixin virtualLine($width, $height, $bgColor) {
+    content: '';
+    display: inline-block;
+    width: $width;
+    height: $height;
+    background-color: $bgColor;
+}
+
+//Mask: @include mask-object(5px,5px,#ff9900,#fff,'/images/aa.jpg');
+@mixin mask-object($width, $height, $maskColor, $maskHoverColor, $imgUrl) {
+    width: $width;
+    height: $height;
+    mask-size: $width $height;
+    background-color: $maskColor;
+    mask-image: url($imgUrl);
+    &:hover {
+        background-color: $maskHoverColor;
+    }
+}
+
+//말줄임: @include ellipsis(1);
+@mixin ellipsis($line-clamp: 1) {
+    @if ($line-clamp ==1) {
+        display: block;
+        white-space: nowrap;
+    }
+    @else {
+        display: -webkit-box;
+        -webkit-line-clamp: $line-clamp;
+        -webkit-box-orient: vertical;
+    }
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+//Placeholder: @include placeholder(#ff9900);
+@mixin placeholder($color) {
+    &::placeholder {
+        color: $color;
+    }
+}
+
+//Scroll: @include scrollbar();
+@mixin scrollbar($show-track: false) {
+    @if ($show-track ==false) {
+        &::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+    }
+    &::-webkit-scrollbar-thumb {
+        background: #d1d6db;
+        border-radius: 5px;
+    }
+    &::-webkit-scrollbar-track {
+        border-radius: 5px;
+    }
+    &::-webkit-scrollbar-thumb:hover {
+        background: #d1d6db;
+        border-radius: 5px;
+    }
+}

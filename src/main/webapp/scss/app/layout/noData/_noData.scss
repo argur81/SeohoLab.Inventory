@@ -1,0 +1,22 @@
+.no_data {
+    @include flexLayout(column, center, center);
+    gap: 20px;
+    color: #c3c3c5;
+    font-size: 16px;
+    font-weight: 500;
+    margin-top: 60px;
+    > img {
+        width: 44px;
+        opacity: 0.4;
+    }
+}
+@include mediaQuery(mobile) {
+    .no_data {
+        gap: 4rem;
+        font-size: 2.8rem;
+        margin-top: 18rem;
+        >img {
+            width: 8.8rem;
+        }
+    }
+}

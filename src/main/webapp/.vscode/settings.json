@@ -1,0 +1,25 @@
+{
+    // 아래부터 추가
+    "liveSassCompile.settings.formats":[
+        {
+        	// 참조 문서에서 압축관련 확인(min파일:compressed | 펼치기:expanded)
+            "format": "expanded", 
+            // output 파일
+            "extensionName": ".css",
+            // output 파일경로
+            "savePath": "/css" 
+        }
+    ],
+    // map 생성 여부
+    "liveSassCompile.settings.generateMap": false,    
+    // 크로스브라우징
+    "liveSassCompile.settings.autoprefix": [
+        "> 1%",
+        "last 2 versions"
+    ],
+    // 모든 .scss 파일
+    "liveSassCompile.settings.includeItems":[
+        "/scss/*.scss"
+    ],
+    //"liveSassCompile.settings.showAnnouncements": null,
+}

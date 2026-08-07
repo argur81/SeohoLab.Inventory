@@ -1,0 +1,39 @@
+button {
+    &.Button {
+        height: 40px;
+        border-radius: 10px;
+        font-weight: 500;
+        transition: all .4s;
+        white-space: nowrap;
+        padding: 0 18px;
+        &.bgBlue {
+            background-color: #007afe;
+            border: 1px solid #007afe;
+            color: #fff;
+            &:hover {
+                background-color: #fff;
+                color: #007afe;
+            }
+        }
+        &.bgGray {
+            background-color: #e5e8ec;
+            border: 1px solid #e5e8ec;
+            color: #595959;
+            &:hover {
+                background-color: #fff;
+                color: #292929;
+                border: 1px solid #292929;
+            }
+        }
+    }
+}
+@include mediaQuery(mobile) {
+    button {
+        &.Button {
+            height: 8rem;
+            border-radius: 2rem;
+            font-size: 2.6rem;
+            padding: 0 3rem;
+        }
+    }
+}

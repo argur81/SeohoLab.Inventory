@@ -1,0 +1,7 @@
+.phoneNumber {
+    @include flexLayout(row, space-around, center);
+    gap: 4px;
+    .inputText {
+        text-align: center;
+    }
+}

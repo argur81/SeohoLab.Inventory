@@ -1,0 +1,96 @@
+.Select {
+    width: 100%;
+    position: relative;
+    min-width: 85px;
+    > .value {
+        height: 40px;
+        border-radius: 10px;
+        border: 1px solid #e6e8eb;
+        padding: 0 15px;
+        @include flexLayout(row, space-between, center);
+        gap: 10px;
+        cursor: pointer;
+        white-space: nowrap;
+        background-color: #fff;
+        font-size: 16px;
+        &.focus {
+            border-radius: 10px 10px 0 0;
+            border-bottom: none;
+            border: 1px solid #007afe;
+            &::after {
+                transform: rotate(180deg)
+            }
+        }
+        &::after {
+            content: '';
+            width: 12px;
+            height: 6px;
+            background: url(/images/svg/select_arrow.svg) no-repeat center center;
+            transition: all .4s;
+        }
+    }
+    .list {
+        width: 100%;
+        position: absolute;
+        left: 0;
+        top: 38px;
+        border-radius: 0 0 10px 10px;
+        border: 1px solid #007afe;
+        border-top: none;
+        display: none;
+        background-color: #fff;
+        max-height: 145px;
+        @include scrollbar();
+        overflow-y: auto;
+        z-index: 10;
+        li {
+            line-height: 48px;
+            cursor: pointer;
+            text-align: left;
+            white-space: nowrap;
+            padding: 0 15px;
+            font-size: 16px;
+            &:hover {
+                background-color: #e6e8eb;
+            }
+            &[data-align=center] {
+                text-align: center;
+            }
+            &:last-child {
+                border-radius: 0 0 10px 10px;
+            }
+        }
+    }
+}
+@include mediaQuery(mobile) {
+    .Select {
+        >.value {
+            height: 8rem;
+            border-radius: 2rem;
+            padding: 0 3rem;
+            gap: 2rem;
+            font-size: 2.6rem;
+            &.focus {
+                border-radius: 2rem 2rem 0 0;
+            }
+            &::after {
+                width: 2.4rem;
+                height: 1.2rem;
+                background-size: 100%;
+            }
+        }
+        .list {
+            top: calc(8rem - 2px);
+            border-radius: 0 0 2rem 2rem;
+            max-height: 28.8rem;
+            li {
+                line-height: 9.6rem;
+                padding: 0 3rem;
+                font-size: 2.6rem;
+                &:last-child {
+                    border-radius: 0 0 2rem 2rem;
+                }
+            }
+        }
+    }
+}

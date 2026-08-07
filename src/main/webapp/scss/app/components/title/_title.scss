@@ -1,0 +1,35 @@
+.title_set {
+    @include flexLayout(column, flex-start, stretch);
+    gap: 20px;
+    margin-bottom: 25px;
+}
+h5 {
+    &.page_tit{
+        font-size: 30px;
+        font-weight: 700;
+    }
+}
+h6 {
+    &.page_sub_tit {
+        font-size: 16px;
+        color: #595959;
+        font-weight: 400;
+    }
+}
+@include mediaQuery(mobile) {
+    .title_set {
+        margin-bottom: 5rem;
+    }
+    h5 {
+        &.page_tit {
+            font-size: 3.6rem;
+        }
+    }
+    h6 {
+        &.page_sub_tit {
+            font-size: 2.6rem;
+            line-height: 1.2;
+            padding: 6rem 4rem 0 4rem;
+        }
+    }
+}

@@ -1,0 +1,273 @@
+.content {
+    &.detailView {
+        section {
+            &.radius {
+                padding: 25px 25px 60px 25px;
+                margin-top: 25px;
+                @include flexLayout(row, flex-start, stretch);
+                row-gap: 25px;
+                column-gap: 10px;
+                flex-wrap: wrap;
+                .top_info {
+                    color: #595959;
+                    width: 100%;
+                    &::before {
+                        content: '*';
+                        color: #ff4c3d;
+                    }
+                }
+                dl {
+                    width: 100%;
+                    @include flexLayout(column, flex-start, stretch);
+                    gap: 10px;
+                    &.w50 {
+                        width: calc(50% - 5px);
+                    }
+                    dt {
+                        color: #595959;
+                        font-weight: 500;
+                        &::after {
+                            content: '*';
+                            color: #ff4c3d;
+                        }
+                    }
+                    &.not {
+                        dt {
+                            &::after {
+                                display: none;
+                            }
+                        }
+                    }
+                    &.approval {
+                        padding-top: 30px;
+                        border-top: 1px solid #e6e8eb;
+                        .state {
+                            width: 50%;
+                            line-height: 40px;
+                            border-radius: 10px;
+                            border: 1px solid #e6e8eb;
+                            padding: 0 15px;
+                            color: #292929;
+                            background-color: #f6f7f9;
+                            i {
+                                &.approval {
+                                    color: #007afe;
+                                }
+                                &.refusal {
+                                    color: #ff4c3d;
+                                }
+                            }
+                        }
+                    }
+                    &.reason {
+                        display: none;
+                    }
+                }
+                .rcvr_list {
+                    width: 100%;
+                    border: 1px solid #e6e8eb;
+                    border-radius: 10px;
+                    margin-top: 4px;
+                    padding: 4px 5px;
+                    @include flexLayout(row, flex-start, center);
+                    gap:6px;
+                    flex-wrap: wrap;
+                    li {
+                        padding: 0 14px;
+                        line-height: 30px;
+                        background-color: #e5f0fc;
+                        border-radius: 10px;
+                        gap: 5px;
+                        display: inline-block;
+                        button {
+                            width: 15px;
+                            height: 15px;
+                            background: url(/images/svg/del_arrow.svg) no-repeat center center;
+                            background-size: 9px;
+                            border: none;
+                            text-indent: -9999px;
+                            margin-left: 5px;
+                        }
+                    }
+                }
+                .img_list {
+                    @include gridLayout(10, 15px, 10px);
+                    margin-bottom: 14px;
+                    color: #595959;
+                    @include mediaQuery(tablet) {
+                        @include gridLayout(5, 15px, 10px);
+                    }
+                    li {
+                        height: 116px;
+                        position: relative;
+                        > div {
+                            width: 100%;
+                            height: 100%;
+                            text-align: center;
+                            border: 1px solid #e6e8eb;
+                            border-radius: 10px;
+                            overflow: hidden;
+                            > img{
+                                max-height: 100%;
+                            }
+                            &.expiration {
+                                @include flexLayout(row, center, center);
+                                background-color: #eef6ff;
+                                color: #595959;
+                                font-weight: 500;
+                            }
+                        }
+                        > button {
+                            width: 18px;
+                            height: 18px;
+                            border-radius: 100%;
+                            position: absolute;
+                            right: -9px;
+                            top: -9px;
+                            border: none;
+                            background: #007afe url(/images/svg/del_arrow_white.svg) no-repeat center center;
+                            background-size: 9px;
+                            border:none;
+                            text-indent: -9999px;
+                        }
+                    }
+                }
+            }
+            .bottom_btns {
+                margin-top: 15px;
+            }
+        }
+        &.result {
+            section {
+                &.radius {
+                    .top_state {
+                        .chip {
+                            font-weight: 500;
+                            line-height: 32px;
+                            padding: 0 15px;
+                            border-radius: 32px;
+                            display: inline-block;
+                            font-weight: 500;
+                            &.ready {
+                                background-color: #d6dbe5;
+                                color: #505050;
+                            }
+                            &.refusal {
+                                background-color: #ffe9e7;
+                                color: #ff4c3d;
+                            }
+                            &.approval {
+                                background-color: #e0efff;
+                                color: #007afe;
+                            }
+                        }
+                    }
+                    dl {
+                        dt {
+                            &::after {
+                                display: none;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+@include mediaQuery(mobile) {
+    .content {
+        &.detailView {
+            padding: 0 !important;
+            section {
+                &.radius {
+                    padding: 5rem 4rem 12rem 4rem;
+                    margin-top: 0;
+                    gap: 4rem;
+                    .top_info {
+                        font-size: 2.8rem;
+                    }
+                    dl {
+                        gap: 2rem;
+                        &.w50 {
+                            width: 100%;
+                        }
+                        dt {
+                            font-size: 2.6rem;
+                        }
+                        dd {
+                            input {
+                                &.inputText {
+                                    width: 100% !important;
+                                }
+                            }
+                        }
+                        &.approval {
+                            padding-top: 4rem;
+                            .state {
+                                width: 100%;
+                                line-height: 8rem;
+                                border-radius: 2rem;
+                                padding: 0 3rem;
+                                font-size: 2.6rem;
+                            }
+                        }
+                    }
+                    .rcvr_list {
+                        margin-top: 0.8rem;
+                        padding: 1rem;
+                        gap: 0.8rem;
+                        li {
+                            padding: 0 2rem;
+                            line-height: 6rem;
+                            border-radius: 2rem;
+                            gap: 1rem;
+                            font-size: 2.8rem;
+                            button {
+                                width: 1.8rem;
+                                height: 1.8rem;
+                                background-size: 100%;
+                                margin-left: 1rem;
+                            }
+                        }
+                    }
+                    .img_list {
+                        @include gridLayout(3, 3rem, 3rem);
+                        margin-bottom: 3rem;
+                        li {
+                            height: 21rem;
+                            > div {
+                                border-radius: 2rem;
+                            }
+                            > button {
+                                width: 3rem;
+                                height: 3rem;
+                                right: -1rem;
+                                top: -1rem;
+                                background-size: 1.4rem;
+                            }
+                        }
+                    }
+                    .ment {
+                        font-size: 2.4rem;
+                    }
+                }
+                .bottom_btns {
+                    margin-top: 3rem;
+                }
+            }
+            &.result {
+                section {
+                    &.radius {
+                        .top_state {
+                            .chip {
+                                line-height: 6rem;
+                                padding: 0 3rem;
+                                border-radius: 6rem;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

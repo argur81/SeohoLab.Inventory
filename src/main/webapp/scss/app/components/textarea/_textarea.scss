@@ -1,0 +1,56 @@
+textarea {
+    &.textArea {
+        width: 100%;
+        border-radius: 10px;
+        border: 1px solid #e6e8eb;
+        padding: 15px;
+        color: #292929;
+        @include placeholder(#c3c3c5);
+        resize: none;
+        &:disabled {
+            background-color: #f6f7f9;
+        }
+        &:focus {
+            border-color: #007afe;
+        }
+    }
+}
+.textArea_max {
+    width: 100%;
+    height: 120px;
+    border-radius: 10px;
+    border: 1px solid #e6e8eb;
+    textarea {
+        width: 100%;
+        height: 90px;
+        padding: 15px;
+        border: none;
+    }
+    > p {
+        width: 100%;
+        padding: 0 15px;
+        text-align: right;
+        color: #c3c3c5;
+    }
+}
+@include mediaQuery(mobile) {
+    textarea {
+        &.textArea {
+            border-radius: 2rem;
+            padding: 3rem;
+            font-size: 2.6rem;
+        }
+    }
+    .textArea_max {
+        height: 48rem;
+        border-radius: 2rem;
+        textarea {
+            height: calc(100% - 7rem);
+            padding: 3rem;
+        }
+        > p {
+            padding: 0 3rem;
+            line-height: 7rem;
+        }
+    }
+}

@@ -1,0 +1,17 @@
+.bottom_btns {
+    width: 100%;
+    @include flexLayout(row, center, center);
+    gap: 8px;
+    .Button {
+        height: 50px;
+    }
+}
+@include mediaQuery(mobile) {
+    .bottom_btns {
+        gap: 1.6rem;
+        .Button {
+            width: 30% !important;
+            height: 8rem;
+        }
+    }
+}

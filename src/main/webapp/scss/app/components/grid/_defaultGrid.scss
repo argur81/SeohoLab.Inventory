@@ -1,0 +1,257 @@
+.default_girid {
+    .top {
+        @include flexLayout(row, space-between, flex-end);
+        >p {
+            font-size: 16px;
+            color: #595959;
+            >i {
+                font-size: 18px;
+                font-weight: 700;
+                color: #007afe;
+            }
+        }
+        .ctrl {
+            @include flexLayout(row, flex-start, center);
+            gap: 5px;
+        }
+    }
+    .grid {
+        margin-top: 10px;
+        .scroll-x {
+            width: 100%;
+            @media all and (max-width:1640px) {
+                overflow-x: auto;
+                @include scrollbar();
+            }
+        }
+        table {
+            background-color: #fff;
+            @media all and (max-width:1640px) {
+                width: 1320px;
+            }
+            thead {
+                tr {
+                    border-top: 1px solid #d1d5d9;
+                    border-bottom: 1px solid #d1d5d9;
+                    th {
+                        background-color: #f5f6f7;
+                        height: 44px;
+                        color: #797979;
+                        font-weight: 500;
+                    }
+                }
+            }
+            tbody {
+                tr {
+                    td {
+                        padding: 20px 0;
+                        text-align: center;
+                        border-bottom: 1px solid #d1d5d9;
+                        line-height: 1.2;
+                        .has_hover {
+                            width: 100%;
+                            position: relative;
+                            >span {
+                                width: 100%;
+                                @include ellipsis(2);
+                                > i {
+                                    &::after {
+                                        content: ',';
+                                    }
+                                    &:last-child {
+                                        &::after {
+                                            display: none;
+                                        }
+                                    }
+                                }
+                            }
+                            .hover {
+                                position: absolute;
+                                background-color: #27272a;
+                                color: #ccc;
+                                padding: 10px;
+                                border-radius: 8px;
+                                left: 10px;
+                                bottom: -80px;
+                                min-width: 335px;
+                                text-align: left;
+                                display: none;
+                            }
+                        }
+                        .person {
+                            @include flexLayout(column, center, center);
+                            gap: 5px;
+                            >p {
+                                font-size: 12px;
+                                color: #595959;
+                            }
+                        }
+                        .state {
+                            @include flexLayout(column, center, center);
+                            gap: 5px;
+                            .chip {
+                                line-height: 22px;
+                                border-radius: 22px;
+                                padding: 0 10px;
+                                &.ready {
+                                    background-color: #f6f7f9;
+                                    color: #595959;
+                                }
+                                &.cancel {
+                                    background-color: #ffe9e7;
+                                    color: #ff4c3d;
+                                }
+                                &.ok {
+                                    background-color: #e0efff;
+                                    color: #007afe;
+                                }
+                            }
+                            span {
+                                font-size: 12px;
+                                color: #595959;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+@include mediaQuery(mobile) {
+    .default_girid {
+        padding: 0 4rem;
+        .top {
+            align-items: center;
+            margin-top: 4rem;
+            >p {
+                font-size: 2.8rem;
+                >i {
+                    font-size: 2.6rem;
+                }
+            }
+            .ctrl {
+                gap: 1rem;
+                .Select {
+                    &[data-width='78']{
+                        width: 14rem !important;
+                    }
+                }
+            }
+        }
+        .grid {
+            margin-top: 2rem;
+            table {
+                width: 100%;
+                display: block;
+                thead {
+                    display: none;
+                }
+                tbody {
+                    width: 100%;
+                    border-top: 1px solid #d1d5d9;
+                    @include flexLayout(column, flex-start, stretch);
+                    tr {
+                        width: 100%;
+                        border-bottom: 1px solid #d1d5d9;
+                        @include flexLayout(column, flex-start, stretch);
+                        padding: 2rem 3rem;
+                        gap: 2rem;
+                        &.mo_top_tit {
+                            padding: 8rem 3rem 2rem 3rem;
+                            position: relative;
+                            td {
+                                &.tit {
+                                    width: 100%;
+                                    position: absolute;
+                                    left: 0;
+                                    top: 3rem;
+                                    padding: 0 3rem;
+                                }
+                            }
+                        }
+                        &.has_checkbox {
+                            padding: 3rem 3rem 3rem 15rem;
+                            position: relative;
+                            td {
+                                &.chk {
+                                    position: absolute;
+                                    left: 3rem;
+                                    top: 3rem;
+                                    display: block;
+                                }
+                                &.no {
+                                    position: absolute;
+                                    top: 3rem;
+                                    left: 9rem;
+                                    line-height: 3.8rem;
+                                    display: block;
+                                }
+                            }
+                        }
+                        td {
+                            padding: 0;
+                            text-align: left;
+                            border-bottom: none;
+                            font-size: 2.4rem;
+                            @include flexLayout(row, flex-start, center);
+                            &.tit {
+                                font-size: 2.8rem;
+                                @include ellipsis(1);
+                            }
+                            &.no {
+                                display: block;
+                            }
+                            &::before {
+                                content: attr(data-text);
+                                white-space: nowrap;
+                                width: 17rem;
+                                color: #797979;
+                            }
+                            .has_hover {
+                                width: calc(100% - 17rem);
+                                .hover {
+                                    display: none;
+                                }
+                            }
+                            .person {
+                                width: calc(100% - 17rem);
+                                &.view_info {
+                                    @include flexLayout(column, flex-start, center);
+                                    i {
+                                        width: 100%;
+                                        white-space: nowrap;
+                                    }
+                                    > p {
+                                        display: block;
+                                        @include ellipsis(1);
+                                        font-size: 12px;
+                                    }
+                                }
+                                > p {
+                                    display: none;
+                                }
+                            }
+                            .state {
+                                .chip {
+                                    line-height: 4.4rem;
+                                    border-radius: 4.4rem;
+                                    padding: 0 2rem;
+                                    white-space: nowrap;
+                                }
+                                &.view_info {
+                                    @include flexLayout(row, flex-start, center);
+                                    > span {
+                                        display: block;
+                                    }
+                                }
+                                > span {
+                                    display: none;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
