@@ -5,9 +5,7 @@
 %>
 <script>
     function fnLogout() {
-        // confirm 창을 띄우고 사용자가 '확인'을 누르면 true, '취소'를 누르면 false가 리턴됩니다.
         if (confirm("정말 로그아웃 하시겠습니까?")) {
-            // '확인'을 눌렀을 때 실행할 코드
             location.href = "/app/login/logoutProcess.jsp";
         }
     }
@@ -21,22 +19,41 @@
             <button type="button" onclick="fnLogout();">로그아웃</button>
         </div>
         <ul class="gnb">
-            <li class="no_depth on"><a href="#"><img src="/images/svg/icon_calendar.svg">근태내역</a></li>
+            <li class="no_depth"><a href="#"><img src="/images/svg/truck-arrow-right-solid-full.svg">출고등록</a></li>
+            <li class="no_depth"><a href="#"><img src="/images/svg/dolly-solid-full.svg">입고등록</a></li>
             <li class="has_depth">
-                <p><img src="/images/svg/icon_image.svg">이미지 보안</p>
+                <p><img src="/images/svg/droplet-solid-full.svg">원료</p>
                 <div class="depth">
                     <div>
-                        <a href="#">이미지 승인 관리</a>
-                        <a href="#">이미지 결재 관리</a>
+                        <a href="#">재고</a>
+                        <a href="#">신규등록</a>
                     </div>
                 </div>
             </li>
             <li class="has_depth">
-                <p><img src="/images/svg/icon_setup.svg">환경설정</p>
+                <p><img src="/images/svg/boxes-packing-solid-full.svg">완제품</p>
                 <div class="depth">
                     <div>
-                        <a href="#">결재 담당자 관리</a>
-                        <a href="#">운영 담당자 관리</a>
+                        <a href="#">재고</a>
+                        <a href="#">신규등록</a>
+                    </div>
+                </div>
+            </li>
+            <li class="has_depth">
+                <p><img src="/images/svg/paste-regular-full.svg">라벨</p>
+                <div class="depth">
+                    <div>
+                        <a href="#">재고</a>
+                        <a href="#">신규등록</a>
+                    </div>
+                </div>
+            </li>
+            <li class="has_depth">
+                <p><img src="/images/svg/bottle-droplet-solid-full.svg">용기</p>
+                <div class="depth">
+                    <div>
+                        <a href="#">재고</a>
+                        <a href="#">신규등록</a>
                     </div>
                 </div>
             </li>

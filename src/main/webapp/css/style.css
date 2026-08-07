@@ -1408,13 +1408,27 @@ header .user_wrap button:hover {
 }
 header .gnb {
   padding-top: 24px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: justify;
+  -webkit-box-align: normal;
+      -ms-flex-align: normal;
+          align-items: normal;
+  gap: 5px;
 }
 header .gnb li {
   border-radius: 10px;
   padding: 15px 20px;
 }
 header .gnb li img {
-  width: 18px;
+  width: 24px;
 }
 header .gnb li.on {
   background-color: #f6f7f9;
@@ -1621,14 +1635,14 @@ header .gnb li.has_depth .depth a.on, header .gnb li.has_depth .depth a:hover {
     padding: 0 2rem;
   }
   header .gnb {
-    padding-top: 5rem;
+    padding-top: 2rem;
   }
   header .gnb li {
     border-radius: 2rem;
-    padding: 3rem 4rem;
+    padding: 3rem 0;
   }
   header .gnb li img {
-    width: 3.2rem;
+    width: 5rem;
   }
   header .gnb li.no_depth a {
     gap: 2rem;
