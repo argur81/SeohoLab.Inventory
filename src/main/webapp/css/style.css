@@ -1167,6 +1167,19 @@ input.inputText:focus {
     padding: 0 3rem;
     font-size: 2.6rem;
   }
+  input[type=date] {
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 100%;
+    max-width: 100%;
+    min-height: 8rem;
+  }
+  input[type=date]::-webkit-calendar-picker-indicator {
+    background-position: right center;
+  }
 }
 textarea.textArea {
   width: 100%;
@@ -3048,10 +3061,25 @@ footer a {
 
 @media screen and (max-width: 780px) {
   .bottom_btns {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -ms-flex-direction: column-reverse;
+        flex-direction: column-reverse;
     gap: 1.6rem;
   }
   .bottom_btns .Button {
-    width: 30% !important;
+    width: 100% !important;
     height: 8rem;
   }
 }

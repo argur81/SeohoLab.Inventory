@@ -24,4 +24,16 @@ input {
             font-size: 2.6rem;
         }
     }
+    input[type="date"] {
+        box-sizing: border-box;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        width: 100%;
+        max-width: 100%;
+        min-height: 8rem;
+    }
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        background-position: right center;
+    }
 }

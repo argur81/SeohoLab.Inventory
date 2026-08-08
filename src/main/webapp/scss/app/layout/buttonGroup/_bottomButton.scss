@@ -8,9 +8,11 @@
 }
 @include mediaQuery(mobile) {
     .bottom_btns {
+        @include flexLayout(column, center, center);
+        flex-direction: column-reverse;
         gap: 1.6rem;
         .Button {
-            width: 30% !important;
+            width: 100% !important;
             height: 8rem;
         }
     }
