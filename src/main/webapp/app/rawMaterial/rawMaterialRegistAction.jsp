@@ -109,7 +109,7 @@
 
         if (result > 0) {
             // 카테고리에 따른 목록 페이지 이동 리다이렉트 처리
-            String targetPage = "rawStock.jsp"; // 기본값 (원료 재고)
+            String targetPage = "rawMaterialStockList.jsp"; // 기본값 (원료 재고)
             if ("PRODUCT".equals(category)) targetPage = "productStock.jsp";
             else if ("SUB".equals(category)) targetPage = "subStock.jsp";
 %>

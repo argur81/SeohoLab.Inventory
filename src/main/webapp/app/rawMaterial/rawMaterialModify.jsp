@@ -6,7 +6,7 @@
     // 1. PK 파라미터 수신 및 예외 처리
     String itemIdStr = request.getParameter("id");
     if (itemIdStr == null || itemIdStr.trim().isEmpty()) {
-        out.println("<script>alert('잘못된 접근입니다.'); location.href='rawStock.jsp';</script>");
+        out.println("<script>alert('잘못된 접근입니다.'); location.href='rawMaterialStockList.jsp';</script>");
         return;
     }
 
@@ -14,7 +14,7 @@
     try {
         itemId = Integer.parseInt(itemIdStr);
     } catch (NumberFormatException e) {
-        out.println("<script>alert('유효하지 않은 ID 형식입니다.'); location.href='rawStock.jsp';</script>");
+        out.println("<script>alert('유효하지 않은 ID 형식입니다.'); location.href='rawMaterialStockList.jsp';</script>");
         return;
     }
 
@@ -74,7 +74,7 @@
             minQtyG = rs.getDouble("min_qty_g");
             minQtyMg = rs.getDouble("min_qty_mg");
         } else {
-            out.println("<script>alert('존재하지 않는 데이터입니다.'); location.href='rawStock.jsp';</script>");
+            out.println("<script>alert('존재하지 않는 데이터입니다.'); location.href='rawMaterialStockList.jsp';</script>");
             return;
         }
     } catch (Exception e) {
@@ -92,9 +92,9 @@
         <div id="container">
             <div class="content registPage">
                 <div class="title_set">
-                    <h5 class="page_tit"><p>원료</p><i><img src="/images/svg/location_arrow.svg"></i><%= itemName %>수정</h5>
+                    <h5 class="page_tit"><p>원료</p><i><img src="/images/svg/location_arrow.svg"></i><%= itemName %></h5>
                 </div>
-                <form action="modifyAction.jsp" method="post">
+                <form action="rawMaterialModifyAction.jsp" method="post">
                     <input type="hidden" name="itemId" value="<%= itemId %>">
                     <input type="hidden" name="category" value="<%= category %>">
                     <section class="radius">
