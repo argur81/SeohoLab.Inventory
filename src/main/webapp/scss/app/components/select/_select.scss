@@ -16,7 +16,7 @@
         &.focus {
             border-radius: 10px 10px 0 0;
             border-bottom: none;
-            border: 1px solid #007afe;
+            border: 1px solid #612d44;
             &::after {
                 transform: rotate(180deg)
             }
@@ -35,7 +35,7 @@
         left: 0;
         top: 38px;
         border-radius: 0 0 10px 10px;
-        border: 1px solid #007afe;
+        border: 1px solid #612d44;
         border-top: none;
         display: none;
         background-color: #fff;
@@ -59,6 +59,21 @@
             &:last-child {
                 border-radius: 0 0 10px 10px;
             }
+        }
+    }
+}
+select {
+    &.og_select {
+        width: 100%;
+        min-width: 85px;
+        height: 40px;
+        border-radius: 10px;
+        border: 1px solid #e6e8eb;
+        font-size: 16px;
+        padding: 0 15px;
+        transition: all .4s;
+        &.focus {
+            border: 1px solid #612d44;
         }
     }
 }
@@ -91,6 +106,14 @@
                     border-radius: 0 0 2rem 2rem;
                 }
             }
+        }
+    }
+    select {
+        &.og_select {
+            height: 8rem;
+            border-radius: 2rem;
+            font-size: 2.6rem;
+            padding: 0 3rem;
         }
     }
 }

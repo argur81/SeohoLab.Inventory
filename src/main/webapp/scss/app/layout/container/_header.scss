@@ -46,7 +46,7 @@ header {
                 width: 18px;
                 height: 18px;
                 @include flexLayout(row, center, center);
-                background-color: #007afe;
+                background-color: #612d44;
                 font-size: 10px;
                 color: #fff;
                 border-radius: 2px;
@@ -63,7 +63,7 @@ header {
             font-weight: 700;
             transition: all .4s;
             &:hover {
-                background-color: #007afe;
+                background-color: #612d44;
                 color: #fff;
             }
         }

@@ -179,7 +179,7 @@
                             bottom: calc(8rem - 1px);
                             border-radius: 2rem 2rem 0 0;
                             border-bottom: none;
-                            border-top: 1px solid #007afe;
+                            border-top: 1px solid #612d44;
                         }
                     }
                 }
@@ -196,14 +196,14 @@
                             border-radius: 2rem;
                             &.focus {
                                 border-radius: 0 0 2rem 2rem;
-                                border-color: #007afe;
+                                border-color: #612d44;
                             }
                         }
                         >.list {
                             top: inherit;
                             bottom: calc(8rem - 1px);
                             border-radius: 2rem 2rem 0 0;
-                            border: 1px solid #007afe;
+                            border: 1px solid #612d44;
                             border-bottom: none;
                         }
                         &::after {
@@ -258,7 +258,7 @@
             font-size: 2.8rem;
             color: #595959;
             i {
-                color: #007afe;
+                color: #612d44;
                 font-size: 3.6rem;
                 font-weight: 700;
             }

@@ -226,3 +226,75 @@ $(document).ready(function(){
     }
     imgPopupSlider();
 });
+
+//숫자 소소점만 입력
+$(document).ready(function() {
+    // 기준 단위(g) 대비 비율
+    const unitToGram = {
+        'unit_t': 1000000,
+        'unit_kg': 1000,
+        'unit_g': 1,
+        'unit_mg': 0.001
+    };
+
+    // 정수 부분에만 3자리마다 콤마를 추가하는 함수
+    function formatWithComma(str) {
+        if (!str) return '';
+        const parts = str.split('.');
+        // 정수 부분에서 기존 콤마 제거 후 3자리마다 콤마 추가
+        parts[0] = parts[0].replace(/,/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        return parts.join('.');
+    }
+
+    $(document).on('input', 'input[inputmode="decimal"]', function() {
+    let $this = $(this);
+    let value = $this.val();
+
+    // 1. [유효성 검사] 숫자, 소수점(.), 콤마(,) 외 문자 제거
+    value = value.replace(/[^0-9.]/g, '');
+
+    // 2. 소수점 중복 입력 방지 (첫 번째 소수점만 유지)
+    const parts = value.split('.');
+    if (parts.length > 2) {
+        value = parts[0] + '.' + parts.slice(1).join('');
+    }
+
+    // 3. 정수 부분에만 3자리 콤마 적용
+    let formattedValue = formatWithComma(value);
+    $this.val(formattedValue);
+
+    // 4. [단위 자동 변환 로직]
+    const $parentGroup = $this.closest('dl');
+    const $parentDiv = $this.parent('div');
+    const currentUnitClass = $parentDiv.attr('class').split(' ').find(cls => cls.startsWith('unit_'));
+
+    // 입력값이 비어있거나 소수점만 있는 경우 처리
+    if (!value || value === '.') {
+        $parentGroup.find('input[inputmode="decimal"]').not($this).val('');
+        return;
+    }
+
+    // 계산 시에는 콤마를 제거한 순수 숫자로 변환
+    const rawNumberString = value.replace(/,/g, '');
+    const numValue = parseFloat(rawNumberString);
+    if (isNaN(numValue)) return;
+
+    // g 기준값 계산
+    const baseGrams = numValue * unitToGram[currentUnitClass];
+
+    // 다른 단위들에 계산 결과 및 콤마 적용하여 출력
+    $.each(unitToGram, function(unitClass, ratio) {
+        if (unitClass !== currentUnitClass) {
+            let calculated = baseGrams / ratio;
+            
+            // 소수점 오차 정제 후 문자열 변환
+            let calcStr = Number(calculated.toFixed(6)).toString(); 
+            
+            // 정수 부분에만 3자리 콤마 포맷팅 후 적용
+            let finalFormatted = formatWithComma(calcStr);
+            
+            $parentGroup.find('.' + unitClass + ' input').val(finalFormatted);
+            }
+        });
+    });
+});
