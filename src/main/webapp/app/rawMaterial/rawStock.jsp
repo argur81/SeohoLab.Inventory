@@ -56,9 +56,9 @@
                                 <td>
                                     <%= count++ %>
                                 </td>
-                                <td><strong>
-                                        <%= itemName %>
-                                    </strong></td>
+                                <td>
+                                    <a href="rawModify.jsp?id=<%= rs.getInt("item_id") %>" class="item-link"><%= itemName %></a>
+                                </td>
                                 <td>
                                     <%= wo1 %>
                                     <%= !wo2.isEmpty() ? " / " + wo2 : "" %>
@@ -106,7 +106,7 @@
                             autoWidth: false,
                             //3번째 열(인덱스 2: 작업지시서)을 화면에서 숨김 처리 (검색은 그대로 작동함)
                             columnDefs: [
-                                { targets: [2], visible: false }
+                                { targets: [2,3,4,5], visible: false }
                             ],
                             responsive: true, //  반응형 옵션 활성화
                             language: {

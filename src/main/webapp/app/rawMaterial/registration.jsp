@@ -68,5 +68,13 @@
                 </form>
             </div>
         </div>
+        <script>
+            $('form').on('submit', function () {
+                $(this).find('input[inputmode="decimal"]').each(function () {
+                    let rawVal = $(this).val().replace(/,/g, '');
+                    $(this).val(rawVal);
+                });
+            });
+        </script>
     </div>
 <jsp:include page="/app/include/FooterDocType.jsp" />

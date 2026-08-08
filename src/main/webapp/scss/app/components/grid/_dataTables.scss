@@ -97,11 +97,23 @@
                         &:last-child {
                             border-right: none;
                         }
+                        a {
+                            &.item-link {
+                                font-weight: 700;
+                                color: #612d44;
+                                &:hover {
+                                    text-decoration: underline;
+                                }
+                            }
+                        }
                     }
                     &.odd {
                         >* {
                             box-shadow: none;
                         }
+                    }
+                    &.low-stock {
+                        background-color:rgba(245, 133, 133, 0.3);
                     }
                 }
             }

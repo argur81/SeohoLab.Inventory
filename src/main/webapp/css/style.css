@@ -970,9 +970,19 @@ h6.page_sub_tit {
 .dataTables_wrapper table.dataTable tbody tr td:last-child {
   border-right: none;
 }
+.dataTables_wrapper table.dataTable tbody tr td a.item-link {
+  font-weight: 700;
+  color: #612d44;
+}
+.dataTables_wrapper table.dataTable tbody tr td a.item-link:hover {
+  text-decoration: underline;
+}
 .dataTables_wrapper table.dataTable tbody tr.odd > * {
   -webkit-box-shadow: none;
           box-shadow: none;
+}
+.dataTables_wrapper table.dataTable tbody tr.low-stock {
+  background-color: rgba(245, 133, 133, 0.3);
 }
 .dataTables_wrapper .bottom_group {
   width: 100%;
