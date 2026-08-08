@@ -3689,9 +3689,6 @@ footer a {
 }
 
 @media screen and (max-width: 780px) {
-  .content.registPage {
-    padding: 0 !important;
-  }
   .content.registPage section.radius {
     padding: 5rem 4rem 12rem 4rem;
     margin-top: 0;

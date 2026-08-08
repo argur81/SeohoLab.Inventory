@@ -204,7 +204,6 @@
 @include mediaQuery(mobile) {
     .content {
         &.registPage {
-            padding: 0 !important;
             section {
                 &.radius {
                     padding: 5rem 4rem 12rem 4rem;
