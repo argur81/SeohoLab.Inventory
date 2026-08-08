@@ -206,18 +206,18 @@
             > div {
                 > label {
                     gap: 1rem;
-                    font-size: 2.8rem;
+                    font-size: 2.4rem;
                     white-space: nowrap;
                 }
             }
             .dataTables_length {
                 position: absolute;
                 right: 0;
-                top: -10.8rem;
+                top: -9.7rem;
                 select {
-                    height: 8rem;
+                    height: 6rem;
                     border-radius: 2rem;
-                    font-size: 2.6rem;
+                    font-size: 2.4rem;
                     padding: 0 3rem;
                 }
             }
@@ -225,10 +225,10 @@
                 width: 100%;
                 input {
                     width: 100%;
-                    height: 8rem;
+                    height: 6rem;
                     border-radius: 2rem;
                     padding: 0 3rem;
-                    font-size: 2.8rem;
+                    font-size: 2.4rem;
                 }
             }
         }
@@ -237,8 +237,8 @@
                 thead {
                     tr {
                         th {
-                            height: 9rem;
-                            font-size: 2.8rem;
+                            height: 7rem;
+                            font-size: 2.4rem;
                             &.sorting {
                                 &::after {
                                     top: 53%;
@@ -268,9 +268,9 @@
                 tbody {
                     tr {
                         td {
-                            padding: 1.5rem 1rem;
-                            height: 9rem;
-                            font-size: 2.8rem;
+                            padding: 1rem 1rem;
+                            height: 6rem;
+                            font-size: 2.4rem;
                             &.last_td {
                                 border-right: none;
                             }
