@@ -26,7 +26,7 @@
                 <p><img src="/images/svg/droplet-solid-full.svg">원료</p>
                 <div class="depth">
                     <div>
-                        <a href="#">재고</a>
+                        <a href="/app/rawMaterial/rawStock.jsp">재고</a>
                         <a href="/app/rawMaterial/registration.jsp">신규등록</a>
                     </div>
                 </div>

@@ -1,0 +1,80 @@
+.dataTables_wrapper {
+    .top_group {
+        width: 100%;
+        @include flexLayout(row, space-between, center);
+        flex-direction: row-reverse;
+        margin-bottom: 20px;
+        > div {
+            float: inherit;
+            > label {
+                @include flexLayout(row, flex-start, center);
+                gap: 10px;
+                font-size: 16px;
+                font-weight: 500;
+                color: #595959;
+            }
+        }
+        .dataTables_length {
+            select {
+                height: 40px;
+                border-radius: 10px;
+                border: 1px solid #e6e8eb;
+                font-size: 16px;
+                padding: 0 15px;
+            }
+        }
+        .dataTables_filter {
+            margin-top: 0;
+            input {
+                height: 40px;
+                margin-left: 0;
+                border-radius: 10px;
+                border: 1px solid #e6e8eb;
+                padding: 0 15px;
+                color: #292929;
+                @include placeholder(#c3c3c5);
+                transition: all .4s;
+                &:focus {
+                    border-color: #612d44;
+                }
+            }
+        }
+    }
+}
+@include mediaQuery(mobile) {
+    .dataTables_wrapper {
+        .top_group {
+            margin-bottom: 2rem;
+            flex-direction: column-reverse;
+            gap: 1rem;
+            > div {
+                > label {
+                    gap: 1rem;
+                    font-size: 2.6rem;
+                    white-space: nowrap;
+                }
+            }
+            .dataTables_length {
+                position: absolute;
+                right: 0;
+                top: -10.8rem;
+                select {
+                    height: 8rem;
+                    border-radius: 2rem;
+                    font-size: 2.6rem;
+                    padding: 0 3rem;
+                }
+            }
+            .dataTables_filter {
+                width: 100%;
+                input {
+                    width: 100%;
+                    height: 8rem;
+                    border-radius: 2rem;
+                    padding: 0 3rem;
+                    font-size: 2.6rem;
+                }
+            }
+        }
+    }
+}
