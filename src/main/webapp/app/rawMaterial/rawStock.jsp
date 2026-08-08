@@ -124,11 +124,26 @@
                                     previous: "이전"
                                 }
                             },
-                            pageLength: 10,
+                            pageLength: 25,
                             order: [[0, 'asc']]
                         });
                         $('.dataTables_wrapper > .dataTables_length, .dataTables_wrapper > .dataTables_filter').wrapAll('<div class="top_group"></div>');
                         $('.dataTables_wrapper > .dataTables_info, .dataTables_wrapper > .dataTables_paginate').wrapAll('<div class="bottom_group"></div>');
+                        function dataTableForMoblie() {
+                            if ($(window).width() <= 780) {
+                                $('.dataTables_wrapper table.dataTable thead tr th').removeClass('last_th');
+                                $('.dataTables_wrapper table.dataTable tbody tr td').removeClass('last_td');
+                                $('th.dtr-hidden').first().prev('th').addClass('last_th');
+                                $('td.dtr-hidden').first().prev('td').addClass('last_td');
+                            } else {
+                                $('.dataTables_wrapper table.dataTable thead tr th').removeClass('last_th');
+                                $('.dataTables_wrapper table.dataTable tbody tr td').removeClass('last_td');
+                            }
+                        }
+                        dataTableForMoblie();
+                        $(window).resize(function () {
+                            dataTableForMoblie();
+                        });
                     });
                 </script>
             </div>
