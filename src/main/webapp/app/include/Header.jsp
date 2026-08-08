@@ -19,6 +19,7 @@
             <button type="button" onclick="fnLogout();">로그아웃</button>
         </div>
         <ul class="gnb">
+            <li class="no_depth"><a href="#"><img src="/images/svg/flask-solid-full.svg">사용등록</a></li>
             <li class="no_depth"><a href="#"><img src="/images/svg/truck-arrow-right-solid-full.svg">출고등록</a></li>
             <li class="no_depth"><a href="#"><img src="/images/svg/dolly-solid-full.svg">입고등록</a></li>
             <li class="has_depth">
@@ -26,7 +27,7 @@
                 <div class="depth">
                     <div>
                         <a href="#">재고</a>
-                        <a href="#">신규등록</a>
+                        <a href="/app/rawMaterial/registration.jsp">신규등록</a>
                     </div>
                 </div>
             </li>
@@ -40,16 +41,7 @@
                 </div>
             </li>
             <li class="has_depth">
-                <p><img src="/images/svg/paste-regular-full.svg">라벨</p>
-                <div class="depth">
-                    <div>
-                        <a href="#">재고</a>
-                        <a href="#">신규등록</a>
-                    </div>
-                </div>
-            </li>
-            <li class="has_depth">
-                <p><img src="/images/svg/bottle-droplet-solid-full.svg">용기</p>
+                <p><img src="/images/svg/bottle-droplet-solid-full.svg">부자재</p>
                 <div class="depth">
                     <div>
                         <a href="#">재고</a>

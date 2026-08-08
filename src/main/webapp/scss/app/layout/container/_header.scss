@@ -155,6 +155,7 @@ header {
         border-left: none;
         border-bottom: 1px solid #dde1e6;
         z-index: 15;
+        padding: 0 2rem;
         .logo {
             width: 100%;
             height: 100%;
@@ -234,13 +235,13 @@ header {
                 &.no_depth {
                     a {
                         gap: 2rem;
-                        font-size: 3.6rem;
+                        font-size: 3.2rem;
                     }
                 }
                 &.has_depth {
                     p {
                         gap: 2rem;
-                        font-size: 3.6rem;
+                        font-size: 3.2rem;
                         &::after {
                             width: 2rem;
                             height: 1.2rem;
@@ -255,7 +256,7 @@ header {
                             padding-bottom: 1rem;
                         }
                         a {
-                            font-size: 2.8rem;
+                            font-size: 3rem;
                         }
                     }
                 }

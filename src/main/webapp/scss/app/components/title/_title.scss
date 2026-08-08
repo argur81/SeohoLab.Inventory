@@ -5,8 +5,15 @@
 }
 h5 {
     &.page_tit{
-        font-size: 30px;
-        font-weight: 700;
+        font-size: 24px;
+        font-weight: 600;
+        @include flexLayout(row, flex-start, center);
+        gap: 10px;
+        i {
+            img {
+                width: 8px;
+            }
+        }
     }
 }
 h6 {
@@ -23,6 +30,12 @@ h6 {
     h5 {
         &.page_tit {
             font-size: 3.6rem;
+            gap: 1rem;
+            i {
+                img {
+                    width: 0.8rem;
+                }
+            }
         }
     }
     h6 {
