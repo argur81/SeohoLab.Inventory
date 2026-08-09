@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @import 'webFonts.css';
 html,
 body,
@@ -4212,6 +4213,9 @@ footer a {
       -ms-flex-align: center;
           align-items: center;
   gap: 10px;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #909090;
 }
 .content.totalReg .top_control button {
   display: -webkit-box;
@@ -4231,19 +4235,208 @@ footer a {
   width: 150px;
   height: 40px;
   border-radius: 10px;
-  font-weight: 500;
+  font-weight: 700;
   -webkit-transition: all 0.4s;
   transition: all 0.4s;
   white-space: nowrap;
-  padding: 0 18px;
-  border: 1px solid #292929;
+  border: 1px solid #909090;
   background-color: #fff;
   font-size: 16px;
+  color: #909090;
+}
+.content.totalReg .top_control button::before {
+  content: "";
+  width: 24px;
+  height: 24px;
+  -webkit-mask-size: 24px 24px;
+          mask-size: 24px 24px;
+  background-color: #909090;
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+}
+.content.totalReg .top_control button.raw::before {
+  -webkit-mask-image: url(/images/svg/droplet-solid-full.svg);
+          mask-image: url(/images/svg/droplet-solid-full.svg);
+}
+.content.totalReg .top_control button.product::before {
+  -webkit-mask-image: url(/images/svg/boxes-packing-solid-full.svg);
+          mask-image: url(/images/svg/boxes-packing-solid-full.svg);
+}
+.content.totalReg .top_control button.subsidiary::before {
+  -webkit-mask-image: url(/images/svg/bottle-droplet-solid-full.svg);
+          mask-image: url(/images/svg/bottle-droplet-solid-full.svg);
 }
 .content.totalReg .top_control button:hover {
-  border: 1px solid #612d44;
+  border-color: #612d44;
   color: #612d44;
 }
-.content.totalReg .top_control button img {
-  height: 24px;
+.content.totalReg .top_control button:hover::before {
+  content: "";
+  background-color: #612d44;
+}
+.content.totalReg .top_control button.on {
+  border-color: #612d44;
+  color: #fff;
+  background-color: #612d44;
+}
+.content.totalReg .top_control button.on::before {
+  content: "";
+  background-color: #fff;
+}
+.content.totalReg > form {
+  display: none;
+}
+
+/* 1. 자동완성 전체 박스 스타일 */
+ul.ui-autocomplete {
+  position: absolute !important;
+  z-index: 99999 !important;
+  max-height: 450px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  -webkit-box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  padding: 6px 0 !important;
+  margin-top: 4px !important;
+  width: auto !important;
+  list-style: none !important;
+}
+ul.ui-autocomplete .ui-menu-item {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+ul.ui-autocomplete .ui-menu-item div,
+ul.ui-autocomplete .ui-menu-item a,
+ul.ui-autocomplete .ui-menu-item-wrapper {
+  display: block !important;
+  padding: 10px 14px !important;
+  font-size: 14px !important;
+  color: #334155 !important;
+  cursor: pointer !important;
+  border: none !important;
+  background: transparent !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+}
+ul.ui-autocomplete .ui-menu-item div.ui-state-active,
+ul.ui-autocomplete .ui-menu-item div:hover,
+ul.ui-autocomplete .ui-menu-item-wrapper.ui-state-active {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+  font-weight: 600 !important;
+  border: none !important;
+  margin: 0 !important;
+}
+ul.ui-autocomplete::-webkit-scrollbar {
+  width: 6px;
+}
+
+/* 스크롤바 세련되게 정리 */
+ul.ui-autocomplete ul.ui-autocomplete::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 3px;
+}
+
+@media screen and (max-width: 780px) {
+  .content.totalReg .top_control {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 1rem;
+    -webkit-column-gap: 1rem;
+       -moz-column-gap: 1rem;
+            column-gap: 1rem;
+    gap: 1rem;
+    padding-bottom: 2rem;
+    margin-bottom: 2rem;
+  }
+  .content.totalReg .top_control button {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    gap: 1rem;
+    width: 100%;
+    height: 8rem;
+    border-radius: 2rem;
+    font-size: 2.6rem;
+  }
+  .content.totalReg .top_control button::before {
+    width: 4rem;
+    height: 4rem;
+    -webkit-mask-size: 4rem 4rem;
+            mask-size: 4rem 4rem;
+  }
+  ul.ui-autocomplete {
+    position: absolute !important;
+    z-index: 99999 !important;
+    max-height: 45rem !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 2rem !important;
+    -webkit-box-shadow: 0 1rem 1.5rem -0.3rem rgba(0, 0, 0, 0.1), 0 0.4rem 0.6rem -0.2rem rgba(0, 0, 0, 0.05) !important;
+            box-shadow: 0 1rem 1.5rem -0.3rem rgba(0, 0, 0, 0.1), 0 0.4rem 0.6rem -0.2rem rgba(0, 0, 0, 0.05) !important;
+    padding: 0.6rem 0 !important;
+    margin-top: 0.4rem !important;
+    width: auto !important;
+    list-style: none !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  ul.ui-autocomplete::-webkit-scrollbar {
+    width: 0.4rem;
+  }
+  ul.ui-autocomplete::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 0.2rem;
+  }
+  ul.ui-autocomplete .ui-menu-item {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  ul.ui-autocomplete .ui-menu-item div,
+  ul.ui-autocomplete .ui-menu-item a,
+  ul.ui-autocomplete .ui-menu-item .ui-menu-item-wrapper {
+    display: -webkit-box !important;
+    display: -ms-flexbox !important;
+    display: flex !important;
+    -webkit-box-align: center !important;
+        -ms-flex-align: center !important;
+            align-items: center !important;
+    min-height: 4.4rem !important;
+    padding: 1rem 1.6rem !important;
+    font-size: 2.6rem !important;
+    color: #334155 !important;
+    cursor: pointer !important;
+    border: none !important;
+    background: transparent !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    word-break: break-all;
+  }
+  ul.ui-autocomplete .ui-menu-item div.ui-state-active, ul.ui-autocomplete .ui-menu-item div:hover,
+  ul.ui-autocomplete .ui-menu-item a.ui-state-active,
+  ul.ui-autocomplete .ui-menu-item a:hover,
+  ul.ui-autocomplete .ui-menu-item .ui-menu-item-wrapper.ui-state-active,
+  ul.ui-autocomplete .ui-menu-item .ui-menu-item-wrapper:hover {
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+    font-weight: 600 !important;
+    border: none !important;
+    margin: 0 !important;
+  }
 }

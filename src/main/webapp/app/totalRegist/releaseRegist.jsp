@@ -5,15 +5,14 @@
         <div id="container">
             <div class="content registPage totalReg">
                 <div class="title_set">
-                    <h5 class="page_tit"><p>사용등록</p></h5>
+                    <h5 class="page_tit"><p>출고등록</p></h5>
                 </div>
                 <div class="top_control">
                     <button type="button" class="raw" data-target="raw">원료</button>
-                    <button type="button" class="subsidiary" data-target="subsidiary">부자재</button>
+                    <button type="button" class="product" data-target="product">제품</button>
                 </div>
-                
                 <!--원료-->
-                <form class="raw" action="usedRegistAction.jsp" method="post">
+                <form class="raw" action="releaseRegistAction.jsp" method="post">
                     <input type="hidden" name="category" value="RAW">
                     <section class="radius">
                         <dl>
@@ -21,7 +20,7 @@
                             <dd><input type="text" id="raw_item_name" name="item_name" class="inputText" placeholder="원료명 입력 (자동완성)"></dd>
                         </dl>
                         <dl class="volume stock">
-                            <dt>사용량</dt>
+                            <dt>출고량</dt>
                             <dd>
                                 <div class="unit_t"><input type="text" name="out_qty_t" class="inputText" inputmode="decimal"><i>t</i></div>
                                 <div class="unit_kg"><input type="text" name="out_qty_kg" class="inputText" inputmode="decimal"><i>kg</i></div>
@@ -31,31 +30,32 @@
                         </dl>
                         <div class="bottom_btns">
                             <button type="button" class="Button bgGray" data-width="100" onclick="history.back();">취소</button>
-                            <button type="submit" class="Button bgBlue" data-width="100">사용등록</button>
+                            <button type="submit" class="Button bgBlue" data-width="100">출고등록</button>
                         </div>
                     </section>
                 </form>
-
-                <!--부자재-->
-                <form class="subsidiary" action="usedRegistAction.jsp" method="post">
-                    <input type="hidden" name="category" value="SUBSIDIARY">
+                <!--//원료-->
+                <!--제품-->
+                <form class="product" action="releaseRegistAction.jsp" method="post">
+                    <input type="hidden" name="category" value="PRODUCT">
                     <section class="radius">
                         <dl class="w75">
-                            <dt>자재명</dt>
-                            <dd><input type="text" id="sub_item_name" name="item_name" class="inputText" placeholder="자재명 입력 (자동완성)"></dd>
+                            <dt>제품명</dt>
+                            <dd><input type="text" id="product_item_name" name="item_name" class="inputText" placeholder="제품명 입력 (자동완성)"></dd>
                         </dl>
                         <dl class="volume stock w25">
-                            <dt>사용개수</dt>
+                            <dt>출고개수</dt>
                             <dd>
                                 <div class="unit_ea"><input type="text" name="out_qty" class="inputText" inputmode="decimal"><i>개</i></div>
                             </dd>
                         </dl>
                         <div class="bottom_btns">
                             <button type="button" class="Button bgGray" data-width="100" onclick="history.back();">취소</button>
-                            <button type="submit" class="Button bgBlue" data-width="100">사용등록</button>
+                            <button type="submit" class="Button bgBlue" data-width="100">출고등록</button>
                         </div>
                     </section>
                 </form>
+                <!--//제품-->
             </div>
         </div>
         
@@ -84,7 +84,7 @@
                 }
 
                 setupAutocomplete("#raw_item_name", "RAW");
-                setupAutocomplete("#sub_item_name", "SUBSIDIARY");
+                setupAutocomplete("#product_item_name", "PRODUCT");
 
                 // Form Submit 시 천단위 콤마(,) 제거
                 $('form').on('submit', function () {

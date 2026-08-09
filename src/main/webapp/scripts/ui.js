@@ -333,9 +333,22 @@ $(document).ready(function(){
         if($('h5.page_tit p').text() == '사용등록'){
             $('header .gnb li:first-child').addClass('on');
         }
+        if($('h5.page_tit p').text() == '출고등록'){
+            $('header .gnb li:nth-child(2)').addClass('on');
+        }
         if($('h5.page_tit p').text() == '입고등록'){
             $('header .gnb li:nth-child(3)').addClass('on');
         }
     }
     gnbAction();
+});
+//토탈등록 공통
+$(document).ready(function(){
+    $('.content.totalReg .top_control button').click(function(){
+        $('.content.totalReg .top_control button').removeClass('on');
+        $(this).addClass('on');
+        var targetClass = $(this).data('target');
+        $('.content.totalReg > form').hide();
+        $('.' + targetClass).fadeIn();
+    });
 });

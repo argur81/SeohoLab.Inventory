@@ -32,7 +32,7 @@
         </div>
         <ul class="gnb">
             <li class="no_depth"><a href="/app/totalRegist/usedRegist.jsp"><img src="/images/svg/flask-solid-full.svg">사용등록</a></li>
-            <li class="no_depth"><a href="#"><img src="/images/svg/truck-arrow-right-solid-full.svg">출고등록</a></li>
+            <li class="no_depth"><a href="/app/totalRegist/releaseRegist.jsp"><img src="/images/svg/truck-arrow-right-solid-full.svg">출고등록</a></li>
             <li class="no_depth"><a href="/app/totalRegist/receivingRegist.jsp"><img src="/images/svg/dolly-solid-full.svg">입고등록</a></li>
             <li class="has_depth raw">
                 <p><img src="/images/svg/droplet-solid-full.svg">원료</p>
