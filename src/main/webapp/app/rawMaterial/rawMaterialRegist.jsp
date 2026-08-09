@@ -5,7 +5,7 @@
         <div id="container">
             <div class="content registPage">
                 <div class="title_set">
-                    <h5 class="page_tit"><p>원료</p><i><img src="/images/svg/location_arrow.svg"></i>신규등록</h5>
+                    <h5 class="page_tit"><p>원료</p><i><img src="/images/svg/location_arrow.svg"></i><b>신규등록</b></h5>
                 </div>
                 <form id="regForm" action="rawMaterialRegistAction.jsp" method="post">
                     <input type="hidden" name="category" value="RAW">

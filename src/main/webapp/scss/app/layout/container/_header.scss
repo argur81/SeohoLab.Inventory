@@ -110,7 +110,9 @@ header {
                         content: '';
                         width: 10px;
                         height: 6px;
-                        @include positionLayout(absolute, y);
+                        position: absolute;
+                        top: 50%;
+                        margin-top: -3px;
                         right: 0;
                         background: url(/images/svg/menu_arrow.svg) no-repeat;
                         transition: all .4s;
@@ -228,7 +230,7 @@ header {
             padding-top: 2rem;
             li {
                 border-radius: 2rem;
-                padding: 3rem 0;
+                padding: 3rem;
                 img {
                     width: 5rem;
                 }

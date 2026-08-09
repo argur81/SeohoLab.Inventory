@@ -82,7 +82,7 @@
         <div id="container">
             <div class="content registPage">
                 <div class="title_set">
-                    <h5 class="page_tit"><p>제품</p><i><img src="/images/svg/location_arrow.svg"></i>재고현황<i><img src="/images/svg/location_arrow.svg"></i>수정</h5>
+                    <h5 class="page_tit"><p>제품</p><i><img src="/images/svg/location_arrow.svg"></i><b>재고현황</b><i><img src="/images/svg/location_arrow.svg"></i>수정</h5>
                 </div>
                 <form action="productModifyAction.jsp" method="post">
                     <input type="hidden" name="productId" value="<%= productId %>">

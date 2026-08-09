@@ -21,7 +21,7 @@
             <div class="content rawStockPage">
                 <div class="title_set">
                     <h5 class="page_tit">
-                        <p>제품</p><i><img src="/images/svg/location_arrow.svg"></i>재고현황
+                        <p>제품</p><i><img src="/images/svg/location_arrow.svg"></i><b>재고현황</b>
                     </h5>
                 </div>
                 <table id="stockTable" class="display cell-border hover" style="width:100%">

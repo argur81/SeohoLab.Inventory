@@ -1,0 +1,29 @@
+.content {
+    &.totalReg {
+        .top_control {
+            @include flexLayout(row, flex-start, center);
+            gap: 10px;
+            button {
+                @include flexLayout(row, center, center);
+                gap: 5px;
+                width: 150px;
+                height: 40px;
+                border-radius: 10px;
+                font-weight: 500;
+                transition: all .4s;
+                white-space: nowrap;
+                padding: 0 18px;
+                border: 1px solid #292929;
+                background-color: #fff;
+                font-size: 16px;
+                &:hover {
+                    border: 1px solid #612d44;
+                    color: #612d44;
+                }
+                img {
+                    height: 24px;
+                }
+            }
+        }
+    }
+}

@@ -20,6 +20,12 @@
                     width: 100%;
                     @include flexLayout(column, flex-start, stretch);
                     gap: 10px;
+                    &.w15 {
+                        width: calc(15% - 8px);
+                    }
+                    &.w20 {
+                        width: calc(20% - 8px);
+                    }
                     &.w25 {
                         width: calc(25% - 8px);
                     }
@@ -28,6 +34,12 @@
                     }
                     &.w50 {
                         width: calc(50% - 5px);
+                    }
+                    &.w75 {
+                        width: calc(75% - 5px);
+                    }
+                    &.w85 {
+                        width: calc(85% - 5px);
                     }
                     dt {
                         color: #595959;
@@ -214,6 +226,12 @@
                     }
                     dl {
                         gap: 2rem;
+                        &.w15 {
+                            width: 100%;
+                        }
+                        &.w20 {
+                            width: 100%;
+                        }
                         &.w25 {
                             width: 100%;
                         }
@@ -221,6 +239,12 @@
                             width: 100%;
                         }
                         &.w50 {
+                            width: 100%;
+                        }
+                        &.w75 {
+                            width: 100%;
+                        }
+                        &.w85 {
                             width: 100%;
                         }
                         dt {

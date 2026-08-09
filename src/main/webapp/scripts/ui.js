@@ -298,3 +298,44 @@ $(document).ready(function() {
         });
     });
 });
+$(document).ready(function(){
+    function gnbAction(){
+        if($('h5.page_tit p').text() == '원료'){
+            $('header .gnb li.raw').addClass('on');
+            $('header .gnb li.raw').find('.depth').show();
+            if($('h5.page_tit b').text() == '재고현황') {
+                $('header .gnb li.raw .depth > div a:first-child').addClass('on');
+            }
+            if($('h5.page_tit b').text() == '신규등록') {
+                $('header .gnb li.raw .depth > div a:nth-child(2)').addClass('on');
+            }
+        }
+        if($('h5.page_tit p').text() == '제품'){
+            $('header .gnb li.product').addClass('on');
+            $('header .gnb li.product').find('.depth').show();
+            if($('h5.page_tit b').text() == '재고현황') {
+                $('header .gnb li.product .depth > div a:first-child').addClass('on');
+            }
+            if($('h5.page_tit b').text() == '신규등록') {
+                $('header .gnb li.product .depth > div a:nth-child(2)').addClass('on');
+            }
+        }
+        if($('h5.page_tit p').text() == '부자재'){
+            $('header .gnb li.subsidiary').addClass('on');
+            $('header .gnb li.subsidiary').find('.depth').show();
+            if($('h5.page_tit b').text() == '재고현황') {
+                $('header .gnb li.subsidiary .depth > div a:first-child').addClass('on');
+            }
+            if($('h5.page_tit b').text() == '신규등록') {
+                $('header .gnb li.subsidiary .depth > div a:nth-child(2)').addClass('on');
+            }
+        }
+        if($('h5.page_tit p').text() == '사용등록'){
+            $('header .gnb li:first-child').addClass('on');
+        }
+        if($('h5.page_tit p').text() == '입고등록'){
+            $('header .gnb li:nth-child(3)').addClass('on');
+        }
+    }
+    gnbAction();
+});
