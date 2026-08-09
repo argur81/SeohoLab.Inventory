@@ -2,7 +2,7 @@
     @include flexLayout(row, center, stretch);
     width: 100%;
     min-height: 100vh;
-    padding: 40px 0 40px 280px;
+    padding: 40px 0 0 280px;
     .content {
         width: 100%;
         padding: 0 20px;

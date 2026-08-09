@@ -1,0 +1,17 @@
+#container {
+    .content {
+        &.home {
+            width: 100%;
+            overflow: hidden;
+            padding: 0;
+            .swiper-wrapper {
+                .swiper-slide {
+                    padding: 0 20px;
+                }
+            }
+            .dashboard {
+                height: calc(100% - 50px);
+            }
+        }
+    }
+}

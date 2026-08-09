@@ -785,6 +785,8 @@ h6.page_sub_tit {
 }
 .works_grid {
   overflow-x: auto;
+  overflow-y: auto;
+  max-height: 300px;
 }
 .works_grid table {
   min-width: 100%;
@@ -2159,7 +2161,7 @@ footer a {
           align-items: stretch;
   width: 100%;
   min-height: 100vh;
-  padding: 40px 0 40px 280px;
+  padding: 40px 0 0 280px;
 }
 #container .content {
   width: 100%;
@@ -3821,6 +3823,18 @@ footer a {
     margin-top: 5rem;
   }
 }
+#container .content.home {
+  width: 100%;
+  overflow: hidden;
+  padding: 0;
+}
+#container .content.home .swiper-wrapper .swiper-slide {
+  padding: 0 20px;
+}
+#container .content.home .dashboard {
+  height: calc(100% - 50px);
+}
+
 .content.registPage section.radius {
   padding: 25px 25px 60px 25px;
   margin-top: 25px;

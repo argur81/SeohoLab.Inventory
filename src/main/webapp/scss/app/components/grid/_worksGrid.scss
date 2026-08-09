@@ -2,6 +2,8 @@
     width: 100%;
     @include scrollbar();
     overflow-x: auto;
+    overflow-y: auto;
+    max-height: 300px;
     table {
         min-width: 100%;
         .fix {
