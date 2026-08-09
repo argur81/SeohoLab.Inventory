@@ -9,5 +9,5 @@
     response.setDateHeader("Expires", 0); // Proxies
 %>
 <script>
-    location.href = "/index.jsp"; 
+    location.href = "/app/login/login.jsp"; 
 </script>

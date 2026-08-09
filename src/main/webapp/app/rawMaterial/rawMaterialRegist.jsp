@@ -39,7 +39,7 @@
                             <dd><input type="date" name="manufacture_date" class="inputText"></dd>
                         </dl>
                         <dl class="w25">
-                            <dt>만료일</dt>
+                            <dt>EXP</dt>
                             <dd><input type="date" name="expiration_date" class="inputText"></dd>
                         </dl>
                         <dl class="volume stock">

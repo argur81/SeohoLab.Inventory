@@ -21,15 +21,15 @@
             <div class="content rawStockPage">
                 <div class="title_set">
                     <h5 class="page_tit">
-                        <p>원료</p><i><img src="/images/svg/location_arrow.svg"></i>재고현황
+                        <p>부자재</p><i><img src="/images/svg/location_arrow.svg"></i>재고현황
                     </h5>
                 </div>
                 <table id="stockTable" class="display cell-border hover" style="width:100%">
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>원료명</th>
-                            <th>작업지시서1~3</th>
+                            <th>종류</th>
+                            <th>제품명</th>
                             <th>현재 재고량</th>
                             <th>최소 재고량</th>
                             <th>상태</th>
@@ -42,64 +42,36 @@
                                 Class.forName("org.mariadb.jdbc.Driver"); 
                                 conn = DriverManager.getConnection(url, dbUser, dbPass);
                                 
-                                String sql = "SELECT * FROM items WHERE category = 'RAW' ORDER BY item_id DESC"; 
+                                // subsidiary 테이블에서 최근 수정일 또는 subsidiary_id 역순 조회
+                                String sql = "SELECT * FROM subsidiary ORDER BY subsidiary_id DESC"; 
                                 pstmt = conn.prepareStatement(sql);
                                 rs = pstmt.executeQuery(); 
-
-                                java.text.DecimalFormat df = new java.text.DecimalFormat("#,##0.##");
+                                
+                                // 숫자는 3자리 콤마, 날짜는 YYYY-MM-DD HH:mm 포맷 적용
+                                java.text.DecimalFormat df = new java.text.DecimalFormat("#,##0");
                                 java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm");
 
                                 int count = 1; 
                                 while(rs.next()) { 
-                                    int itemId = rs.getInt("item_id");
+                                    int subsidiaryId = rs.getInt("subsidiary_id");
+                                    String subsidiaryType = rs.getString("subsidiary_type");
+                                    if (subsidiaryType == null || subsidiaryType.trim().isEmpty()) {
+                                        subsidiaryType = "-";
+                                    }
+                                    
                                     String itemName = rs.getString("item_name");
                                     if (itemName == null) itemName = "";
-
-                                    String w1 = rs.getString("work_order_1");
-                                    String w2 = rs.getString("work_order_2");
-                                    String w3 = rs.getString("work_order_3");
                                     
-                                    StringBuilder woSb = new StringBuilder();
-                                    if (w1 != null && !w1.trim().isEmpty()) woSb.append(w1.trim());
-                                    if (w2 != null && !w2.trim().isEmpty()) {
-                                        if (woSb.length() > 0) woSb.append(" / ");
-                                        woSb.append(w2.trim());
-                                    }
-                                    if (w3 != null && !w3.trim().isEmpty()) {
-                                        if (woSb.length() > 0) woSb.append(" / ");
-                                        woSb.append(w3.trim());
-                                    }
-                                    String workOrderStr = woSb.length() > 0 ? woSb.toString() : "-";
+                                    // 현재 재고 개수 / 최소 재고 개수
+                                    int stockQty = rs.getInt("stock_qty"); 
+                                    int minQty = rs.getInt("min_qty"); 
+                                    boolean isLowStock = stockQty < minQty;
 
-                                    // DB 단위별 수치 수신
-                                    double stockT = rs.getDouble("stock_qty_t");
-                                    double stockKg = rs.getDouble("stock_qty_kg");
-                                    double stockG = rs.getDouble("stock_qty_g");
-                                    double stockMg = rs.getDouble("stock_qty_mg");
+                                    // 표시용 텍스트 (예: 20 개)
+                                    String stockDisplay = df.format(stockQty) + " 개";
+                                    String minDisplay = df.format(minQty) + " 개";
 
-                                    double minT = rs.getDouble("min_qty_t");
-                                    double minKg = rs.getDouble("min_qty_kg");
-                                    double minG = rs.getDouble("min_qty_g");
-                                    double minMg = rs.getDouble("min_qty_mg");
-
-                                    // ★ 중복 더하기 제거: kg 수치를 최우선으로 사용하며, 없으면 존재하는 단위 1개만 kg 환산 사용
-                                    double finalStockKg = 0;
-                                    if (stockKg > 0) finalStockKg = stockKg;
-                                    else if (stockT > 0) finalStockKg = stockT * 1000.0;
-                                    else if (stockG > 0) finalStockKg = stockG / 1000.0;
-                                    else if (stockMg > 0) finalStockKg = stockMg / 1000000.0;
-
-                                    double finalMinKg = 0;
-                                    if (minKg > 0) finalMinKg = minKg;
-                                    else if (minT > 0) finalMinKg = minT * 1000.0;
-                                    else if (minG > 0) finalMinKg = minG / 1000.0;
-                                    else if (minMg > 0) finalMinKg = minMg / 1000000.0;
-
-                                    String stockDisplay = df.format(finalStockKg) + " kg";
-                                    String minDisplay = df.format(finalMinKg) + " kg";
-
-                                    boolean isLowStock = (finalStockKg < finalMinKg) && (finalMinKg > 0);
-
+                                    // 최근 수정일 null 예외 안전 처리
                                     Timestamp updatedAt = rs.getTimestamp("updated_at");
                                     String updatedAtDisplay = (updatedAt != null) ? sdf.format(updatedAt) : "-";
                         %>
@@ -108,10 +80,10 @@
                                 <%= count++ %>
                             </td>
                             <td>
-                                <a href="rawMaterialModify.jsp?id=<%= rs.getInt("item_id") %>" class="item-link"><%= itemName %></a>
+                                <%= subsidiaryType %>
                             </td>
                             <td>
-                                <%= workOrderStr %>
+                                <a href="subsidiaryModify.jsp?id=<%= subsidiaryId %>" class="item-link"><%= itemName %></a>
                             </td>
                             <td><%= stockDisplay %></td>
                             <td><%= minDisplay %></td>
@@ -121,7 +93,7 @@
                             <td><%= updatedAtDisplay %></td>
                         </tr>
                         <% 
-                                } 
+                            } 
                             } catch(Exception e) { 
                                 e.printStackTrace(); 
                             } finally { 
@@ -138,8 +110,8 @@
                             autoWidth: false,
                             //3번째 열(인덱스 2: 작업지시서)을 화면에서 숨김 처리 (검색은 그대로 작동함)
                             columnDefs: [
-                                { targets: [2], visible: false },
                                 { width: "80px", targets: 0, className: "dt-center" },
+                                { width: "160px", targets: 1, className: "dt-center" },
                                 { width: "150px", targets: 3, className: "dt-right" },
                                 { width: "150px", targets: 4, className: "dt-right" },
                                 { width: "100px", targets: 5, className: "dt-center" },
@@ -147,7 +119,7 @@
                             ],
                             responsive: true, //  반응형 옵션 활성화
                             language: {
-                                emptyTable: "등록된 원료 재고가 없습니다.",
+                                emptyTable: "등록된 제품이 없습니다.",
                                 lengthMenu: "_MENU_ 개씩 보기",
                                 info: "총 <i>_TOTAL_</i>개 중 _START_ - _END_",
                                 infoEmpty: "데이터 없음",

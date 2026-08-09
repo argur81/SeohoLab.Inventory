@@ -1505,6 +1505,9 @@ input.inputText:disabled {
 input.inputText:focus {
   border-color: #612d44;
 }
+input.inputText[readonly=readonly] {
+  background-color: #f6f7f9;
+}
 
 @media screen and (max-width: 780px) {
   input.inputText {

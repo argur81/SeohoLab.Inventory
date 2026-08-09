@@ -25,8 +25,9 @@
     String lotNumber = "";
     String receiptDate = "", manufactureDate = "", expirationDate = "";
 
-    // DB에 자동 변환되어 저장되어 있는 단위별 수치들
+    // DB에 저장되어 있는 단위별 수치들 (입고 / 현재 재고 / 최소 재고)
     double inQtyT = 0, inQtyKg = 0, inQtyG = 0, inQtyMg = 0;
+    double stockQtyT = 0, stockQtyKg = 0, stockQtyG = 0, stockQtyMg = 0;
     double minQtyT = 0, minQtyKg = 0, minQtyG = 0, minQtyMg = 0;
 
     // 3. Cloudtype MariaDB 접속 설정
@@ -59,16 +60,22 @@
             lotNumber = rs.getString("lot_number") != null ? rs.getString("lot_number") : "";
             
             receiptDate = rs.getString("receipt_date") != null ? rs.getString("receipt_date") : "";
-            // DB의 actual 컬럼명 (manufacture_dat)
             manufactureDate = rs.getString("manufacture_date") != null ? rs.getString("manufacture_date") : "";
             expirationDate = rs.getString("expiration_date") != null ? rs.getString("expiration_date") : "";
 
-            // DB에 저장된 단위별 변환 수치 조회
+            // 입고 수량
             inQtyT = rs.getDouble("in_qty_t");
             inQtyKg = rs.getDouble("in_qty_kg");
             inQtyG = rs.getDouble("in_qty_g");
             inQtyMg = rs.getDouble("in_qty_mg");
 
+            // 현재 재고 수량
+            stockQtyT = rs.getDouble("stock_qty_t");
+            stockQtyKg = rs.getDouble("stock_qty_kg");
+            stockQtyG = rs.getDouble("stock_qty_g");
+            stockQtyMg = rs.getDouble("stock_qty_mg");
+
+            // 최소 재고 수량
             minQtyT = rs.getDouble("min_qty_t");
             minQtyKg = rs.getDouble("min_qty_kg");
             minQtyG = rs.getDouble("min_qty_g");
@@ -92,11 +99,15 @@
         <div id="container">
             <div class="content registPage">
                 <div class="title_set">
-                    <h5 class="page_tit"><p>원료</p><i><img src="/images/svg/location_arrow.svg"></i><%= itemName %></h5>
+                    <h5 class="page_tit"><p>원료</p><i><img src="/images/svg/location_arrow.svg"></i>재고현황<i><img src="/images/svg/location_arrow.svg"></i>수정</h5>
                 </div>
                 <form action="rawMaterialModifyAction.jsp" method="post">
                     <input type="hidden" name="itemId" value="<%= itemId %>">
                     <input type="hidden" name="category" value="<%= category %>">
+                    <input type="hidden" name="stock_qty_t" value="<%= stockQtyT %>">
+                    <input type="hidden" name="stock_qty_kg" value="<%= stockQtyKg %>">
+                    <input type="hidden" name="stock_qty_g" value="<%= stockQtyG %>">
+                    <input type="hidden" name="stock_qty_mg" value="<%= stockQtyMg %>">
                     <section class="radius">
                         <dl class="w25">
                             <dt>원료명</dt>
@@ -127,16 +138,16 @@
                             <dd><input type="date" name="manufacture_date" class="inputText" value="<%= manufactureDate %>"></dd>
                         </dl>
                         <dl class="w25">
-                            <dt>만료일</dt>
+                            <dt>EXP</dt>
                             <dd><input type="date" name="expiration_date" class="inputText" value="<%= expirationDate %>"></dd>
                         </dl>
                         <dl class="volume stock">
-                            <dt>입고물량</dt>
+                            <dt>현재 재고물량</dt>
                             <dd>
-                                <div class="unit_t"><input type="text" name="in_qty_t" class="inputText" inputmode="decimal" value="<%= inQtyT %>"><i>t</i></div>
-                                <div class="unit_kg"><input type="text" name="in_qty_kg" class="inputText" inputmode="decimal" value="<%= inQtyKg %>"><i>kg</i></div>
-                                <div class="unit_g"><input type="text" name="in_qty_g" class="inputText" inputmode="decimal" value="<%= inQtyG %>"><i>g</i></div>
-                                <div class="unit_mg"><input type="text" name="in_qty_mg" class="inputText" inputmode="decimal" value="<%= inQtyMg %>"><i>mg</i></div>
+                                <div class="unit_t"><input type="text" name="stock_qty_t" class="inputText" inputmode="decimal" value="<%= stockQtyT %>" disabled="disabled"><i>t</i></div>
+                                <div class="unit_kg"><input type="text" name="stock_qty_kg" class="inputText" inputmode="decimal" value="<%= stockQtyKg %>" disabled="disabled"><i>kg</i></div>
+                                <div class="unit_g"><input type="text" name="stock_qty_g" class="inputText" inputmode="decimal" value="<%= stockQtyG %>" disabled="disabled"><i>g</i></div>
+                                <div class="unit_mg"><input type="text" name="stock_qty_mg" class="inputText" inputmode="decimal" value="<%= stockQtyMg %>" disabled="disabled"><i>mg</i></div>
                             </dd>
                         </dl>
                         <dl class="volume min">

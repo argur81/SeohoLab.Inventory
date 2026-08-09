@@ -13,6 +13,9 @@ input {
         &:focus {
             border-color: #612d44;
         }
+        &[readonly=readonly] {
+            background-color: #f6f7f9;
+        }
     }
 }
 @include mediaQuery(mobile) {

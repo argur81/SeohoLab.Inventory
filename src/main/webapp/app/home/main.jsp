@@ -5,7 +5,7 @@
         <div id="container">
             <div class="content home">
                 <div class="title_set">
-                    <h5 class="page_tit">이미지 승인 관리</h5>
+                    <h5 class="page_tit">test</h5>
                 </div>
             </div>
         </div>
