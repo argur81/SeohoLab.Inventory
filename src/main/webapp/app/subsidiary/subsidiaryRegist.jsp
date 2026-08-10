@@ -23,7 +23,7 @@
                                 </select>
                             </dd>
                         </dl>
-                        <dl class="w50">
+                        <dl class="w25">
                             <dt>자재명</dt>
                             <dd><input type="text" name="item_name" class="inputText" placeholder="제품명 입력"></dd>
                         </dl>
@@ -37,12 +37,6 @@
                                     <option>유리</option>
                                     <option>기타</option>
                                 </select>
-                            </dd>
-                        </dl>
-                        <dl class="volume stock w25">
-                            <dt>등록개수</dt>
-                            <dd>
-                                <div class="unit_ea"><input type="text" name="in_qty" class="inputText" inputmode="decimal"><i>개</i></div>
                             </dd>
                         </dl>
                         <dl class="volume min w25">

@@ -31,33 +31,33 @@
             <button type="button" onclick="location.href='/app/login/logoutProcess.jsp'">로그아웃</button>
         </div>
         <ul class="gnb">
-            <li class="no_depth"><a href="/app/totalRegist/usedRegist.jsp"><img src="/images/svg/flask-solid-full.svg">사용등록</a></li>
-            <li class="no_depth"><a href="/app/totalRegist/releaseRegist.jsp"><img src="/images/svg/truck-arrow-right-solid-full.svg">출고등록</a></li>
-            <li class="no_depth"><a href="/app/totalRegist/receivingRegist.jsp"><img src="/images/svg/dolly-solid-full.svg">입고등록</a></li>
-            <li class="has_depth raw">
-                <p><img src="/images/svg/droplet-solid-full.svg">원료</p>
+            <li class="has_depth">
+                <p><img src="/images/svg/flask-solid-full.svg">사용·출고·입고</p>
                 <div class="depth">
                     <div>
-                        <a href="/app/rawMaterial/rawMaterialStockList.jsp">재고현황</a>
-                        <a href="/app/rawMaterial/rawMaterialRegist.jsp">신규등록</a>
+                        <a href="/app/totalRegist/usedRegist.jsp">사용등록</a>
+                        <a href="/app/totalRegist/releaseRegist.jsp">출고등록</a>
+                        <a href="/app/totalRegist/receivingRegist.jsp">입고등록</a>
                     </div>
                 </div>
             </li>
-            <li class="has_depth product">
-                <p><img src="/images/svg/boxes-packing-solid-full.svg">제품</p>
+            <li class="has_depth">
+                <p><img src="/images/svg/boxes-packing-solid-full.svg">재고현황</p>
                 <div class="depth">
                     <div>
-                        <a href="/app/product/productStockList.jsp">재고현황</a>
-                        <a href="/app/product/productRegist.jsp">신규등록</a>
+                        <a href="/app/rawMaterial/rawMaterialStockList.jsp">원료</a>
+                        <a href="/app/product/productStockList.jsp">제품</a>
+                        <a href="/app/subsidiary/subsidiaryStockList.jsp">부자재</a>
                     </div>
                 </div>
             </li>
-            <li class="has_depth subsidiary">
-                <p><img src="/images/svg/bottle-droplet-solid-full.svg">부자재</p>
+            <li class="has_depth">
+                <p><img src="/images/svg/plus-solid-full.svg">신규등록</p>
                 <div class="depth">
                     <div>
-                        <a href="/app/subsidiary/subsidiaryStockList.jsp">재고현황</a>
-                        <a href="/app/subsidiary/subsidiaryRegist.jsp">신규등록</a>
+                        <a href="/app/rawMaterial/rawMaterialRegist.jsp">원료</a>
+                        <a href="/app/product/productRegist.jsp">제품</a>
+                        <a href="/app/subsidiary/subsidiaryRegist.jsp">부자재</a>
                     </div>
                 </div>
             </li>

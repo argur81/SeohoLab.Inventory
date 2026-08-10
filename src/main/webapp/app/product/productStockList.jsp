@@ -29,7 +29,7 @@
                         <tr>
                             <th>No</th>
                             <th>종류</th>
-                            <th>제품명</th>
+                            <th class="name">제품명</th>
                             <th>현재 재고량</th>
                             <th>최소 재고량</th>
                             <th>상태</th>

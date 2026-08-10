@@ -4,7 +4,7 @@
     // 1. Request 한글 인코딩 설정
     request.setCharacterEncoding("UTF-8");
 
-    // 2. PK 수신 (itemId, item_id, id 파라미터 체크)
+    // 2. PK 수신
     String itemIdStr = request.getParameter("itemId");
     if (itemIdStr == null || itemIdStr.trim().isEmpty()) {
         itemIdStr = request.getParameter("item_id");
@@ -13,7 +13,6 @@
         itemIdStr = request.getParameter("id");
     }
 
-    // 아이디 유효성 검사
     int itemId = 0;
     try {
         if (itemIdStr != null && !itemIdStr.trim().isEmpty()) {
@@ -33,35 +32,27 @@
     String workOrder1 = request.getParameter("work_order_1");
     String workOrder2 = request.getParameter("work_order_2");
     String workOrder3 = request.getParameter("work_order_3");
-    
-    String lotNumber = request.getParameter("lot_number");
-    String receiptDate = request.getParameter("receipt_date");
-    String manufactureDate = request.getParameter("manufacture_date");
-    String expirationDate = request.getParameter("expiration_date");
 
-    // 현재 재고 수량 파라미터 (t, kg, g, mg 중 입력된 값 수신)
+    // 현재 재고 수량 파라미터 (hidden으로 전달)
     double stockQtyT = parseDouble(request.getParameter("stock_qty_t"));
     double stockQtyKg = parseDouble(request.getParameter("stock_qty_kg"));
     double stockQtyG = parseDouble(request.getParameter("stock_qty_g"));
     double stockQtyMg = parseDouble(request.getParameter("stock_qty_mg"));
 
-    // 최소 재고 수량 파라미터 (t, kg, g, mg 중 입력된 값 수신)
+    // 최소 재고 수량 파라미터
     double minQtyT = parseDouble(request.getParameter("min_qty_t"));
     double minQtyKg = parseDouble(request.getParameter("min_qty_kg"));
     double minQtyG = parseDouble(request.getParameter("min_qty_g"));
     double minQtyMg = parseDouble(request.getParameter("min_qty_mg"));
 
-    // 4. 수치 단위 완전 동기화 (기준: kg 환산 총량 계산 후 모든 컬럼 맞춰주기)
-    double baseStockKg = 0.0;
-    if (stockQtyKg > 0) baseStockKg = stockQtyKg;
-    else if (stockQtyT > 0) baseStockKg = stockQtyT * 1000.0;
-    else if (stockQtyG > 0) baseStockKg = stockQtyG / 1000.0;
-    else if (stockQtyMg > 0) baseStockKg = stockQtyMg / 1000000.0;
-
-    stockQtyKg = baseStockKg;
-    stockQtyT = baseStockKg / 1000.0;
-    stockQtyG = baseStockKg * 1000.0;
-    stockQtyMg = baseStockKg * 1000000.0;
+    // 4. 수치 단위 완전 동기화 (kg 기준으로 총량 계산)
+    double baseStockKg = (stockQtyT * 1000.0) + stockQtyKg + (stockQtyG / 1000.0) + (stockQtyMg / 1000000.0);
+    if (baseStockKg > 0) {
+        stockQtyKg = (stockQtyKg > 0) ? stockQtyKg : baseStockKg;
+        stockQtyT = stockQtyKg / 1000.0;
+        stockQtyG = stockQtyKg * 1000.0;
+        stockQtyMg = stockQtyKg * 1000000.0;
+    }
 
     double baseMinKg = 0.0;
     if (minQtyKg > 0) baseMinKg = minQtyKg;
@@ -97,7 +88,7 @@
         Class.forName("org.mariadb.jdbc.Driver");
         conn = DriverManager.getConnection(url, dbUser, dbPass);
 
-        // ★ [원료 수정 중복 체크] 나 자신(item_id)을 제외한 다른 데이터에 동일 원료명이 있는지 확인
+        // [중복 체크] 나 자신(item_id)을 제외하고 동일 원료명이 존재하는지 확인
         String checkSql = "SELECT COUNT(*) FROM items WHERE item_name = ? AND item_id != ?";
         pstmt = conn.prepareStatement(checkSql);
         pstmt.setString(1, itemName.trim());
@@ -116,7 +107,7 @@
             return;
         }
 
-        // ★ 현재 재고가 disabled 등으로 인해 0으로 전송되었을 경우 기존 DB의 stock_qty 유지
+        // 재고 값이 0으로 넘어왔다면 DB에서 기존 값 유지
         if (totalStockKg == 0.0) {
             String stockSql = "SELECT total_stock_kg, stock_qty_t, stock_qty_kg, stock_qty_g, stock_qty_mg FROM items WHERE item_id = ?";
             pstmt = conn.prepareStatement(stockSql);
@@ -133,10 +124,9 @@
             if (pstmt != null) pstmt.close();
         }
 
-        // ★ 중복이 없을 경우 UPDATE 진행
+        // ★ [SQL 수정] items 테이블에 존재하지 않는 lot_number, date 관련 컬럼 제거!
         String sql = "UPDATE items SET "
-                + "item_name = ?, work_order_1 = ?, work_order_2 = ?, work_order_3 = ?, lot_number = ?, "
-                + "receipt_date = ?, manufacture_date = ?, expiration_date = ?, "
+                + "item_name = ?, work_order_1 = ?, work_order_2 = ?, work_order_3 = ?, "
                 + "stock_qty_t = ?, stock_qty_kg = ?, stock_qty_g = ?, stock_qty_mg = ?, "
                 + "min_qty_t = ?, min_qty_kg = ?, min_qty_g = ?, min_qty_mg = ?, "
                 + "total_stock_kg = ?, total_min_kg = ?, "
@@ -149,26 +139,21 @@
         pstmt.setString(2, workOrder1 != null ? workOrder1.trim() : "");
         pstmt.setString(3, workOrder2 != null ? workOrder2.trim() : "");
         pstmt.setString(4, workOrder3 != null ? workOrder3.trim() : "");
-        pstmt.setString(5, lotNumber != null ? lotNumber.trim() : "");
 
-        setDateOrNull(pstmt, 6, receiptDate);
-        setDateOrNull(pstmt, 7, manufactureDate);
-        setDateOrNull(pstmt, 8, expirationDate);
+        pstmt.setDouble(5, stockQtyT);
+        pstmt.setDouble(6, stockQtyKg);
+        pstmt.setDouble(7, stockQtyG);
+        pstmt.setDouble(8, stockQtyMg);
 
-        pstmt.setDouble(9, stockQtyT);
-        pstmt.setDouble(10, stockQtyKg);
-        pstmt.setDouble(11, stockQtyG);
-        pstmt.setDouble(12, stockQtyMg);
+        pstmt.setDouble(9, minQtyT);
+        pstmt.setDouble(10, minQtyKg);
+        pstmt.setDouble(11, minQtyG);
+        pstmt.setDouble(12, minQtyMg);
 
-        pstmt.setDouble(13, minQtyT);
-        pstmt.setDouble(14, minQtyKg);
-        pstmt.setDouble(15, minQtyG);
-        pstmt.setDouble(16, minQtyMg);
+        pstmt.setDouble(13, totalStockKg);
+        pstmt.setDouble(14, totalMinKg);
 
-        pstmt.setDouble(17, totalStockKg);
-        pstmt.setDouble(18, totalMinKg);
-
-        pstmt.setInt(19, itemId);
+        pstmt.setInt(15, itemId);
 
         int result = pstmt.executeUpdate();
 
@@ -192,10 +177,5 @@
     private double parseDouble(String str) {
         if (str == null || str.trim().isEmpty()) return 0.0;
         try { return Double.parseDouble(str.replaceAll(",", "")); } catch (Exception e) { return 0.0; }
-    }
-
-    private void setDateOrNull(PreparedStatement pstmt, int index, String dateStr) throws SQLException {
-        if (dateStr != null && !dateStr.trim().isEmpty()) pstmt.setString(index, dateStr);
-        else pstmt.setNull(index, java.sql.Types.DATE);
     }
 %>

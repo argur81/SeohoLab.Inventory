@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*" %>
+<%@ page import="java.text.DecimalFormat" %>
 <%
     request.setCharacterEncoding("UTF-8");
 
@@ -25,8 +26,7 @@
     String lotNumber = "";
     String receiptDate = "", manufactureDate = "", expirationDate = "";
 
-    // DB에 저장되어 있는 단위별 수치들 (입고 / 현재 재고 / 최소 재고)
-    double inQtyT = 0, inQtyKg = 0, inQtyG = 0, inQtyMg = 0;
+    // DB 수치
     double stockQtyT = 0, stockQtyKg = 0, stockQtyG = 0, stockQtyMg = 0;
     double minQtyT = 0, minQtyKg = 0, minQtyG = 0, minQtyMg = 0;
 
@@ -57,18 +57,6 @@
             workOrder2 = rs.getString("work_order_2") != null ? rs.getString("work_order_2") : "";
             workOrder3 = rs.getString("work_order_3") != null ? rs.getString("work_order_3") : "";
             
-            lotNumber = rs.getString("lot_number") != null ? rs.getString("lot_number") : "";
-            
-            receiptDate = rs.getString("receipt_date") != null ? rs.getString("receipt_date") : "";
-            manufactureDate = rs.getString("manufacture_date") != null ? rs.getString("manufacture_date") : "";
-            expirationDate = rs.getString("expiration_date") != null ? rs.getString("expiration_date") : "";
-
-            // 입고 수량
-            inQtyT = rs.getDouble("in_qty_t");
-            inQtyKg = rs.getDouble("in_qty_kg");
-            inQtyG = rs.getDouble("in_qty_g");
-            inQtyMg = rs.getDouble("in_qty_mg");
-
             // 현재 재고 수량
             stockQtyT = rs.getDouble("stock_qty_t");
             stockQtyKg = rs.getDouble("stock_qty_kg");
@@ -92,6 +80,9 @@
         if (pstmt != null) try { pstmt.close(); } catch(Exception e) {}
         if (conn != null) try { conn.close(); } catch(Exception e) {}
     }
+
+    // 숫자를 콤마 포맷팅용 문자열로 변환하는 포맷터
+    DecimalFormat df = new DecimalFormat("#,##0.######");
 %>
 <jsp:include page="/app/include/HeaderDocType.jsp" />
     <div id="wrap">
@@ -104,10 +95,13 @@
                 <form action="rawMaterialModifyAction.jsp" method="post">
                     <input type="hidden" name="itemId" value="<%= itemId %>">
                     <input type="hidden" name="category" value="<%= category %>">
+                    
+                    <!-- 현재 재고는 수정 불가하므로 hidden으로 서버 전송 -->
                     <input type="hidden" name="stock_qty_t" value="<%= stockQtyT %>">
                     <input type="hidden" name="stock_qty_kg" value="<%= stockQtyKg %>">
                     <input type="hidden" name="stock_qty_g" value="<%= stockQtyG %>">
                     <input type="hidden" name="stock_qty_mg" value="<%= stockQtyMg %>">
+
                     <section class="radius">
                         <dl class="w25">
                             <dt>원료명</dt>
@@ -125,40 +119,29 @@
                             <dt>작업 지시서명3</dt>
                             <dd><input type="text" name="work_order_3" class="inputText" placeholder="작업 지시서명3 입력" value="<%= workOrder3 %>"></dd>
                         </dl>
-                        <dl class="w25">
-                            <dt>Lot번호</dt>
-                            <dd><input type="text" name="lot_number" class="inputText" placeholder="Lot 입력" value="<%= lotNumber %>"></dd>
-                        </dl>
-                        <dl class="w25">
-                            <dt>입고일</dt>
-                            <dd><input type="date" name="receipt_date" class="inputText" value="<%= receiptDate %>"></dd>
-                        </dl>
-                        <dl class="w25">
-                            <dt>제조일</dt>
-                            <dd><input type="date" name="manufacture_date" class="inputText" value="<%= manufactureDate %>"></dd>
-                        </dl>
-                        <dl class="w25">
-                            <dt>EXP</dt>
-                            <dd><input type="date" name="expiration_date" class="inputText" value="<%= expirationDate %>"></dd>
-                        </dl>
+
+                        <!-- 현재 재고물량 (disabled input에서는 name 속성 제거하여 파라미터 충돌 방지) -->
                         <dl class="volume stock">
                             <dt>현재 재고물량</dt>
                             <dd>
-                                <div class="unit_t"><input type="text" name="stock_qty_t" class="inputText" inputmode="decimal" value="<%= stockQtyT %>" disabled="disabled"><i>t</i></div>
-                                <div class="unit_kg"><input type="text" name="stock_qty_kg" class="inputText" inputmode="decimal" value="<%= stockQtyKg %>" disabled="disabled"><i>kg</i></div>
-                                <div class="unit_g"><input type="text" name="stock_qty_g" class="inputText" inputmode="decimal" value="<%= stockQtyG %>" disabled="disabled"><i>g</i></div>
-                                <div class="unit_mg"><input type="text" name="stock_qty_mg" class="inputText" inputmode="decimal" value="<%= stockQtyMg %>" disabled="disabled"><i>mg</i></div>
+                                <div class="unit_t"><input type="text" class="inputText" inputmode="decimal" value="<%= df.format(stockQtyT) %>" disabled="disabled"><i>t</i></div>
+                                <div class="unit_kg"><input type="text" class="inputText" inputmode="decimal" value="<%= df.format(stockQtyKg) %>" disabled="disabled"><i>kg</i></div>
+                                <div class="unit_g"><input type="text" class="inputText" inputmode="decimal" value="<%= df.format(stockQtyG) %>" disabled="disabled"><i>g</i></div>
+                                <div class="unit_mg"><input type="text" class="inputText" inputmode="decimal" value="<%= df.format(stockQtyMg) %>" disabled="disabled"><i>mg</i></div>
                             </dd>
                         </dl>
+
+                        <!-- 최소 재고물량 (수정 가능) -->
                         <dl class="volume min">
                             <dt>최소 재고물량</dt>
                             <dd>
-                                <div class="unit_t"><input type="text" name="min_qty_t" class="inputText" inputmode="decimal" value="<%= minQtyT %>"><i>t</i></div>
-                                <div class="unit_kg"><input type="text" name="min_qty_kg" class="inputText" inputmode="decimal" value="<%= minQtyKg %>"><i>kg</i></div>
-                                <div class="unit_g"><input type="text" name="min_qty_g" class="inputText" inputmode="decimal" value="<%= minQtyG %>"><i>g</i></div>
-                                <div class="unit_mg"><input type="text" name="min_qty_mg" class="inputText" inputmode="decimal" value="<%= minQtyMg %>"><i>mg</i></div>
+                                <div class="unit_t"><input type="text" name="min_qty_t" class="inputText" inputmode="decimal" value="<%= df.format(minQtyT) %>"><i>t</i></div>
+                                <div class="unit_kg"><input type="text" name="min_qty_kg" class="inputText" inputmode="decimal" value="<%= df.format(minQtyKg) %>"><i>kg</i></div>
+                                <div class="unit_g"><input type="text" name="min_qty_g" class="inputText" inputmode="decimal" value="<%= df.format(minQtyG) %>"><i>g</i></div>
+                                <div class="unit_mg"><input type="text" name="min_qty_mg" class="inputText" inputmode="decimal" value="<%= df.format(minQtyMg) %>"><i>mg</i></div>
                             </dd>
                         </dl>
+
                         <div class="bottom_btns">
                             <button type="button" class="Button bgGray" data-width="100" onclick="history.back();">취소</button>
                             <button type="submit" class="Button bgBlue" data-width="100">수정</button>
@@ -167,11 +150,69 @@
                 </form>
             </div>
         </div>
+
         <script>
-            $('form').on('submit', function () {
-                $(this).find('input[inputmode="decimal"]').each(function () {
-                    let rawVal = $(this).val().replace(/,/g, '');
-                    $(this).val(rawVal);
+            $(document).ready(function() {
+                const unitToGram = {
+                    'unit_t': 1000000,
+                    'unit_kg': 1000,
+                    'unit_g': 1,
+                    'unit_mg': 0.001
+                };
+
+                function formatWithComma(str) {
+                    if (!str) return '';
+                    const parts = str.split('.');
+                    parts[0] = parts[0].replace(/,/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                    return parts.join('.');
+                }
+
+                // 최소 재고물량 입력 시 단위 자동 계산 및 포맷팅
+                $(document).on('input', 'dl.min input[inputmode="decimal"]', function() {
+                    let $this = $(this);
+                    let value = $this.val();
+
+                    value = value.replace(/[^0-9.]/g, '');
+
+                    const parts = value.split('.');
+                    if (parts.length > 2) {
+                        value = parts[0] + '.' + parts.slice(1).join('');
+                    }
+
+                    let formattedValue = formatWithComma(value);
+                    $this.val(formattedValue);
+
+                    const $parentGroup = $this.closest('dl');
+                    const $parentDiv = $this.parent('div');
+                    const currentUnitClass = $parentDiv.attr('class').split(' ').find(cls => cls.startsWith('unit_'));
+
+                    if (!value || value === '.') {
+                        $parentGroup.find('input[inputmode="decimal"]').not($this).val('');
+                        return;
+                    }
+
+                    const rawNumberString = value.replace(/,/g, '');
+                    const numValue = parseFloat(rawNumberString);
+                    if (isNaN(numValue)) return;
+
+                    const baseGrams = numValue * unitToGram[currentUnitClass];
+
+                    $.each(unitToGram, function(unitClass, ratio) {
+                        if (unitClass !== currentUnitClass) {
+                            let calculated = baseGrams / ratio;
+                            let calcStr = Number(calculated.toFixed(6)).toString(); 
+                            let finalFormatted = formatWithComma(calcStr);
+                            $parentGroup.find('.' + unitClass + ' input').val(finalFormatted);
+                        }
+                    });
+                });
+
+                // Form submit 시 콤마 제거 후 전송
+                $('form').on('submit', function () {
+                    $(this).find('input[inputmode="decimal"]').not(':disabled').each(function () {
+                        let rawVal = $(this).val().replace(/,/g, '');
+                        $(this).val(rawVal);
+                    });
                 });
             });
         </script>

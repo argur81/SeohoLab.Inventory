@@ -4,7 +4,7 @@
     // 1. Request 한글 인코딩 설정
     request.setCharacterEncoding("UTF-8");
 
-    // 2. Form 파라미터 수신 (productId, product_id 모두 대응)
+    // 2. Form 파라미터 수신 (productId, product_id, id 파라미터 체크)
     String productIdStr = request.getParameter("productId");
     if (productIdStr == null || productIdStr.trim().isEmpty()) {
         productIdStr = request.getParameter("product_id");
@@ -15,11 +15,7 @@
 
     String productType = request.getParameter("product_type");
     String itemName = request.getParameter("item_name");
-    String lotNumber = request.getParameter("lot_number");
-    String manufactureDate = request.getParameter("manufacture_date");
-    String expirationDate = request.getParameter("expiration_date");
     
-    String inQtyStr = request.getParameter("in_qty");
     String stockQtyStr = request.getParameter("stock_qty");
     String minQtyStr = request.getParameter("min_qty");
 
@@ -37,21 +33,21 @@
         return;
     }
 
-    // 4. 제품명 필수값 체크
+    // 4. 필수값 체크
+    if (productType == null || productType.trim().isEmpty()) {
+        out.println("<script>alert('종류를 선택해 주세요.'); history.back();</script>");
+        return;
+    }
     if (itemName == null || itemName.trim().isEmpty()) {
         out.println("<script>alert('제품명을 입력해 주세요.'); history.back();</script>");
         return;
     }
 
     // 5. 수량 파라미터 정수(INT) 변환 (천단위 콤마 제거 처리)
-    int inQty = 0;
     int stockQty = 0;
     int minQty = 0;
 
     try {
-        if (inQtyStr != null && !inQtyStr.trim().isEmpty()) {
-            inQty = Integer.parseInt(inQtyStr.replaceAll(",", "").trim());
-        }
         if (stockQtyStr != null && !stockQtyStr.trim().isEmpty()) {
             stockQty = Integer.parseInt(stockQtyStr.replaceAll(",", "").trim());
         }
@@ -63,7 +59,7 @@
         return;
     }
 
-    // 6. Cloudtype MariaDB 접속 설정
+    // 6. DB 접속 설정
     String url = "jdbc:mariadb://svc.sel3.cloudtype.app:32170/seoholabdb";
     String dbUser = "root";
     String dbPass = System.getenv("DB_PASSWORD");
@@ -96,7 +92,7 @@
             return;
         }
 
-        // ★ 화면에서 disabled 처리되어 stockQty가 0으로 넘어왔을 경우 기존 DB 값 유지
+        // ★ 화면에서 disabled 등으로 stockQty가 0으로 넘어왔을 경우 기존 DB 값 유지
         if (stockQty == 0) {
             String checkStockSql = "SELECT stock_qty FROM products WHERE product_id = ?";
             pstmt = conn.prepareStatement(checkStockSql);
@@ -109,14 +105,10 @@
             if (pstmt != null) pstmt.close();
         }
 
-        // 7. products 테이블 UPDATE 쿼리 작성
+        // 7. products 테이블 UPDATE 쿼리 (삭제된 컬럼 반영)
         String sql = "UPDATE products SET "
                 + "product_type = ?, "
                 + "item_name = ?, "
-                + "lot_number = ?, "
-                + "manufacture_date = ?, "
-                + "expiration_date = ?, "
-                + "in_qty = ?, "
                 + "stock_qty = ?, "
                 + "min_qty = ?, "
                 + "updated_at = CURRENT_TIMESTAMP "
@@ -124,28 +116,11 @@
 
         pstmt = conn.prepareStatement(sql);
         
-        pstmt.setString(1, productType != null ? productType.trim() : "");
+        pstmt.setString(1, productType.trim());
         pstmt.setString(2, itemName.trim());
-        pstmt.setString(3, lotNumber != null ? lotNumber.trim() : "");
-        
-        // 날짜가 빈 값("")일 경우 DB NULL 처리
-        if (manufactureDate != null && !manufactureDate.trim().isEmpty()) {
-            pstmt.setString(4, manufactureDate.trim());
-        } else {
-            pstmt.setNull(4, java.sql.Types.DATE);
-        }
-
-        if (expirationDate != null && !expirationDate.trim().isEmpty()) {
-            pstmt.setString(5, expirationDate.trim());
-        } else {
-            pstmt.setNull(5, java.sql.Types.DATE);
-        }
-
-        // 수량 정보 바인딩
-        pstmt.setInt(6, inQty);
-        pstmt.setInt(7, stockQty);
-        pstmt.setInt(8, minQty);
-        pstmt.setInt(9, productId);
+        pstmt.setInt(3, stockQty);
+        pstmt.setInt(4, minQty);
+        pstmt.setInt(5, productId);
 
         int result = pstmt.executeUpdate();
 

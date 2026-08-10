@@ -26,31 +26,6 @@
                             <dt>작업 지시서명3</dt>
                             <dd><input type="text" name="work_order_3" class="inputText" placeholder="작업 지시서명3 입력"></dd>
                         </dl>
-                        <dl class="w25">
-                            <dt>Lot번호</dt>
-                            <dd><input type="text" name="lot_number" class="inputText" placeholder="Lot 입력"></dd>
-                        </dl>
-                        <dl class="w25">
-                            <dt>입고일</dt>
-                            <dd><input type="date" name="receipt_date" class="inputText"></dd>
-                        </dl>
-                        <dl class="w25">
-                            <dt>제조일</dt>
-                            <dd><input type="date" name="manufacture_date" class="inputText"></dd>
-                        </dl>
-                        <dl class="w25">
-                            <dt>EXP</dt>
-                            <dd><input type="date" name="expiration_date" class="inputText"></dd>
-                        </dl>
-                        <dl class="volume stock">
-                            <dt>입고물량</dt>
-                            <dd>
-                                <div class="unit_t"><input type="text" name="in_qty_t" class="inputText" inputmode="decimal"><i>t</i></div>
-                                <div class="unit_kg"><input type="text" name="in_qty_kg" class="inputText" inputmode="decimal"><i>kg</i></div>
-                                <div class="unit_g"><input type="text" name="in_qty_g" class="inputText" inputmode="decimal"><i>g</i></div>
-                                <div class="unit_mg"><input type="text" name="in_qty_mg" class="inputText" inputmode="decimal"><i>mg</i></div>
-                            </dd>
-                        </dl>
                         <dl class="volume min">
                             <dt>최소 재고물량</dt>
                             <dd>

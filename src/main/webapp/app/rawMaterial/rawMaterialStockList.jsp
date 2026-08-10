@@ -28,7 +28,7 @@
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>원료명</th>
+                            <th class="name">원료명</th>
                             <th>작업지시서1~3</th>
                             <th>현재 재고량</th>
                             <th>최소 재고량</th>

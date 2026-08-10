@@ -56,32 +56,32 @@
                 <form class="product" action="receivingRegistAction.jsp" method="post">
                     <input type="hidden" name="category" value="PRODUCT">
                     <section class="radius">
+                        <dl class="w75">
+                            <dt>제품명</dt>
+                            <dd><input type="text" id="product_item_name" name="item_name" class="inputText" placeholder="제품명 입력 (자동완성)"></dd>
+                        </dl>
                         <dl class="w25">
                             <dt>종류</dt>
                             <dd>
                                 <select class="og_select" name="product_type">
                                     <option value="">선택</option>
-                                    <option>에센스·세럼·앰플</option>
-                                    <option>샴푸</option>
-                                    <option>미스트</option>
-                                    <option>크림</option>
-                                    <option>토너·스킨</option>
-                                    <option>패드(토너패드·패드팩)</option>
-                                    <option>로션·에멀전</option>
-                                    <option>아이크림</option>
-                                    <option>페이스 오일</option>
-                                    <option>클렌징 폼</option>
-                                    <option>클렌징 오일·워터·림</option>
-                                    <option>클렌징 티슈</option>
-                                    <option>필링젤·스크럽</option>
-                                    <option>선크림</option>
-                                    <option>기타</option>
+                                    <option value="에센스·세럼·앰플">에센스·세럼·앰플</option>
+                                    <option value="샴푸">샴푸</option>
+                                    <option value="미스트">미스트</option>
+                                    <option value="크림">크림</option>
+                                    <option value="토너·스킨">토너·스킨</option>
+                                    <option value="패드(토너패드·패드팩)">패드(토너패드·패드팩)</option>
+                                    <option value="로션·에멀전">로션·에멀전</option>
+                                    <option value="아이크림">아이크림</option>
+                                    <option value="페이스 오일">페이스 오일</option>
+                                    <option value="클렌징 폼">클렌징 폼</option>
+                                    <option value="클렌징 오일·워터·림">클렌징 오일·워터·림</option>
+                                    <option value="클렌징 티슈">클렌징 티슈</option>
+                                    <option value="필링젤·스크럽">필링젤·스크럽</option>
+                                    <option value="선크림">선크림</option>
+                                    <option value="기타">기타</option>
                                 </select>
                             </dd>
-                        </dl>
-                        <dl class="w75">
-                            <dt>제품명</dt>
-                            <dd><input type="text" id="product_item_name" name="item_name" class="inputText" placeholder="제품명 입력 (자동완성)"></dd>
                         </dl>
                         <dl class="w25">
                             <dt>Lot번호</dt>
@@ -113,32 +113,32 @@
                     <input type="hidden" name="category" value="SUBSIDIARY">
                     <section class="radius">
                         <dl class="w25">
+                            <dt>자재명</dt>
+                            <dd><input type="text" id="sub_item_name" name="item_name" class="inputText" placeholder="자재명 입력 (자동완성)"></dd>
+                        </dl>
+                        <dl class="w25">
                             <dt>종류</dt>
                             <dd>
                                 <select class="og_select" name="subsidiary_type">
                                     <option value="">선택</option>
-                                    <option>Label</option>
-                                    <option>Bottle</option>
-                                    <option>Pump</option>
-                                    <option>Cap</option>
-                                    <option>Box</option>
-                                    <option>기타</option>
+                                    <option value="Label">Label</option>
+                                    <option value="Bottle">Bottle</option>
+                                    <option value="Pump">Pump</option>
+                                    <option value="Cap">Cap</option>
+                                    <option value="Box">Box</option>
+                                    <option value="기타">기타</option>
                                 </select>
                             </dd>
-                        </dl>
-                        <dl class="w75">
-                            <dt>자재명</dt>
-                            <dd><input type="text" id="sub_item_name" name="item_name" class="inputText" placeholder="자재명 입력 (자동완성)"></dd>
                         </dl>
                         <dl class="w25">
                             <dt>재질</dt>
                             <dd>
                                 <select class="og_select" name="material_type">
                                     <option value="">선택</option>
-                                    <option>종이</option>
-                                    <option>플라스틱</option>
-                                    <option>유리</option>
-                                    <option>기타</option>
+                                    <option value="종이">종이</option>
+                                    <option value="플라스틱">플라스틱</option>
+                                    <option value="유리">유리</option>
+                                    <option value="기타">기타</option>
                                 </select>
                             </dd>
                         </dl>
@@ -159,10 +159,10 @@
         </div>
         <script>
             $(document).ready(function() {
-                // Autocomplete 공통 호출 함수
+                // 품목명 Autocomplete 및 종류/재질 자동 선택
                 function setupAutocomplete(elementId, categoryName) {
                     $(elementId).autocomplete({
-                        source: function(request, response) {
+                        source: function (request, response) {
                             $.ajax({
                                 url: "searchItems.jsp",
                                 type: "GET",
@@ -171,8 +171,53 @@
                                     keyword: request.term
                                 },
                                 dataType: "json",
-                                success: function(data) {
-                                    response(data); // ["원료A", "원료B", ...] 배열 수신
+                                success: function (data) {
+                                    // data는 [{label: '이름', value: '이름', type: '종류', material: '재질'}, ...] 형태
+                                    response(data);
+                                }
+                            });
+                        },
+                        minLength: 1,
+                        select: function(event, ui) {
+                            const $form = $(this).closest('form');
+                            
+                            // 제품일 때 종류 자동 선택
+                            if (categoryName === "PRODUCT" && ui.item.type) {
+                                $form.find("select[name='product_type']").val(ui.item.type).trigger('change');
+                            }
+                            
+                            // 부자재일 때 종류 및 재질 자동 선택
+                            if (categoryName === "SUBSIDIARY") {
+                                if (ui.item.type) {
+                                    $form.find("select[name='subsidiary_type']").val(ui.item.type).trigger('change');
+                                }
+                                if (ui.item.material) {
+                                    $form.find("select[name='material_type']").val(ui.item.material).trigger('change');
+                                }
+                            }
+                        }
+                    });
+                }
+
+                setupAutocomplete("#raw_item_name", "RAW");
+                setupAutocomplete("#product_item_name", "PRODUCT");
+                setupAutocomplete("#sub_item_name", "SUBSIDIARY");
+
+                // Lot 번호 Autocomplete
+                function setupLotAutocomplete(lotInputSelector, nameInputSelector, categoryName) {
+                    $(lotInputSelector).autocomplete({
+                        source: function (request, response) {
+                            $.ajax({
+                                url: "searchLots.jsp",
+                                type: "GET",
+                                data: {
+                                    category: categoryName,
+                                    item_name: $(nameInputSelector).val(),
+                                    keyword: request.term
+                                },
+                                dataType: "json",
+                                success: function (data) {
+                                    response(data);
                                 }
                             });
                         },
@@ -180,13 +225,72 @@
                     });
                 }
 
-                // 각 input에 Autocomplete 적용
-                setupAutocomplete("#raw_item_name", "RAW");
-                setupAutocomplete("#product_item_name", "PRODUCT");
-                setupAutocomplete("#sub_item_name", "SUBSIDIARY");
+                setupLotAutocomplete("form.raw input[name='lot_number']", "#raw_item_name", "RAW");
+                setupLotAutocomplete("form.product input[name='lot_number']", "#product_item_name", "PRODUCT");
 
-                // Form Submit 시 천단위 콤마(,) 제거
+                const unitToGram = {
+                    'unit_t': 1000000,
+                    'unit_kg': 1000,
+                    'unit_g': 1,
+                    'unit_mg': 0.001
+                };
+
+                function formatWithComma(str) {
+                    if (!str) return '';
+                    const parts = str.split('.');
+                    parts[0] = parts[0].replace(/,/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                    return parts.join('.');
+                }
+
+                let $userInput = null;
+
+                $(document).on('input', 'input[inputmode="decimal"]', function() {
+                    let $this = $(this);
+                    $userInput = $this;
+                    let value = $this.val();
+
+                    value = value.replace(/[^0-9.]/g, '');
+
+                    const parts = value.split('.');
+                    if (parts.length > 2) {
+                        value = parts[0] + '.' + parts.slice(1).join('');
+                    }
+
+                    let formattedValue = formatWithComma(value);
+                    $this.val(formattedValue);
+
+                    const $parentGroup = $this.closest('dl');
+                    const $parentDiv = $this.parent('div');
+                    const currentUnitClass = $parentDiv.attr('class').split(' ').find(cls => cls.startsWith('unit_'));
+
+                    if (!value || value === '.') {
+                        $parentGroup.find('input[inputmode="decimal"]').not($this).val('');
+                        return;
+                    }
+
+                    const rawNumberString = value.replace(/,/g, '');
+                    const numValue = parseFloat(rawNumberString);
+                    if (isNaN(numValue)) return;
+
+                    const baseGrams = numValue * unitToGram[currentUnitClass];
+
+                    $.each(unitToGram, function(unitClass, ratio) {
+                        if (unitClass !== currentUnitClass) {
+                            let calculated = baseGrams / ratio;
+                            let calcStr = Number(calculated.toFixed(6)).toString(); 
+                            let finalFormatted = formatWithComma(calcStr);
+                            $parentGroup.find('.' + unitClass + ' input').val(finalFormatted);
+                        }
+                    });
+                });
+
                 $('form').on('submit', function () {
+                    const $parentGroup = $(this).find('dl.volume');
+                    
+                    if ($userInput && $userInput.length > 0) {
+                        $parentGroup.find('input[inputmode="decimal"]').not($userInput).val('');
+                    }
+
                     $(this).find('input[inputmode="decimal"]').each(function () {
                         let rawVal = $(this).val().replace(/,/g, '');
                         $(this).val(rawVal);
