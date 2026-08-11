@@ -31,33 +31,33 @@
             <button type="button" onclick="location.href='/app/login/logoutProcess.jsp'">로그아웃</button>
         </div>
         <ul class="gnb">
-            <li class="has_depth">
+            <li class="has_depth regist">
                 <p><img src="/images/svg/flask-solid-full.svg">사용·출고·입고</p>
                 <div class="depth">
                     <div>
-                        <a href="/app/totalRegist/usedRegist.jsp">사용등록</a>
-                        <a href="/app/totalRegist/releaseRegist.jsp">출고등록</a>
-                        <a href="/app/totalRegist/receivingRegist.jsp">입고등록</a>
+                        <a href="/app/totalRegist/usedRegist.jsp" class="used">사용등록</a>
+                        <a href="/app/totalRegist/releaseRegist.jsp" class="release">출고등록</a>
+                        <a href="/app/totalRegist/receivingRegist.jsp" class="receiving">입고등록</a>
                     </div>
                 </div>
             </li>
-            <li class="has_depth">
+            <li class="has_depth stock">
                 <p><img src="/images/svg/boxes-packing-solid-full.svg">재고현황</p>
                 <div class="depth">
                     <div>
-                        <a href="/app/rawMaterial/rawMaterialStockList.jsp">원료</a>
-                        <a href="/app/product/productStockList.jsp">제품</a>
-                        <a href="/app/subsidiary/subsidiaryStockList.jsp">부자재</a>
+                        <a href="/app/rawMaterial/rawMaterialStockList.jsp" class="raw">원료</a>
+                        <a href="/app/product/productStockList.jsp" class="product">제품</a>
+                        <a href="/app/subsidiary/subsidiaryStockList.jsp" class="subsidiary">부자재</a>
                     </div>
                 </div>
             </li>
-            <li class="has_depth">
+            <li class="has_depth new">
                 <p><img src="/images/svg/plus-solid-full.svg">신규등록</p>
                 <div class="depth">
                     <div>
-                        <a href="/app/rawMaterial/rawMaterialRegist.jsp">원료</a>
-                        <a href="/app/product/productRegist.jsp">제품</a>
-                        <a href="/app/subsidiary/subsidiaryRegist.jsp">부자재</a>
+                        <a href="/app/rawMaterial/rawMaterialRegist.jsp" class="raw">원료</a>
+                        <a href="/app/product/productRegist.jsp" class="product">제품</a>
+                        <a href="/app/subsidiary/subsidiaryRegist.jsp" class="subsidiary">부자재</a>
                     </div>
                 </div>
             </li>

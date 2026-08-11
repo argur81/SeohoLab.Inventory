@@ -351,6 +351,9 @@ h5.page_tit {
           align-items: center;
   gap: 10px;
 }
+h5.page_tit b {
+  font-weight: 600;
+}
 h5.page_tit i img {
   width: 8px;
 }

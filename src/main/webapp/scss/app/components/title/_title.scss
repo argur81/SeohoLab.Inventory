@@ -9,6 +9,9 @@ h5 {
         font-weight: 600;
         @include flexLayout(row, flex-start, center);
         gap: 10px;
+        b {
+            font-weight: 600;
+        }
         i {
             img {
                 width: 8px;

@@ -5,7 +5,7 @@
         <div id="container">
             <div class="content registPage">
                 <div class="title_set">
-                    <h5 class="page_tit"><p>부자재</p><i><img src="/images/svg/location_arrow.svg"></i><b>신규등록</b></h5>
+                    <h5 class="page_tit"><p>신규등록</p><i><img src="/images/svg/location_arrow.svg"></i><b>부자재</b></h5>
                 </div>
                 <form id="regForm" action="subsidiaryRegistAction.jsp" method="post">
                     <section class="radius">
