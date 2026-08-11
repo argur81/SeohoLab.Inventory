@@ -171,6 +171,66 @@
                         }
                     }
                 }
+                .layer_popup {
+                    .pop_data {
+                        padding: 40px 30px 40px 40px;
+                        .body {
+                            max-height: 500px;
+                            @include scrollbar();
+                            overflow-x: hidden;
+                            overflow-y: auto;
+                            > ul {
+                                @include flexLayout(column, flex-start, center);
+                                gap: 20px;
+                                padding-right: 10px;
+                                li {
+                                    width: 100%;
+                                    @include flexLayout(column, flex-start, center);
+                                    padding-bottom: 20px;
+                                    border-bottom: 1px solid #d3d3d3;
+                                    gap: 20px;
+                                    dl {
+                                        &.lot,
+                                        &.stock {
+                                            @include flexLayout(row, space-between, center);
+                                            dt {
+                                                font-size: 16px;
+                                            }
+                                            dd {
+                                                font-size: 16px;
+                                                font-weight: 600;
+                                            }
+                                        }
+                                        &.volume {
+                                            dt {
+                                                @include flexLayout(row, space-between, center);
+                                                font-size: 16px;
+                                                button {
+                                                    font-size: 14px;
+                                                    background-color: #fff;
+                                                    border: 1px solid #909090;
+                                                    border-radius: 5px;
+                                                    min-width: 90px;
+                                                    height: 36px;
+                                                    &:hover {
+                                                        border-color: #612d44;
+                                                    }
+                                                }
+                                            }
+                                            dd {
+                                                input {
+                                                    &[inputmode=decimal] {
+                                                        text-align: right;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
             .bottom_btns {
                 margin-top: 15px;

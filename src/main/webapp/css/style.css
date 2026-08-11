@@ -4067,6 +4067,119 @@ footer a {
   border: none;
   text-indent: -9999px;
 }
+.content.registPage section.radius .layer_popup .pop_data {
+  padding: 40px 30px 40px 40px;
+}
+.content.registPage section.radius .layer_popup .pop_data .body {
+  max-height: 500px;
+}
+.content.registPage section.radius .layer_popup .pop_data .body::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+.content.registPage section.radius .layer_popup .pop_data .body::-webkit-scrollbar-thumb {
+  background: #d1d6db;
+  border-radius: 5px;
+}
+.content.registPage section.radius .layer_popup .pop_data .body::-webkit-scrollbar-track {
+  border-radius: 5px;
+}
+.content.registPage section.radius .layer_popup .pop_data .body::-webkit-scrollbar-thumb:hover {
+  background: #d1d6db;
+  border-radius: 5px;
+}
+.content.registPage section.radius .layer_popup .pop_data .body {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.content.registPage section.radius .layer_popup .pop_data .body > ul {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 20px;
+  padding-right: 10px;
+}
+.content.registPage section.radius .layer_popup .pop_data .body > ul li {
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #d3d3d3;
+  gap: 20px;
+}
+.content.registPage section.radius .layer_popup .pop_data .body > ul li dl.lot, .content.registPage section.radius .layer_popup .pop_data .body > ul li dl.stock {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+.content.registPage section.radius .layer_popup .pop_data .body > ul li dl.lot dt, .content.registPage section.radius .layer_popup .pop_data .body > ul li dl.stock dt {
+  font-size: 16px;
+}
+.content.registPage section.radius .layer_popup .pop_data .body > ul li dl.lot dd, .content.registPage section.radius .layer_popup .pop_data .body > ul li dl.stock dd {
+  font-size: 16px;
+  font-weight: 600;
+}
+.content.registPage section.radius .layer_popup .pop_data .body > ul li dl.volume dt {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  font-size: 16px;
+}
+.content.registPage section.radius .layer_popup .pop_data .body > ul li dl.volume dt button {
+  font-size: 14px;
+  background-color: #fff;
+  border: 1px solid #909090;
+  border-radius: 5px;
+  min-width: 90px;
+  height: 36px;
+}
+.content.registPage section.radius .layer_popup .pop_data .body > ul li dl.volume dt button:hover {
+  border-color: #612d44;
+}
+.content.registPage section.radius .layer_popup .pop_data .body > ul li dl.volume dd input[inputmode=decimal] {
+  text-align: right;
+}
 .content.registPage section .bottom_btns {
   margin-top: 15px;
 }
