@@ -167,6 +167,8 @@
                 }
             }
             > span {
+                @include flexLayout(row, center, center);
+                gap: 5px;
                 a {
                     &.paginate_button {
                         @include flexLayout(row, center, center);

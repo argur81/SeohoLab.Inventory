@@ -61,6 +61,16 @@
                     </div>
                 </div>
             </li>
+            <li class="has_depth new">
+                <p><img src="/images/svg/user-gear-solid-full.svg">계정관리</p>
+                <div class="depth">
+                    <div>
+                        <a href="/app/account/myPage.jsp" class="myPage">나의정보</a>
+                        <a href="/app/account/authority.jsp" class="authority">권한관리</a>
+                        <a href="/app/account/member.jsp" class="member">직원관리</a>
+                    </div>
+                </div>
+            </li>
         </ul>
     </div>
 </header>

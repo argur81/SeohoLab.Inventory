@@ -1,0 +1,38 @@
+#container {
+    .content {
+        &.member {
+            .top_btn {
+                @include flexLayout(row, flex-end, center);
+                margin-bottom: 10px;
+                button {
+                    width: 150px;
+                }
+            }
+            .works_grid {
+                max-height: none;
+                padding: 10px 20px;
+                table {
+                    tbody {
+                        td {
+                            button {
+                                height: 30px;
+                                padding: 0 15px;
+                                border-radius: 2px;
+                                background-color: #fff;
+                                &.update-btn {
+                                    color: #612d44;
+                                    border: 1px solid #612d44;
+                                }
+                                &.delete-btn{
+                                    background-color: #334155;
+                                    border:  1px solid #334155;
+                                    color: #fff;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

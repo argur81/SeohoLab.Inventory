@@ -43,17 +43,17 @@
                     }
                 }
                 &:hover {
-                    border-color: #612d44;
-                    color: #612d44;
+                    border-color: #334155;
+                    color: #334155;
                     &::before {
                         content: '';
-                        background-color: #612d44;
+                        background-color: #334155;
                     }
                 }
                 &.on {
-                    border-color: #612d44;
+                    border-color: #334155;
                     color: #fff;
-                    background-color: #612d44;
+                    background-color: #334155;
                     &::before {
                         content: '';
                         background-color: #fff;
@@ -66,59 +66,7 @@
         }
     }
 }
-/* 1. 자동완성 전체 박스 스타일 */
-ul.ui-autocomplete {
-    position: absolute !important;
-    z-index: 99999 !important;
-    max-height: 450px !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    
-    background: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
-    border-radius: 8px !important;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
-    padding: 6px 0 !important;
-    margin-top: 4px !important;
-    width: auto !important;
-    list-style: none !important;
-    .ui-menu-item {
-        list-style: none !important;
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-    .ui-menu-item div,
-    .ui-menu-item a,
-    .ui-menu-item-wrapper {
-        display: block !important;
-        padding: 10px 14px !important;
-        font-size: 14px !important;
-        color: #334155 !important;
-        cursor: pointer !important;
-        border: none !important;
-        background: transparent !important;
-        margin: 0 !important;
-        border-radius: 0 !important;
-    }
-    .ui-menu-item div.ui-state-active,
-    .ui-menu-item div:hover,
-    .ui-menu-item-wrapper.ui-state-active {
-        background-color: #f1f5f9 !important;
-        color: #0f172a !important;
-        font-weight: 600 !important;
-        border: none !important;
-        margin: 0 !important;
-    }
-    &::-webkit-scrollbar {
-        width: 6px;
-    }
-}
-/* 스크롤바 세련되게 정리 */
-ul.ui-autocomplete
-ul.ui-autocomplete::-webkit-scrollbar-thumb {
-    background-color: #cbd5e1;
-    border-radius: 3px;
-}
+
 @include mediaQuery(mobile) {
     .content {
         &.totalReg {
@@ -139,63 +87,6 @@ ul.ui-autocomplete::-webkit-scrollbar-thumb {
                         height: 4rem;
                         mask-size: 4rem 4rem;
                     }
-                }
-            }
-        }
-    }
-    ul.ui-autocomplete {
-        position: absolute !important;
-        z-index: 99999 !important;
-        max-height: 45rem !important; // 250px
-        overflow-y: auto !important;
-        overflow-x: hidden !important;
-        background: #ffffff !important;
-        border: 1px solid #e2e8f0 !important; // 1px
-        border-radius: 2rem !important; // 8px
-        box-shadow: 0 1rem 1.5rem -0.3rem rgba(0, 0, 0, 0.1), 0 0.4rem 0.6rem -0.2rem rgba(0, 0, 0, 0.05) !important;
-        padding: 0.6rem 0 !important; // 6px
-        margin-top: 0.4rem !important; // 4px
-        width: auto !important;
-        list-style: none !important;
-        -webkit-overflow-scrolling: touch; // iOS 모바일 부드러운 스크롤
-        // 스크롤바 디자인
-        &::-webkit-scrollbar {
-            width: 0.4rem; // 4px
-        }
-        &::-webkit-scrollbar-thumb {
-            background-color: #cbd5e1;
-            border-radius: 0.2rem;
-        }
-        // 각 항목 (li)
-        .ui-menu-item {
-            list-style: none !important;
-            padding: 0 !important;
-            margin: 0 !important;
-
-            // 각 항목 내부 텍스트 및 터치 영역
-            div,
-            a,
-            .ui-menu-item-wrapper {
-            display: flex !important;
-            align-items: center !important;
-            min-height: 4.4rem !important; // 모바일 표준 터치 최소 높이 (44px)
-            padding: 1rem 1.6rem !important; // 10px 16px
-            font-size: 2.6rem !important; // 14px
-            color: #334155 !important;
-            cursor: pointer !important;
-            border: none !important;
-            background: transparent !important;
-            margin: 0 !important;
-            border-radius: 0 !important;
-            word-break: break-all; // 모바일 긴 단어 자동 줄바꿈
-            // 마우스 호버 및 터치/선택 상태
-            &.ui-state-active,
-                &:hover {
-                    background-color: #f1f5f9 !important;
-                    color: #0f172a !important;
-                    font-weight: 600 !important;
-                    border: none !important;
-                    margin: 0 !important;
                 }
             }
         }

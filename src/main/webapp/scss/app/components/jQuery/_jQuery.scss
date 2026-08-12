@@ -1,0 +1,234 @@
+/* 자동완성 전체 박스 스타일 */
+ul.ui-autocomplete {
+    position: absolute !important;
+    z-index: 99999 !important;
+    max-height: 450px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+    padding: 6px 0 !important;
+    margin-top: 4px !important;
+    width: auto !important;
+    list-style: none !important;
+
+    .ui-menu-item {
+        list-style: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .ui-menu-item div,
+    .ui-menu-item a,
+    .ui-menu-item-wrapper {
+        display: block !important;
+        padding: 10px 14px !important;
+        font-size: 14px !important;
+        color: #334155 !important;
+        cursor: pointer !important;
+        border: none !important;
+        background: transparent !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+    }
+
+    .ui-menu-item div.ui-state-active,
+    .ui-menu-item div:hover,
+    .ui-menu-item-wrapper.ui-state-active {
+        background-color: #f1f5f9 !important;
+        color: #0f172a !important;
+        font-weight: 600 !important;
+        border: none !important;
+        margin: 0 !important;
+    }
+
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+}
+ul.ui-autocomplete ul.ui-autocomplete::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 3px;
+}
+/* Dialog */
+.ui-widget-overlay {
+    &.ui-front {
+        background-color: rgba(0, 0, 0, 0.6);
+        opacity: 1;
+    }
+}
+.ui-widget.ui-widget-content {
+    padding: 40px;
+    border: 1px solid #e6e8eb !important;
+    border-radius: 15px;
+    box-sizing: content-box;
+    .ui-dialog-titlebar {
+        width: 100%;
+        background-color: #fff;
+        border: none;
+        padding: 0 !important;
+        border-radius: 0;
+        @include flexLayout(row, space-between, center);
+        margin-bottom: 25px;
+        &::before,
+        &::after {
+            display: none;
+        }
+        .ui-dialog-title {
+            float: inherit;
+            margin: 0;
+            width: auto;
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .ui-dialog-titlebar-close {
+            position: relative;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            border: none;
+            .ui-button-icon {
+                background: url(/images/svg/popup_close.svg) no-repeat center center;
+                background-size: 20px;
+            }
+            .ui-button-icon-space {
+                display: none;
+            }
+        }
+    }
+    .ui-dialog-content {
+        padding: 0;
+        /* 직원추가 */
+        .memberRegist {
+            ul {
+                @include flexLayout(column, flex-start, stretch);
+                gap: 20px;
+                li {
+                    width: 100%;
+                    @include flexLayout(column, flex-start, stretch);
+                    gap: 5px;
+                    label {
+                        color: #595959;
+                        font-weight: 500;
+                    }
+                    .edit_user_name {
+                        width: 100%;
+                        line-height: 40px;
+                        border-radius: 10px;
+                        border: 1px solid #e6e8eb;
+                        background-color: #f6f7f9;
+                        padding: 0 15px;
+                        color: #292929;
+                    }
+                }
+            }
+        }
+    }
+    .ui-dialog-buttonpane {
+        text-align: center;
+        border-width: 0;
+        background-image: none;
+        margin-top: 20px;
+        padding: 0;
+        &::before,
+        &::after {
+            display: none;
+        }
+        .ui-dialog-buttonset {
+            width: 100%;
+            @include flexLayout(row, center, center);
+            gap: 10px;
+        }
+        button {
+            width: 100px;
+            margin: 0;
+            font-family: 'Pretendard';
+            height: 40px;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all .4s;
+            white-space: nowrap;
+            background-color: #fff;
+            padding: 0 18px;
+            &:first-child {
+                border: 1px solid #612d44;
+                color: #612d44;
+                &:hover {
+                    background-color: #612d44;
+                    color: #fff;
+                }
+            }
+            &:nth-child(2){
+                border: 1px solid #334155;
+                color: #334155;
+                &:hover {
+                    background-color: #334155;
+                    color: #fff;
+                }
+            }
+        }
+    }
+}
+@include mediaQuery(mobile) {
+    /* 자동완성 전체 박스 스타일 */
+    ul.ui-autocomplete {
+        position: absolute !important;
+        z-index: 99999 !important;
+        max-height: 45rem !important; // 250px
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important; // 1px
+        border-radius: 2rem !important; // 8px
+        box-shadow: 0 1rem 1.5rem -0.3rem rgba(0, 0, 0, 0.1), 0 0.4rem 0.6rem -0.2rem rgba(0, 0, 0, 0.05) !important;
+        padding: 0.6rem 0 !important; // 6px
+        margin-top: 0.4rem !important; // 4px
+        width: auto !important;
+        list-style: none !important;
+        -webkit-overflow-scrolling: touch; // iOS 모바일 부드러운 스크롤
+        // 스크롤바 디자인
+        &::-webkit-scrollbar {
+            width: 0.4rem; // 4px
+        }
+        &::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 0.2rem;
+        }
+        // 각 항목 (li)
+        .ui-menu-item {
+            list-style: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+
+            // 각 항목 내부 텍스트 및 터치 영역
+            div,
+            a,
+            .ui-menu-item-wrapper {
+            display: flex !important;
+            align-items: center !important;
+            min-height: 4.4rem !important; // 모바일 표준 터치 최소 높이 (44px)
+            padding: 1rem 1.6rem !important; // 10px 16px
+            font-size: 2.6rem !important; // 14px
+            color: #334155 !important;
+            cursor: pointer !important;
+            border: none !important;
+            background: transparent !important;
+            margin: 0 !important;
+            border-radius: 0 !important;
+            word-break: break-all; // 모바일 긴 단어 자동 줄바꿈
+            // 마우스 호버 및 터치/선택 상태
+            &.ui-state-active,
+                &:hover {
+                    background-color: #f1f5f9 !important;
+                    color: #0f172a !important;
+                    font-weight: 600 !important;
+                    border: none !important;
+                    margin: 0 !important;
+                }
+            }
+        }
+    }
+}
