@@ -2,6 +2,15 @@
 <%@ page import="java.sql.*" %>
 <%
     request.setCharacterEncoding("UTF-8");
+    // ★ 응답 인코딩 설정 추가
+    response.setContentType("text/html; charset=UTF-8");
+    response.setCharacterEncoding("UTF-8");
+
+    // 세션에서 로그인한 사용자 아이디 가져오기
+    String loginUserId = (String) session.getAttribute("userId");
+    if (loginUserId == null || loginUserId.trim().isEmpty()) {
+        loginUserId = (String) session.getAttribute("loginId"); 
+    }
 
     String category = request.getParameter("category"); // RAW, PRODUCT, SUBSIDIARY
     String itemName = request.getParameter("item_name");
@@ -11,7 +20,8 @@
         return;
     }
 
-    String url = "jdbc:mariadb://svc.sel3.cloudtype.app:32170/seoholabdb";
+    // ★ DB URL에 한글 캐릭터셋 옵션 추가
+    String url = "jdbc:mariadb://svc.sel3.cloudtype.app:32170/seoholabdb?useUnicode=true&characterEncoding=utf8";
     String dbUser = "root";
     String dbPass = System.getenv("DB_PASSWORD");
     if (dbPass == null) dbPass = "1234";
@@ -22,7 +32,7 @@
     try {
         Class.forName("org.mariadb.jdbc.Driver");
         conn = DriverManager.getConnection(url, dbUser, dbPass);
-        conn.setAutoCommit(false); // 트랜잭션 시작
+        conn.setAutoCommit(false);
 
         boolean isSuccess = false;
 
@@ -30,11 +40,10 @@
             int idx = 0;
             int lotCount = 0;
 
-            double sumTotalKg = 0; // items의 total_stock_kg에서 뺄 총 kg 합산[cite: 6]
-            double sumT = 0;       // items의 stock_qty_t에서 뺄 총 t 합산[cite: 6]
-            double sumKg = 0;      // items의 stock_qty_kg에서 뺄 총 kg 합산[cite: 6]
-            double sumG = 0;       // items의 stock_qty_g에서 뺄 총 g 합산[cite: 6]
-            double sumMg = 0;      // items의 stock_qty_mg에서 뺄 총 mg 합산[cite: 6]
+            double sumT = 0;       
+            double sumKg = 0;      
+            double sumG = 0;       
+            double sumMg = 0;      
 
             while (true) {
                 String lotNumber = request.getParameter("lotUsages[" + idx + "].lot_number");
@@ -45,17 +54,11 @@
                 double lG = Double.parseDouble(request.getParameter("lotUsages[" + idx + "].g").replace(",", ""));
                 double lMg = Double.parseDouble(request.getParameter("lotUsages[" + idx + "].mg").replace(",", ""));
                 
-                // 개별 Lot의 kg 기준 총합 계산[cite: 5, 6]
-                double lTotalKg = (lT * 1000) + lKg + (lG / 1000) + (lMg / 1000000);
-
-                // 이번 루프에서 출고된 양들을 총합에 누적
                 sumT += lT;
                 sumKg += lKg;
                 sumG += lG;
                 sumMg += lMg;
-                sumTotalKg += lTotalKg;
 
-                // 개별 Lot 단위 차감 쿼리 실행 (`item_lots`에서 total_stock_kg 삭제 완료)
                 String lotSql = "UPDATE item_lots SET "
                     + "  stock_qty_t = stock_qty_t - ?, "
                     + "  stock_qty_kg = stock_qty_kg - ?, "
@@ -81,7 +84,6 @@
                 idx++;
             }
 
-            // 2. 개별 Lot들의 차감 총합을 `items` (원료 마스터) 테이블에 반영[cite: 5, 6]
             int totalUpdateResult = 0;
             if (lotCount > 0) {
                 String totalSql = "UPDATE items SET "
@@ -89,7 +91,7 @@
                     + "  stock_qty_kg = stock_qty_kg - ?, "
                     + "  stock_qty_g = stock_qty_g - ?, "
                     + "  stock_qty_mg = stock_qty_mg - ?, "
-                    + "  total_stock_kg = total_stock_kg - ?, "
+                    + "  last_stock_user_id = ?, "
                     + "  updated_at = CURRENT_TIMESTAMP "
                     + "WHERE TRIM(item_name) = ?";
 
@@ -98,23 +100,22 @@
                 pstmt.setDouble(2, sumKg);
                 pstmt.setDouble(3, sumG);
                 pstmt.setDouble(4, sumMg);
-                pstmt.setDouble(5, sumTotalKg);
+                pstmt.setString(5, loginUserId);
                 pstmt.setString(6, itemName.trim());
                 
                 totalUpdateResult = pstmt.executeUpdate();
                 pstmt.close();
 
-                // 만약 items 테이블에 해당 원료 데이터가 없다면 신규 INSERT 처리[cite: 5, 6]
                 if (totalUpdateResult == 0) {
-                    String insertSql = "INSERT INTO items (category, item_name, stock_qty_t, stock_qty_kg, stock_qty_g, stock_qty_mg, total_stock_kg) "
-                        + "VALUES ('RAW', ?, -?, -?, -?, -?, -?)";
+                    String insertSql = "INSERT INTO items (category, item_name, stock_qty_t, stock_qty_kg, stock_qty_g, stock_qty_mg, last_stock_user_id) "
+                        + "VALUES ('RAW', ?, -?, -?, -?, -?, ?)";
                     pstmt = conn.prepareStatement(insertSql);
                     pstmt.setString(1, itemName.trim());
                     pstmt.setDouble(2, sumT);
                     pstmt.setDouble(3, sumKg);
                     pstmt.setDouble(4, sumG);
                     pstmt.setDouble(5, sumMg);
-                    pstmt.setDouble(6, sumTotalKg);
+                    pstmt.setString(6, loginUserId);
                     totalUpdateResult = pstmt.executeUpdate();
                     pstmt.close();
                 }
@@ -127,17 +128,15 @@
         } else if ("PRODUCT".equals(category)) {
             int idx = 0;
             int lotCount = 0;
-            int sumQty = 0; // products 마스터 테이블에서 뺄 총 개수 합산
+            int sumQty = 0; 
 
             while (true) {
                 String lotNumber = request.getParameter("lotUsages[" + idx + "].lot_number");
                 if (lotNumber == null) break;
 
                 int lQty = Integer.parseInt(request.getParameter("lotUsages[" + idx + "].qty").replace(",", ""));
-                
                 sumQty += lQty;
 
-                // 1. 개별 제품 Lot 단위 차감 쿼리 실행
                 String lotSql = "UPDATE product_lots SET "
                     + "  stock_qty = stock_qty - ?, "
                     + "  updated_at = CURRENT_TIMESTAMP "
@@ -157,27 +156,28 @@
                 idx++;
             }
 
-            // 2. 개별 Lot들의 차감 총합을 `products` (제품 마스터) 테이블에 반영
             int totalUpdateResult = 0;
             if (lotCount > 0) {
                 String totalSql = "UPDATE products SET "
                     + "  stock_qty = stock_qty - ?, "
+                    + "  last_stock_user_id = ?, "
                     + "  updated_at = CURRENT_TIMESTAMP "
                     + "WHERE TRIM(item_name) = ?";
 
                 pstmt = conn.prepareStatement(totalSql);
                 pstmt.setInt(1, sumQty);
-                pstmt.setString(2, itemName.trim());
+                pstmt.setString(2, loginUserId);
+                pstmt.setString(3, itemName.trim());
                 
                 totalUpdateResult = pstmt.executeUpdate();
                 pstmt.close();
 
-                // 만약 products 테이블에 해당 데이터가 없다면 신규 INSERT 처리
                 if (totalUpdateResult == 0) {
-                    String insertSql = "INSERT INTO products (item_name, stock_qty) VALUES (?, -?)";
+                    String insertSql = "INSERT INTO products (item_name, stock_qty, last_stock_user_id) VALUES (?, -?, ?)";
                     pstmt = conn.prepareStatement(insertSql);
                     pstmt.setString(1, itemName.trim());
                     pstmt.setInt(2, sumQty);
+                    pstmt.setString(3, loginUserId);
                     totalUpdateResult = pstmt.executeUpdate();
                     pstmt.close();
                 }
@@ -191,10 +191,11 @@
             String outQtyStr = request.getParameter("out_qty");
             int outQty = (outQtyStr != null && !outQtyStr.trim().isEmpty()) ? Integer.parseInt(outQtyStr.replace(",", "")) : 0;
 
-            String sql = "UPDATE subsidiary SET stock_qty = stock_qty - ?, updated_at = CURRENT_TIMESTAMP WHERE TRIM(item_name) = ?";
+            String sql = "UPDATE subsidiary SET stock_qty = stock_qty - ?, last_stock_user_id = ?, updated_at = CURRENT_TIMESTAMP WHERE TRIM(item_name) = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, outQty);
-            pstmt.setString(2, itemName.trim());
+            pstmt.setString(2, loginUserId);
+            pstmt.setString(3, itemName.trim());
             if (pstmt.executeUpdate() > 0) isSuccess = true;
             pstmt.close();
         }

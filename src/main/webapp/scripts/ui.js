@@ -232,43 +232,56 @@ $(document).ready(function(){
         if($('h5.page_tit p').text() == '사용등록'){
             $('header .gnb li.regist').addClass('on');
             $('header .gnb li.regist').find('.depth').show();
-            $('header .gnb li.regist .depth > div a:first-child').addClass('on');
+            $('header .gnb li.regist .depth > div a.used').addClass('on');
         }
         if($('h5.page_tit p').text() == '출고등록'){
             $('header .gnb li.regist').addClass('on');
             $('header .gnb li.regist').find('.depth').show();
-            $('header .gnb li.regist .depth > div a:nth-child(2)').addClass('on');
+            $('header .gnb li.regist .depth > div a.release').addClass('on');
         }
         if($('h5.page_tit p').text() == '입고등록'){
             $('header .gnb li.regist').addClass('on');
             $('header .gnb li.regist').find('.depth').show();
-            $('header .gnb li.regist .depth > div a:nth-child(3)').addClass('on');
+            $('header .gnb li.regist .depth > div a.receiving').addClass('on');
         }
 
         if($('h5.page_tit p').text() == '재고현황'){
             $('header .gnb li.stock').addClass('on');
             $('header .gnb li.stock').find('.depth').show();
             if($('h5.page_tit b').text() == '원료') {
-                $('header .gnb li.stock .depth > div a:first-child').addClass('on');
+                $('header .gnb li.stock .depth > div a.raw').addClass('on');
             }
             if($('h5.page_tit b').text() == '제품') {
-                $('header .gnb li.stock .depth > div a:nth-child(2)').addClass('on');
+                $('header .gnb li.stock .depth > div a.product').addClass('on');
             }
             if($('h5.page_tit b').text() == '부자재') {
-                $('header .gnb li.stock .depth > div a:nth-child(3)').addClass('on');
+                $('header .gnb li.stock .depth > div a.subsidiary').addClass('on');
             }
         }
-        if($('h5.page_tit p').text() == '신규등록'){
-            $('header .gnb li.new').addClass('on');
-            $('header .gnb li.new').find('.depth').show();
+        if($('h5.page_tit p').text() == '품목관리'){
+            $('header .gnb li.status').addClass('on');
+            $('header .gnb li.status').find('.depth').show();
             if($('h5.page_tit b').text() == '원료') {
-                $('header .gnb li.new .depth > div a:first-child').addClass('on');
+                $('header .gnb li.status .depth > div a.raw').addClass('on');
             }
             if($('h5.page_tit b').text() == '제품') {
-                $('header .gnb li.new .depth > div a:nth-child(2)').addClass('on');
+                $('header .gnb li.status .depth > div a.product').addClass('on');
             }
             if($('h5.page_tit b').text() == '부자재') {
-                $('header .gnb li.new .depth > div a:nth-child(3)').addClass('on');
+                $('header .gnb li.status .depth > div a.subsidiary').addClass('on');
+            }
+        }
+        if($('h5.page_tit p').text() == '계정관리'){
+            $('header .gnb li.account').addClass('on');
+            $('header .gnb li.account').find('.depth').show();
+            if($('h5.page_tit b').text() == '나의정보') {
+                $('header .gnb li.account .depth > div a.myPage').addClass('on');
+            }
+            if($('h5.page_tit b').text() == '권한관리') {
+                $('header .gnb li.account .depth > div a.authority').addClass('on');
+            }
+            if($('h5.page_tit b').text() == '직원관리') {
+                $('header .gnb li.account .depth > div a.member').addClass('on');
             }
         }
     }

@@ -18,12 +18,13 @@
     <div id="wrap">
         <jsp:include page="/app/include/Header.jsp" />
         <div id="container">
-            <div class="content rawStockPage">
+            <div class="content productStockPage">
                 <div class="title_set">
                     <h5 class="page_tit">
                         <p>재고현황</p><i><img src="/images/svg/location_arrow.svg"></i><b>제품</b>
                     </h5>
                 </div>
+                <button type="button" class="new_regist_btn" onclick="location.href='/app/product/productRegist.jsp'">신규등록</button>
                 <table id="stockTable" class="display cell-border hover" style="width:100%">
                     <thead>
                         <tr>
@@ -33,7 +34,8 @@
                             <th>현재 재고량</th>
                             <th>최소 재고량</th>
                             <th>상태</th>
-                            <th>최근 수정일</th>
+                            <th>최종 처리자</th>
+                            <th>Update</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -42,12 +44,14 @@
                                 Class.forName("org.mariadb.jdbc.Driver"); 
                                 conn = DriverManager.getConnection(url, dbUser, dbPass);
                                 
-                                // products 테이블에서 최근 수정일 또는 product_id 역순 조회
-                                String sql = "SELECT * FROM products ORDER BY product_id DESC"; 
+                                // 회원 테이블(users)과 JOIN하여 이름(user_name) 가져오기
+                                String sql = "SELECT p.*, u.user_name "
+                                           + "FROM products p "
+                                           + "LEFT JOIN users u ON p.last_stock_user_id = u.user_id "
+                                           + "ORDER BY p.product_id DESC";
                                 pstmt = conn.prepareStatement(sql);
                                 rs = pstmt.executeQuery(); 
                                 
-                                // 숫자는 3자리 콤마, 날짜는 YYYY-MM-DD HH:mm 포맷 적용
                                 java.text.DecimalFormat df = new java.text.DecimalFormat("#,##0");
                                 java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm");
 
@@ -62,16 +66,22 @@
                                     String itemName = rs.getString("item_name");
                                     if (itemName == null) itemName = "";
                                     
-                                    // 현재 재고 개수 / 최소 재고 개수
-                                    int stockQty = rs.getInt("stock_qty"); 
-                                    int minQty = rs.getInt("min_qty"); 
+                                    int stockQty = rs.getInt("stock_qty");
+                                    int minQty = rs.getInt("min_qty");
                                     boolean isLowStock = stockQty < minQty;
 
-                                    // 표시용 텍스트 (예: 20 개)
                                     String stockDisplay = df.format(stockQty) + " 개";
                                     String minDisplay = df.format(minQty) + " 개";
 
-                                    // 최근 수정일 null 예외 안전 처리
+                                    // 최종 작업자 이름 수신 (이름이 없으면 아이디, 둘 다 없으면 '-')
+                                    String lastStockUserName = rs.getString("user_name");
+                                    if (lastStockUserName == null || lastStockUserName.trim().isEmpty()) {
+                                        lastStockUserName = rs.getString("last_stock_user_id");
+                                        if (lastStockUserName == null || lastStockUserName.trim().isEmpty()) {
+                                            lastStockUserName = "-";
+                                        }
+                                    }
+
                                     Timestamp updatedAt = rs.getTimestamp("updated_at");
                                     String updatedAtDisplay = (updatedAt != null) ? sdf.format(updatedAt) : "-";
                         %>
@@ -90,6 +100,7 @@
                             <td class="state">
                                 <%= isLowStock ? "⚠️ 부족" : "정상" %>
                             </td>
+                            <td><%= lastStockUserName %></td>
                             <td><%= updatedAtDisplay %></td>
                         </tr>
                         <% 
@@ -108,16 +119,16 @@
                     $(document).ready(function () {
                         $('#stockTable').DataTable({
                             autoWidth: false,
-                            //3번째 열(인덱스 2: 작업지시서)을 화면에서 숨김 처리 (검색은 그대로 작동함)
                             columnDefs: [
-                                { width: "80px", targets: 0, className: "dt-center" },
-                                { width: "160px", targets: 1, className: "dt-center" },
-                                { width: "150px", targets: 3, className: "dt-right" },
-                                { width: "150px", targets: 4, className: "dt-right" },
-                                { width: "100px", targets: 5, className: "dt-center" },
-                                { width: "180px", targets: 6, className: "dt-center" },
+                                { width: "60px", targets: 0, className: "dt-center" },
+                                { width: "130px", targets: 1, className: "dt-center" },
+                                { width: "120px", targets: 3, className: "dt-right" },
+                                { width: "120px", targets: 4, className: "dt-right" },
+                                { width: "90px", targets: 5, className: "dt-center" },
+                                { width: "120px", targets: 6, className: "dt-center" },
+                                { width: "180px", targets: 7, className: "dt-center" },
                             ],
-                            responsive: true, //  반응형 옵션 활성화
+                            responsive: true,
                             language: {
                                 emptyTable: "등록된 제품이 없습니다.",
                                 lengthMenu: "_MENU_ 개씩 보기",

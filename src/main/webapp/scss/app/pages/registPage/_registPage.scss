@@ -104,6 +104,82 @@
                             }
                         }
                     }
+                    dd {
+                        &.has_input-select {
+                            @include flexLayout(row, flex-start, center);
+                            gap: 5px;
+                            select[name=packing_unit_select] {
+                                width: 100px;
+                            }
+                        }
+                        input {
+                            &[inputmode=decimal] {
+                                text-align: right;
+                            }
+                        }
+                        > div.direct {
+                            position: relative;
+                            &:after {   
+                                content : '원';
+                                @include positionLayout(absolute, y);
+                                right: 10px;
+                            }
+                            input {
+                                &[inputmode=decimal] {
+                                    padding-right: 28px;
+                                }
+                            }
+                        }
+                        > div.kg_enter {
+                            width: 100%;
+                            ul {
+                                width: 100%;
+                                @include flexLayout(row, space-between, center);
+                                gap: 5px;
+                                li {
+                                    width: 100%;
+                                    @include flexLayout(column, flex-start, center);
+                                    gap: 5px;
+                                    > p {
+                                        width: 100%;
+                                        @include flexLayout(row, flex-start, center);
+                                        gap: 5px;
+                                        .og_select {
+                                            width: 100px;
+                                        }
+                                    }
+                                    > div {
+                                        width: 100%;
+                                        position: relative;
+                                        &:after {
+                                            content: '원';
+                                            @include positionLayout(absolute, y);
+                                            right: 10px;
+                                        }
+                                        input {
+                                            &[inputmode=decimal] {
+                                                padding-right: 28px;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        > div.price_range {
+                            position: relative;
+                            &:after {
+                                content: '원대';
+                                @include positionLayout(absolute, y);
+                                right: 10px;
+                            }
+                        
+                            input {
+                                &[inputmode=decimal] {
+                                    padding-right: 40px;
+                                }
+                            }
+                        }
+                    }
                 }
                 .rcvr_list {
                     width: 100%;
@@ -340,6 +416,72 @@
                                         @include positionLayout(absolute, y);
                                         right: 2rem;
                                         font-size: 2.6rem;
+                                    }
+                                }
+                            }
+                        }
+                        dd {
+                            &.has_input-select {
+                                gap: 1rem;
+                                select[name=packing_unit_select] {
+                                    width: 19rem;
+                                }
+                            }
+                            >div.direct {
+                                &:after {
+                                    right: 1rem;
+                                    font-size: 2.6rem;
+                                }
+
+                                input {
+                                    &[inputmode=decimal] {
+                                        padding-right: 4rem;
+                                    }
+                                }
+                            }
+
+                            >div.kg_enter {
+                                ul {
+                                    flex-direction: column;
+                                    gap: 1rem;
+
+                                    li {
+                                        flex-direction: row;
+                                        gap: 0.5rem;
+
+                                        >p {
+                                            @include flexLayout(row, flex-start, center);
+                                            gap: 0.5rem;
+                                            .og_select {
+                                                width: 15rem;
+                                            }
+                                        }
+
+                                        >div {
+                                            &:after {
+                                                font-size: 2.6rem;
+                                                right: 1rem;
+                                            }
+
+                                            input {
+                                                &[inputmode=decimal] {
+                                                    padding-right: 4rem;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            >div.price_range {
+                                &:after {
+                                    right: 1rem;
+                                    font-size: 2.6rem;
+                                }
+
+                                input {
+                                    &[inputmode=decimal] {
+                                        padding-right: 6rem;
                                     }
                                 }
                             }

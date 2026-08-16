@@ -172,21 +172,37 @@
                                 },
                                 dataType: "json",
                                 success: function (data) {
-                                    // data는 [{label: '이름', value: '이름', type: '종류', material: '재질'}, ...] 형태
-                                    response(data);
+                                    // 서버 응답 데이터를 콘솔에서 확인 (F12 콘솔 탭 참고)
+                                    console.log("Autocomplete 응답 데이터:", data);
+
+                                    // 문자열 배열 또는 객체 배열 모두 대응 가능하도록 변환
+                                    response($.map(data, function (item) {
+                                        if (typeof item === 'string') {
+                                            return { label: item, value: item };
+                                        } else {
+                                            return {
+                                                label: item.label || item.item_name, // 서버의 키 값에 맞춰 조정
+                                                value: item.value || item.item_name,
+                                                type: item.type,
+                                                material: item.material
+                                            };
+                                        }
+                                    }));
+                                },
+                                error: function (jqXHR, textStatus, errorThrown) {
+                                    console.error("Autocomplete 오류:", textStatus, errorThrown);
                                 }
                             });
                         },
                         minLength: 1,
-                        select: function(event, ui) {
+                        appendTo: ".registPage", // 목록이 CSS 레이어 뒤로 숨겨지는 현상 방지
+                        select: function (event, ui) {
                             const $form = $(this).closest('form');
-                            
-                            // 제품일 때 종류 자동 선택
+
                             if (categoryName === "PRODUCT" && ui.item.type) {
                                 $form.find("select[name='product_type']").val(ui.item.type).trigger('change');
                             }
-                            
-                            // 부자재일 때 종류 및 재질 자동 선택
+
                             if (categoryName === "SUBSIDIARY") {
                                 if (ui.item.type) {
                                     $form.find("select[name='subsidiary_type']").val(ui.item.type).trigger('change');
@@ -261,27 +277,30 @@
 
                     const $parentGroup = $this.closest('dl');
                     const $parentDiv = $this.parent('div');
-                    const currentUnitClass = $parentDiv.attr('class').split(' ').find(cls => cls.startsWith('unit_'));
+                    
+                    if (!$parentDiv.hasClass('unit_ea')) {
+                        const currentUnitClass = $parentDiv.attr('class').split(' ').find(cls => cls.startsWith('unit_'));
 
-                    if (!value || value === '.') {
-                        $parentGroup.find('input[inputmode="decimal"]').not($this).val('');
-                        return;
-                    }
-
-                    const rawNumberString = value.replace(/,/g, '');
-                    const numValue = parseFloat(rawNumberString);
-                    if (isNaN(numValue)) return;
-
-                    const baseGrams = numValue * unitToGram[currentUnitClass];
-
-                    $.each(unitToGram, function(unitClass, ratio) {
-                        if (unitClass !== currentUnitClass) {
-                            let calculated = baseGrams / ratio;
-                            let calcStr = Number(calculated.toFixed(6)).toString(); 
-                            let finalFormatted = formatWithComma(calcStr);
-                            $parentGroup.find('.' + unitClass + ' input').val(finalFormatted);
+                        if (!value || value === '.') {
+                            $parentGroup.find('input[inputmode="decimal"]').not($this).val('');
+                            return;
                         }
-                    });
+
+                        const rawNumberString = value.replace(/,/g, '');
+                        const numValue = parseFloat(rawNumberString);
+                        if (isNaN(numValue)) return;
+
+                        const baseGrams = numValue * unitToGram[currentUnitClass];
+
+                        $.each(unitToGram, function(unitClass, ratio) {
+                            if (unitClass !== currentUnitClass) {
+                                let calculated = baseGrams / ratio;
+                                let calcStr = Number(calculated.toFixed(6)).toString(); 
+                                let finalFormatted = formatWithComma(calcStr);
+                                $parentGroup.find('.' + unitClass + ' input').val(finalFormatted);
+                            }
+                        });
+                    }
                 });
 
                 $('form').on('submit', function () {

@@ -7,6 +7,39 @@
         width: 100%;
         padding: 0 20px 40px 20px;
     }
+    .new_regist_btn {
+        width: 60px;
+        height: 60px;
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        border-radius: 100%;
+        border: none;
+        transition: all .4s;
+        background-color: #612d44;
+        text-indent: -9999px;
+        z-index: 9;
+        &::before {
+            content: '';
+            width: 30px;
+            height: 30px;
+            mask-size: 30px 30px;
+            background-color: #fff;
+            mask-image: url(/images/svg/plus-solid-full.svg);
+            mask-repeat: no-repeat;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-top: -15px;
+            margin-left: -15px;
+            transition: all .4s;
+        }
+        &:hover {
+            &::before {
+                transform: rotate(90deg)
+            }
+        }
+    }
     section {
         &.radius {
             background-color: #fff;

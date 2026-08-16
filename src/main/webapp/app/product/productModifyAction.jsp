@@ -4,6 +4,12 @@
     // 1. Request 한글 인코딩 설정
     request.setCharacterEncoding("UTF-8");
 
+    // ★ 세션에서 로그인한 사용자 아이디 가져오기 추가
+    String loginUserId = (String) session.getAttribute("userId");
+    if (loginUserId == null || loginUserId.trim().isEmpty()) {
+        loginUserId = (String) session.getAttribute("loginId");
+    }
+
     // 2. Form 파라미터 수신 (productId, product_id, id 파라미터 체크)
     String productIdStr = request.getParameter("productId");
     if (productIdStr == null || productIdStr.trim().isEmpty()) {
@@ -105,12 +111,13 @@
             if (pstmt != null) pstmt.close();
         }
 
-        // 7. products 테이블 UPDATE 쿼리 (삭제된 컬럼 반영)
+        // 7. products 테이블 UPDATE 쿼리에 last_stock_user_id 추가
         String sql = "UPDATE products SET "
                 + "product_type = ?, "
                 + "item_name = ?, "
                 + "stock_qty = ?, "
                 + "min_qty = ?, "
+                + "last_stock_user_id = ?, " // ★ 추가된 컬럼 반영
                 + "updated_at = CURRENT_TIMESTAMP "
                 + "WHERE product_id = ?";
 
@@ -120,7 +127,8 @@
         pstmt.setString(2, itemName.trim());
         pstmt.setInt(3, stockQty);
         pstmt.setInt(4, minQty);
-        pstmt.setInt(5, productId);
+        pstmt.setString(5, loginUserId);    // ★ 추가된 값 바인딩
+        pstmt.setInt(6, productId);
 
         int result = pstmt.executeUpdate();
 

@@ -25,6 +25,16 @@ button {
                 border: 1px solid #292929;
             }
         }
+        &.brdrGray {
+            background-color: #fff;
+            border: 1px solid #e5e8ec;
+            color: #595959;
+            &:hover {
+                background-color: #292929;
+                border-color: #292929;
+                color: #fff;
+            }
+        }
     }
 }
 @include mediaQuery(mobile) {

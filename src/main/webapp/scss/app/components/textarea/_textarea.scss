@@ -7,11 +7,17 @@ textarea {
         color: #292929;
         @include placeholder(#c3c3c5);
         resize: none;
+        font-size: 14px;
+        line-height: 1.4;
         &:disabled {
             background-color: #f6f7f9;
         }
         &:focus {
             border-color: #612d44;
+        }
+        &.input_size {
+            height: 40px;
+            padding: 12px 15px;
         }
     }
 }
@@ -36,9 +42,13 @@ textarea {
 @include mediaQuery(mobile) {
     textarea {
         &.textArea {
+            height: 20rem;
             border-radius: 2rem;
             padding: 3rem;
             font-size: 2.6rem;
+            &.input_size {
+                height: 20rem;
+            }
         }
     }
     .textArea_max {

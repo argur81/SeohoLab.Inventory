@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*" %>
+<%@ page import="java.text.DecimalFormat" %>
+<%@ page import="java.text.SimpleDateFormat" %>
 <%
     request.setCharacterEncoding("UTF-8");
 
@@ -13,27 +15,73 @@
     PreparedStatement pstmt = null;
     ResultSet rs = null;
 %>
+<style>
+    /* [Style] 로딩 오버레이 디자인 */
+    #loadingOverlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 1);
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
 
+    /* [Style] 로딩 스피너 애니메이션 */
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #3498db;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    .loading_text {
+        margin-top: 15px;
+        font-weight: bold;
+        color: #333;
+        font-size: 14px;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
 <jsp:include page="/app/include/HeaderDocType.jsp" />
+    <!-- 로딩 오버레이 -->
+    <div id="loadingOverlay">
+        <div class="spinner"></div>
+        <p class="loading_text">데이터를 불러오는 중입니다...</p>
+    </div>
     <div id="wrap">
         <jsp:include page="/app/include/Header.jsp" />
         <div id="container">
-            <div class="content subsidiaryStockPage">
+            <div class="content rawStatuskPage">
                 <div class="title_set">
                     <h5 class="page_tit">
-                        <p>재고현황</p><i><img src="/images/svg/location_arrow.svg"></i><b>부자재</b>
+                        <p>품목관리</p><i><img src="/images/svg/location_arrow.svg"></i><b>원료</b>
                     </h5>
                 </div>
-                <button type="button" class="new_regist_btn" onclick="location.href='/app/subsidiary/subsidiaryRegist.jsp'">신규등록</button>
+                <button type="button" class="new_regist_btn" onclick="location.href='/app/rawMaterial/rawMaterialRegist.jsp'">신규등록</button>
                 <table id="stockTable" class="display cell-border hover" style="width:100%">
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>종류</th>
-                            <th class="name">제품명</th>
-                            <th>현재 재고량</th>
-                            <th>최소 재고량</th>
-                            <th>상태</th>
+                            <th>원료코드</th>
+                            <th class="name">상품명 (Trade Name)</th>
+                            <th>화학명(한글)</th>
+                            <th>단가</th>
                             <th>최종 처리자</th>
                             <th>Update</th>
                         </tr>
@@ -44,67 +92,58 @@
                                 Class.forName("org.mariadb.jdbc.Driver"); 
                                 conn = DriverManager.getConnection(url, dbUser, dbPass);
                                 
-                                // ★ 회원 테이블(users)과 JOIN하여 이름(user_name) 가져오기
-                                String sql = "SELECT s.*, u.user_name "
-                                           + "FROM subsidiary s "
-                                           + "LEFT JOIN users u ON s.last_stock_user_id = u.user_id "
-                                           + "ORDER BY s.subsidiary_id DESC";
+                                // ★ 핵심: items와 users 테이블을 JOIN하여 user_name(작성자 이름)을 함께 가져옴
+                                String sql = "SELECT i.*, u.user_name FROM items i " +
+                                            "LEFT JOIN users u ON i.user_id = u.user_id " +
+                                            "WHERE i.category = 'RAW' ORDER BY i.item_id DESC"; 
                                 pstmt = conn.prepareStatement(sql);
                                 rs = pstmt.executeQuery(); 
-                                
-                                java.text.DecimalFormat df = new java.text.DecimalFormat("#,##0");
-                                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+                                DecimalFormat df = new DecimalFormat("#,##0.##");
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
                                 int count = 1; 
                                 while(rs.next()) { 
-                                    int subsidiaryId = rs.getInt("subsidiary_id");
-                                    String subsidiaryType = rs.getString("subsidiary_type");
-                                    if (subsidiaryType == null || subsidiaryType.trim().isEmpty()) {
-                                        subsidiaryType = "-";
-                                    }
-                                    
+                                    int itemId = rs.getInt("item_id");
+                                    String itemCode = rs.getString("item_code");
+                                    if (itemCode == null) itemCode = "";
+
                                     String itemName = rs.getString("item_name");
                                     if (itemName == null) itemName = "";
-                                    
-                                    int stockQty = rs.getInt("stock_qty");
-                                    int minQty = rs.getInt("min_qty");
-                                    boolean isLowStock = stockQty < minQty;
 
-                                    String stockDisplay = df.format(stockQty) + " 개";
-                                    String minDisplay = df.format(minQty) + " 개";
+                                    String chemName = rs.getString("chem_name");
+                                    if (chemName == null) chemName = "";
 
-                                    // ★ 최종 작업자 이름 수신 (이름이 없으면 아이디, 둘 다 없으면 '-')
-                                    String lastStockUserName = rs.getString("user_name");
-                                    if (lastStockUserName == null || lastStockUserName.trim().isEmpty()) {
-                                        lastStockUserName = rs.getString("last_stock_user_id");
-                                        if (lastStockUserName == null || lastStockUserName.trim().isEmpty()) {
-                                            lastStockUserName = "-";
-                                        }
-                                    }
+                                    double price = rs.getDouble("price");
+                                    String priceDisplay = df.format(price);
 
                                     Timestamp updatedAt = rs.getTimestamp("updated_at");
                                     String updatedAtDisplay = (updatedAt != null) ? sdf.format(updatedAt) : "-";
+
+                                    // 조인해온 작성자 이름 가져오기 (없거나 비어있으면 '-')
+                                    String userName = rs.getString("user_name");
+                                    if (userName == null || userName.trim().isEmpty()) {
+                                        userName = "-";
+                                    }
                         %>
-                        <tr class="<%= isLowStock ? " low-stock" : "" %>">
+                        <tr>
+                            <td><%= count++ %></td>
+                            <td><%= itemCode %></td>
                             <td>
-                                <%= count++ %>
+                                <a href="rawStatusModify.jsp?id=<%= itemId %>" class="item-link"><%= itemName %></a>
                             </td>
-                            <td>
-                                <%= subsidiaryType %>
+                            <td class="chemName">
+                                <div class="text" title="<%= chemName %>">
+                                    <%= chemName %>
+                                </div>
+
                             </td>
-                            <td>
-                                <a href="subsidiaryModify.jsp?id=<%= subsidiaryId %>" class="item-link"><%= itemName %></a>
-                            </td>
-                            <td><%= stockDisplay %></td>
-                            <td><%= minDisplay %></td>
-                            <td class="state">
-                                <%= isLowStock ? "⚠️ 부족" : "정상" %>
-                            </td>
-                            <td><%= lastStockUserName %></td> <!-- ★ 이름 출력 -->
+                            <td><%= priceDisplay %></td>
+                            <td><%= userName %></td>
                             <td><%= updatedAtDisplay %></td>
                         </tr>
                         <% 
-                            } 
+                                } 
                             } catch(Exception e) { 
                                 e.printStackTrace(); 
                             } finally { 
@@ -120,17 +159,16 @@
                         $('#stockTable').DataTable({
                             autoWidth: false,
                             columnDefs: [
-                                { width: "60px", targets: 0, className: "dt-center" },
-                                { width: "130px", targets: 1, className: "dt-center" },
-                                { width: "120px", targets: 3, className: "dt-right" },
-                                { width: "120px", targets: 4, className: "dt-right" },
-                                { width: "90px", targets: 5, className: "dt-center" },
-                                { width: "120px", targets: 6, className: "dt-center" },
-                                { width: "180px", targets: 7, className: "dt-center" },
+                                { width: "80px", targets: 0, className: "dt-center" },
+                                { width: "120px", targets: 1, className: "dt-center" },
+                                { width: "350px", targets: 3 },
+                                { width: "150px", targets: 4, className: "dt-right" },
+                                { width: "120px", targets: 5, className: "dt-center" },
+                                { width: "180px", targets: 6, className: "dt-center" },
                             ],
                             responsive: true,
                             language: {
-                                emptyTable: "등록된 제품이 없습니다.",
+                                emptyTable: "등록된 원료가 없습니다.",
                                 lengthMenu: "_MENU_ 개씩 보기",
                                 info: "총 <i>_TOTAL_</i>개 중 _START_ - _END_",
                                 infoEmpty: "데이터 없음",
@@ -144,11 +182,16 @@
                                     previous: "이전"
                                 }
                             },
-                            pageLength: 25,
-                            order: [[0, 'asc']]
+                            pageLength: 100,
+                            order: [[0, 'asc']],
+                            initComplete: function (settings, json) {
+                                // 데이터 로딩 및 테이블 정렬이 완전히 끝난 후 로딩창 제거
+                                $('#loadingOverlay').fadeOut(1000);
+                            }
                         });
                         $('.dataTables_wrapper > .dataTables_length, .dataTables_wrapper > .dataTables_filter').wrapAll('<div class="top_group"></div>');
                         $('.dataTables_wrapper > .dataTables_info, .dataTables_wrapper > .dataTables_paginate').wrapAll('<div class="bottom_group"></div>');
+                        
                         function dataTableForMoblie() {
                             if ($(window).width() <= 780) {
                                 $('.dataTables_wrapper table.dataTable thead tr th').removeClass('last_th');

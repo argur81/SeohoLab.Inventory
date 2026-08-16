@@ -983,6 +983,12 @@ h6.page_sub_tit {
 .dataTables_wrapper table.dataTable tbody tr td a.item-link:hover {
   text-decoration: underline;
 }
+.dataTables_wrapper table.dataTable tbody tr td.chemName .text {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .dataTables_wrapper table.dataTable tbody tr.odd > * {
   -webkit-box-shadow: none;
           box-shadow: none;
@@ -1294,6 +1300,16 @@ button.Button.bgGray:hover {
   color: #292929;
   border: 1px solid #292929;
 }
+button.Button.brdrGray {
+  background-color: #fff;
+  border: 1px solid #e5e8ec;
+  color: #595959;
+}
+button.Button.brdrGray:hover {
+  background-color: #292929;
+  border-color: #292929;
+  color: #fff;
+}
 
 @media screen and (max-width: 780px) {
   button.Button {
@@ -1576,12 +1592,18 @@ textarea.textArea::placeholder {
 }
 textarea.textArea {
   resize: none;
+  font-size: 14px;
+  line-height: 1.4;
 }
 textarea.textArea:disabled {
   background-color: #f6f7f9;
 }
 textarea.textArea:focus {
   border-color: #612d44;
+}
+textarea.textArea.input_size {
+  height: 40px;
+  padding: 12px 15px;
 }
 
 .textArea_max {
@@ -1605,9 +1627,13 @@ textarea.textArea:focus {
 
 @media screen and (max-width: 780px) {
   textarea.textArea {
+    height: 20rem;
     border-radius: 2rem;
     padding: 3rem;
     font-size: 2.6rem;
+  }
+  textarea.textArea.input_size {
+    height: 20rem;
   }
   .textArea_max {
     height: 48rem;
@@ -2466,6 +2492,43 @@ footer a {
 #container .content {
   width: 100%;
   padding: 0 20px 40px 20px;
+}
+#container .new_regist_btn {
+  width: 60px;
+  height: 60px;
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  border-radius: 100%;
+  border: none;
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+  background-color: #612d44;
+  text-indent: -9999px;
+  z-index: 9;
+}
+#container .new_regist_btn::before {
+  content: "";
+  width: 30px;
+  height: 30px;
+  -webkit-mask-size: 30px 30px;
+          mask-size: 30px 30px;
+  background-color: #fff;
+  -webkit-mask-image: url(/images/svg/plus-solid-full.svg);
+          mask-image: url(/images/svg/plus-solid-full.svg);
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-top: -15px;
+  margin-left: -15px;
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+}
+#container .new_regist_btn:hover::before {
+  -webkit-transform: rotate(90deg);
+          transform: rotate(90deg);
 }
 #container section.radius {
   background-color: #fff;
@@ -3725,8 +3788,6 @@ footer a {
     -webkit-box-align: center;
         -ms-flex-align: center;
             align-items: center;
-    -ms-flex-direction: column-reverse;
-        flex-direction: column-reverse;
     gap: 1.6rem;
   }
   .bottom_btns .Button {
@@ -4307,6 +4368,128 @@ footer a {
 .content.registPage section.radius dl.volume.min dd > div .inputText {
   color: #ff4c3d;
 }
+.content.registPage section.radius dl dd.has_input-select {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 5px;
+}
+.content.registPage section.radius dl dd.has_input-select select[name=packing_unit_select] {
+  width: 100px;
+}
+.content.registPage section.radius dl dd input[inputmode=decimal] {
+  text-align: right;
+}
+.content.registPage section.radius dl dd > div.direct {
+  position: relative;
+}
+.content.registPage section.radius dl dd > div.direct:after {
+  content: "원";
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  right: 10px;
+}
+.content.registPage section.radius dl dd > div.direct input[inputmode=decimal] {
+  padding-right: 28px;
+}
+.content.registPage section.radius dl dd > div.kg_enter {
+  width: 100%;
+}
+.content.registPage section.radius dl dd > div.kg_enter ul {
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 5px;
+}
+.content.registPage section.radius dl dd > div.kg_enter ul li {
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 5px;
+}
+.content.registPage section.radius dl dd > div.kg_enter ul li > p {
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 5px;
+}
+.content.registPage section.radius dl dd > div.kg_enter ul li > p .og_select {
+  width: 100px;
+}
+.content.registPage section.radius dl dd > div.kg_enter ul li > div {
+  width: 100%;
+  position: relative;
+}
+.content.registPage section.radius dl dd > div.kg_enter ul li > div:after {
+  content: "원";
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  right: 10px;
+}
+.content.registPage section.radius dl dd > div.kg_enter ul li > div input[inputmode=decimal] {
+  padding-right: 28px;
+}
+.content.registPage section.radius dl dd > div.price_range {
+  position: relative;
+}
+.content.registPage section.radius dl dd > div.price_range:after {
+  content: "원대";
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  right: 10px;
+}
+.content.registPage section.radius dl dd > div.price_range input[inputmode=decimal] {
+  padding-right: 40px;
+}
 .content.registPage section.radius .rcvr_list {
   width: 100%;
   border: 1px solid #e6e8eb;
@@ -4611,6 +4794,66 @@ footer a {
             transform: translateY(-50%);
     right: 2rem;
     font-size: 2.6rem;
+  }
+  .content.registPage section.radius dl dd.has_input-select {
+    gap: 1rem;
+  }
+  .content.registPage section.radius dl dd.has_input-select select[name=packing_unit_select] {
+    width: 19rem;
+  }
+  .content.registPage section.radius dl dd > div.direct:after {
+    right: 1rem;
+    font-size: 2.6rem;
+  }
+  .content.registPage section.radius dl dd > div.direct input[inputmode=decimal] {
+    padding-right: 4rem;
+  }
+  .content.registPage section.radius dl dd > div.kg_enter ul {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    gap: 1rem;
+  }
+  .content.registPage section.radius dl dd > div.kg_enter ul li {
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    gap: 0.5rem;
+  }
+  .content.registPage section.radius dl dd > div.kg_enter ul li > p {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    gap: 0.5rem;
+  }
+  .content.registPage section.radius dl dd > div.kg_enter ul li > p .og_select {
+    width: 15rem;
+  }
+  .content.registPage section.radius dl dd > div.kg_enter ul li > div:after {
+    font-size: 2.6rem;
+    right: 1rem;
+  }
+  .content.registPage section.radius dl dd > div.kg_enter ul li > div input[inputmode=decimal] {
+    padding-right: 4rem;
+  }
+  .content.registPage section.radius dl dd > div.price_range:after {
+    right: 1rem;
+    font-size: 2.6rem;
+  }
+  .content.registPage section.radius dl dd > div.price_range input[inputmode=decimal] {
+    padding-right: 6rem;
   }
   .content.registPage section.radius .rcvr_list {
     margin-top: 0.8rem;

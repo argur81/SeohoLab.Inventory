@@ -4,6 +4,12 @@
     // 1. Request 한글 인코딩 설정
     request.setCharacterEncoding("UTF-8");
 
+    // ★ 세션에서 로그인한 사용자 아이디 가져오기 추가
+    String loginUserId = (String) session.getAttribute("userId");
+    if (loginUserId == null || loginUserId.trim().isEmpty()) {
+        loginUserId = (String) session.getAttribute("loginId");
+    }
+
     // 2. PK 수신 (subsidiary_id, id 파라미터 모두 지원)
     String idStr = request.getParameter("subsidiary_id");
     if (idStr == null || idStr.trim().isEmpty()) {
@@ -84,10 +90,11 @@
             if (pstmt != null) pstmt.close();
         }
 
-        // 6. UPDATE 쿼리 실행
+        // 6. UPDATE 쿼리에 last_stock_user_id 추가
         String sql = "UPDATE subsidiary SET "
                    + "item_name = ?, subsidiary_type = ?, material_type = ?, "
                    + "min_qty = ?, stock_qty = ?, "
+                   + "last_stock_user_id = ?, " // ★ 추가된 컬럼 반영
                    + "updated_at = CURRENT_TIMESTAMP "
                    + "WHERE subsidiary_id = ?";
 
@@ -98,7 +105,8 @@
         pstmt.setString(3, (materialType != null && !"선택".equals(materialType)) ? materialType.trim() : "");
         pstmt.setInt(4, minQty);
         pstmt.setInt(5, stockQty);
-        pstmt.setInt(6, subsidiaryId);
+        pstmt.setString(6, loginUserId);     // ★ 로그인 사용자 아이디 바인딩
+        pstmt.setInt(7, subsidiaryId);
 
         int result = pstmt.executeUpdate();
 

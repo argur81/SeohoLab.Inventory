@@ -32,19 +32,17 @@
         String sql = "";
 
         if ("RAW".equals(category)) {
-            // 원료(items)
+            // 원료(items) - work_order_1, work_order_2 2개 체제로 수정 반영
             sql = "SELECT DISTINCT item_name FROM items "
                 + "WHERE (item_name LIKE ? "
                 + "   OR COALESCE(work_order_1, '') LIKE ? "
-                + "   OR COALESCE(work_order_2, '') LIKE ? "
-                + "   OR COALESCE(work_order_3, '') LIKE ?) "
+                + "   OR COALESCE(work_order_2, '') LIKE ?) "
                 + "ORDER BY item_name ASC LIMIT 20";
 
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, searchPattern);
             pstmt.setString(2, searchPattern);
             pstmt.setString(3, searchPattern);
-            pstmt.setString(4, searchPattern);
 
         } else if ("PRODUCT".equals(category)) {
             // 완제품(products) - product_type 추가 조회
@@ -89,7 +87,6 @@
     }
 
     // JSON 객체 배열 형태 직접 생성
-    // [{ "label": "...", "value": "...", "type": "...", "material": "..." }, ...]
     StringBuilder json = new StringBuilder("[");
     for (int i = 0; i < list.size(); i++) {
         Map<String, String> map = list.get(i);

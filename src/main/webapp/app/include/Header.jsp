@@ -51,17 +51,15 @@
                     </div>
                 </div>
             </li>
-            <li class="has_depth new">
-                <p><img src="/images/svg/plus-solid-full.svg">신규등록</p>
+            <li class="has_depth status">
+                <p><img src="/images/svg/laptop-file-solid-full.svg">품목관리</p>
                 <div class="depth">
                     <div>
-                        <a href="/app/rawMaterial/rawMaterialRegist.jsp" class="raw">원료</a>
-                        <a href="/app/product/productRegist.jsp" class="product">제품</a>
-                        <a href="/app/subsidiary/subsidiaryRegist.jsp" class="subsidiary">부자재</a>
+                        <a href="/app/status/rawStatusList.jsp" class="raw">원료</a>
                     </div>
                 </div>
             </li>
-            <li class="has_depth new">
+            <li class="has_depth account">
                 <p><img src="/images/svg/user-gear-solid-full.svg">계정관리</p>
                 <div class="depth">
                     <div>

@@ -13,8 +13,55 @@
     PreparedStatement pstmt = null;
     ResultSet rs = null;
 %>
+<style>
+    /* [Style] 로딩 오버레이 디자인 */
+    #loadingOverlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 1);
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
 
+    /* [Style] 로딩 스피너 애니메이션 */
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #3498db;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    .loading_text {
+        margin-top: 15px;
+        font-weight: bold;
+        color: #333;
+        font-size: 14px;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
 <jsp:include page="/app/include/HeaderDocType.jsp" />
+    <!-- 로딩 오버레이 -->
+    <div id="loadingOverlay">
+        <div class="spinner"></div>
+        <p class="loading_text">데이터를 불러오는 중입니다...</p>
+    </div>
     <div id="wrap">
         <jsp:include page="/app/include/Header.jsp" />
         <div id="container">
@@ -24,16 +71,18 @@
                         <p>재고현황</p><i><img src="/images/svg/location_arrow.svg"></i><b>원료</b>
                     </h5>
                 </div>
+                <button type="button" class="new_regist_btn" onclick="location.href='/app/rawMaterial/rawMaterialRegist.jsp'">신규등록</button>
                 <table id="stockTable" class="display cell-border hover" style="width:100%">
                     <thead>
                         <tr>
                             <th>No</th>
                             <th class="name">원료명</th>
-                            <th>작업지시서1~3</th>
+                            <th>작업지시서1~2</th>
                             <th>현재 재고량</th>
                             <th>최소 재고량</th>
                             <th>상태</th>
-                            <th>최근 수정일</th>
+                            <th>최종 처리자</th>
+                            <th>Update</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -42,7 +91,10 @@
                                 Class.forName("org.mariadb.jdbc.Driver"); 
                                 conn = DriverManager.getConnection(url, dbUser, dbPass);
                                 
-                                String sql = "SELECT * FROM items WHERE category = 'RAW' ORDER BY item_id DESC"; 
+                                // ★ 수정: i.user_id 대신 재고 변동용 last_stock_user_id와 users 테이블 조인
+                                String sql = "SELECT i.*, u.user_name FROM items i " +
+                                             "LEFT JOIN users u ON i.last_stock_user_id = u.user_id " +
+                                             "WHERE i.category = 'RAW' ORDER BY i.item_id DESC";
                                 pstmt = conn.prepareStatement(sql);
                                 rs = pstmt.executeQuery(); 
 
@@ -57,7 +109,6 @@
 
                                     String w1 = rs.getString("work_order_1");
                                     String w2 = rs.getString("work_order_2");
-                                    String w3 = rs.getString("work_order_3");
                                     
                                     StringBuilder woSb = new StringBuilder();
                                     if (w1 != null && !w1.trim().isEmpty()) woSb.append(w1.trim());
@@ -65,40 +116,31 @@
                                         if (woSb.length() > 0) woSb.append(" / ");
                                         woSb.append(w2.trim());
                                     }
-                                    if (w3 != null && !w3.trim().isEmpty()) {
-                                        if (woSb.length() > 0) woSb.append(" / ");
-                                        woSb.append(w3.trim());
-                                    }
                                     String workOrderStr = woSb.length() > 0 ? woSb.toString() : "-";
 
-                                    // DB 단위별 수치 수신
                                     double stockT = rs.getDouble("stock_qty_t");
                                     double stockKg = rs.getDouble("stock_qty_kg");
                                     double stockG = rs.getDouble("stock_qty_g");
                                     double stockMg = rs.getDouble("stock_qty_mg");
 
-                                    double minT = rs.getDouble("min_qty_t");
-                                    double minKg = rs.getDouble("min_qty_kg");
-                                    double minG = rs.getDouble("min_qty_g");
-                                    double minMg = rs.getDouble("min_qty_mg");
-
-                                    // ★ 중복 더하기 제거: kg 수치를 최우선으로 사용하며, 없으면 존재하는 단위 1개만 kg 환산 사용
                                     double finalStockKg = 0;
                                     if (stockKg > 0) finalStockKg = stockKg;
                                     else if (stockT > 0) finalStockKg = stockT * 1000.0;
                                     else if (stockG > 0) finalStockKg = stockG / 1000.0;
                                     else if (stockMg > 0) finalStockKg = stockMg / 1000000.0;
 
-                                    double finalMinKg = 0;
-                                    if (minKg > 0) finalMinKg = minKg;
-                                    else if (minT > 0) finalMinKg = minT * 1000.0;
-                                    else if (minG > 0) finalMinKg = minG / 1000.0;
-                                    else if (minMg > 0) finalMinKg = minMg / 1000000.0;
+                                    double finalMinKg = rs.getDouble("total_min_kg");
 
                                     String stockDisplay = df.format(finalStockKg) + " kg";
                                     String minDisplay = df.format(finalMinKg) + " kg";
 
                                     boolean isLowStock = (finalStockKg < finalMinKg) && (finalMinKg > 0);
+
+                                    // 작성자 이름 처리 (없거나 비어있으면 '-')
+                                    String userName = rs.getString("user_name");
+                                    if (userName == null || userName.trim().isEmpty()) {
+                                        userName = "-";
+                                    }
 
                                     Timestamp updatedAt = rs.getTimestamp("updated_at");
                                     String updatedAtDisplay = (updatedAt != null) ? sdf.format(updatedAt) : "-";
@@ -108,7 +150,7 @@
                                 <%= count++ %>
                             </td>
                             <td>
-                                <a href="rawMaterialModify.jsp?id=<%= rs.getInt("item_id") %>" class="item-link"><%= itemName %></a>
+                                <a href="rawMaterialModify.jsp?id=<%= itemId %>" class="item-link"><%= itemName %></a>
                             </td>
                             <td>
                                 <%= workOrderStr %>
@@ -118,6 +160,7 @@
                             <td class="state">
                                 <%= isLowStock ? "⚠️ 부족" : "정상" %>
                             </td>
+                            <td><%= userName %></td>
                             <td><%= updatedAtDisplay %></td>
                         </tr>
                         <% 
@@ -136,16 +179,16 @@
                     $(document).ready(function () {
                         $('#stockTable').DataTable({
                             autoWidth: false,
-                            //3번째 열(인덱스 2: 작업지시서)을 화면에서 숨김 처리 (검색은 그대로 작동함)
                             columnDefs: [
                                 { targets: [2], visible: false },
-                                { width: "80px", targets: 0, className: "dt-center" },
-                                { width: "150px", targets: 3, className: "dt-right" },
-                                { width: "150px", targets: 4, className: "dt-right" },
-                                { width: "100px", targets: 5, className: "dt-center" },
-                                { width: "180px", targets: 6, className: "dt-center" },
+                                { width: "70px", targets: 0, className: "dt-center" },
+                                { width: "130px", targets: 3, className: "dt-right" },
+                                { width: "130px", targets: 4, className: "dt-right" },
+                                { width: "90px", targets: 5, className: "dt-center" },
+                                { width: "120px", targets: 6, className: "dt-center" },
+                                { width: "180px", targets: 7, className: "dt-center" },
                             ],
-                            responsive: true, //  반응형 옵션 활성화
+                            responsive: true,
                             language: {
                                 emptyTable: "등록된 원료 재고가 없습니다.",
                                 lengthMenu: "_MENU_ 개씩 보기",
@@ -161,8 +204,12 @@
                                     previous: "이전"
                                 }
                             },
-                            pageLength: 25,
-                            order: [[0, 'asc']]
+                            pageLength: 100,
+                            order: [[0, 'asc']],
+                            initComplete: function (settings, json) {
+                                // 데이터 로딩 및 테이블 정렬이 완전히 끝난 후 로딩창 제거
+                                $('#loadingOverlay').fadeOut(1000);
+                            }
                         });
                         $('.dataTables_wrapper > .dataTables_length, .dataTables_wrapper > .dataTables_filter').wrapAll('<div class="top_group"></div>');
                         $('.dataTables_wrapper > .dataTables_info, .dataTables_wrapper > .dataTables_paginate').wrapAll('<div class="bottom_group"></div>');
