@@ -77,7 +77,8 @@
                         <tr>
                             <th>No</th>
                             <th class="name">원료명</th>
-                            <th>작업지시서1~2</th>
+                            <th>작업지시서1~2</th> <!-- 인덱스 2 (숨김 대상) -->
+                            <th>화학명(한글)</th>   <!-- 인덱스 3 (숨김 대상) -->
                             <th>현재 재고량</th>
                             <th>최소 재고량</th>
                             <th>상태</th>
@@ -91,7 +92,6 @@
                                 Class.forName("org.mariadb.jdbc.Driver"); 
                                 conn = DriverManager.getConnection(url, dbUser, dbPass);
                                 
-                                // ★ 수정: i.user_id 대신 재고 변동용 last_stock_user_id와 users 테이블 조인
                                 String sql = "SELECT i.*, u.user_name FROM items i " +
                                              "LEFT JOIN users u ON i.last_stock_user_id = u.user_id " +
                                              "WHERE i.category = 'RAW' ORDER BY i.item_id DESC";
@@ -118,6 +118,9 @@
                                     }
                                     String workOrderStr = woSb.length() > 0 ? woSb.toString() : "-";
 
+                                    String chemName = rs.getString("chem_name");
+                                    if (chemName == null) chemName = "";
+
                                     double stockT = rs.getDouble("stock_qty_t");
                                     double stockKg = rs.getDouble("stock_qty_kg");
                                     double stockG = rs.getDouble("stock_qty_g");
@@ -136,7 +139,6 @@
 
                                     boolean isLowStock = (finalStockKg < finalMinKg) && (finalMinKg > 0);
 
-                                    // 작성자 이름 처리 (없거나 비어있으면 '-')
                                     String userName = rs.getString("user_name");
                                     if (userName == null || userName.trim().isEmpty()) {
                                         userName = "-";
@@ -146,15 +148,12 @@
                                     String updatedAtDisplay = (updatedAt != null) ? sdf.format(updatedAt) : "-";
                         %>
                         <tr class="<%= isLowStock ? " low-stock" : "" %>">
-                            <td>
-                                <%= count++ %>
-                            </td>
+                            <td><%= count++ %></td>
                             <td>
                                 <a href="rawMaterialModify.jsp?id=<%= itemId %>" class="item-link"><%= itemName %></a>
                             </td>
-                            <td>
-                                <%= workOrderStr %>
-                            </td>
+                            <td><%= workOrderStr %></td>
+                            <td><%= chemName %></td> <!-- ★ 여기에 화학명 데이터가 출력되어야 검색이 가능합니다 -->
                             <td><%= stockDisplay %></td>
                             <td><%= minDisplay %></td>
                             <td class="state">
@@ -180,13 +179,13 @@
                         $('#stockTable').DataTable({
                             autoWidth: false,
                             columnDefs: [
-                                { targets: [2], visible: false },
+                                { targets: [2, 3], visible: false }, // 작업지시서(2번)와 화학명(3번) 화면 숨김 처리 및 검색 가능 유지
                                 { width: "70px", targets: 0, className: "dt-center" },
-                                { width: "130px", targets: 3, className: "dt-right" },
                                 { width: "130px", targets: 4, className: "dt-right" },
-                                { width: "90px", targets: 5, className: "dt-center" },
-                                { width: "120px", targets: 6, className: "dt-center" },
-                                { width: "180px", targets: 7, className: "dt-center" },
+                                { width: "130px", targets: 5, className: "dt-right" },
+                                { width: "90px", targets: 6, className: "dt-center" },
+                                { width: "120px", targets: 7, className: "dt-center" },
+                                { width: "180px", targets: 8, className: "dt-center" },
                             ],
                             responsive: true,
                             language: {
@@ -207,7 +206,6 @@
                             pageLength: 100,
                             order: [[0, 'asc']],
                             initComplete: function (settings, json) {
-                                // 데이터 로딩 및 테이블 정렬이 완전히 끝난 후 로딩창 제거
                                 $('#loadingOverlay').fadeOut(1000);
                             }
                         });
