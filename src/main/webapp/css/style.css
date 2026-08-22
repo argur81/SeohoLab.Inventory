@@ -869,6 +869,22 @@ h6.page_sub_tit {
 }
 .dataTables_wrapper .top_group > div {
   float: inherit;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -ms-flex-direction: row-reverse;
+      flex-direction: row-reverse;
+  gap: 5px;
 }
 .dataTables_wrapper .top_group > div > label {
   display: -webkit-box;
@@ -888,6 +904,14 @@ h6.page_sub_tit {
   font-size: 16px;
   font-weight: 500;
   color: #595959;
+}
+.dataTables_wrapper .top_group > div #excelBtn {
+  border: none;
+  background-color: #27ae60;
+  color: #fff;
+}
+.dataTables_wrapper .top_group > div #excelBtn img {
+  width: 30px;
 }
 .dataTables_wrapper .top_group .dataTables_length select {
   height: 40px;
@@ -966,7 +990,7 @@ h6.page_sub_tit {
   color: #494949;
 }
 .dataTables_wrapper table.dataTable tbody tr td {
-  padding: 15px 10px;
+  padding: 10px;
   border-right: 1px solid #d1d5d9;
   word-break: break-all;
 }
@@ -1120,10 +1144,16 @@ h6.page_sub_tit {
             flex-direction: column-reverse;
     gap: 1rem;
   }
+  .dataTables_wrapper .top_group > div {
+    display: inline-block;
+  }
   .dataTables_wrapper .top_group > div > label {
     gap: 1rem;
     font-size: 2.4rem;
     white-space: nowrap;
+  }
+  .dataTables_wrapper .top_group > div #excelBtn {
+    display: none;
   }
   .dataTables_wrapper .top_group .dataTables_length {
     position: absolute;
@@ -1172,6 +1202,60 @@ h6.page_sub_tit {
   }
   .dataTables_wrapper table.dataTable tbody tr td.last_td {
     border-right: none;
+  }
+  .dataTables_wrapper table.dataTable tbody tr.child {
+    padding: 0;
+  }
+  .dataTables_wrapper table.dataTable tbody tr.child td.child {
+    padding: 0;
+  }
+  .dataTables_wrapper table.dataTable tbody tr.child td.child ul.dtr-details {
+    width: 100%;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -webkit-box-align: stretch;
+        -ms-flex-align: stretch;
+            align-items: stretch;
+    gap: 1.5rem;
+    padding: 1.5rem 0;
+  }
+  .dataTables_wrapper table.dataTable tbody tr.child td.child ul.dtr-details li {
+    width: 100%;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid #d1d5d9;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -webkit-box-align: stretch;
+        -ms-flex-align: stretch;
+            align-items: stretch;
+    font-size: 2.4rem;
+    gap: 2rem;
+  }
+  .dataTables_wrapper table.dataTable tbody tr.child td.child ul.dtr-details li .dtr-title {
+    white-space: nowrap;
+    line-height: 1.4;
+  }
+  .dataTables_wrapper table.dataTable tbody tr.child td.child ul.dtr-details li .dtr-data {
+    line-height: 1.4;
+  }
+  .dataTables_wrapper table.dataTable tbody tr.child td.child ul.dtr-details li:last-child {
+    border-bottom: none;
   }
   .dataTables_wrapper .bottom_group {
     margin-top: 2.5rem;
@@ -1420,13 +1504,16 @@ select.og_select {
   height: 40px;
   border-radius: 10px;
   border: 1px solid #e6e8eb;
-  font-size: 16px;
+  font-size: 14px;
   padding: 0 15px;
   -webkit-transition: all 0.4s;
   transition: all 0.4s;
 }
 select.og_select.focus {
   border: 1px solid #612d44;
+}
+select.og_select:disabled {
+  background-color: #f6f7f9;
 }
 
 @media screen and (max-width: 780px) {
@@ -2503,7 +2590,7 @@ footer a {
   border: none;
   -webkit-transition: all 0.4s;
   transition: all 0.4s;
-  background-color: #612d44;
+  background-color: rgba(97, 45, 68, 0.9);
   text-indent: -9999px;
   z-index: 9;
 }
@@ -2534,6 +2621,230 @@ footer a {
   background-color: #fff;
   border-radius: 12px;
   border: 1px solid #e6e8eb;
+}
+#container section.radius dl {
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+  gap: 10px;
+}
+#container section.radius dl.w15 {
+  width: calc(15% - 8px);
+}
+#container section.radius dl.w20 {
+  width: calc(20% - 8px);
+}
+#container section.radius dl.w25 {
+  width: calc(25% - 8px);
+}
+#container section.radius dl.w30 {
+  width: calc(33% - 5px);
+}
+#container section.radius dl.w50 {
+  width: calc(50% - 5px);
+}
+#container section.radius dl.w75 {
+  width: calc(75% - 5px);
+}
+#container section.radius dl.w85 {
+  width: calc(85% - 5px);
+}
+#container section.radius dl dt {
+  color: #595959;
+  font-weight: 500;
+}
+#container section.radius dl.not dt::after {
+  display: none;
+}
+#container section.radius dl.approval {
+  padding-top: 30px;
+  border-top: 1px solid #e6e8eb;
+}
+#container section.radius dl.approval .state {
+  width: 50%;
+  line-height: 40px;
+  border-radius: 10px;
+  border: 1px solid #e6e8eb;
+  padding: 0 15px;
+  color: #292929;
+  background-color: #f6f7f9;
+}
+#container section.radius dl.approval .state i.approval {
+  color: #612d44;
+}
+#container section.radius dl.approval .state i.refusal {
+  color: #ff4c3d;
+}
+#container section.radius dl.reason {
+  display: none;
+}
+#container section.radius dl.volume dd {
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 10px;
+}
+#container section.radius dl.volume dd > div {
+  width: 100%;
+  position: relative;
+}
+#container section.radius dl.volume dd > div .inputText {
+  padding-right: 35px;
+  text-align: right;
+}
+#container section.radius dl.volume dd > div i {
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  right: 10px;
+}
+#container section.radius dl.volume.min dd > div .inputText {
+  color: #ff4c3d;
+}
+#container section.radius dl dd.has_input-select {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 5px;
+}
+#container section.radius dl dd.has_input-select select[name=packing_unit_select] {
+  width: 100px;
+}
+#container section.radius dl dd input[inputmode=decimal] {
+  text-align: right;
+}
+#container section.radius dl dd > div.direct {
+  position: relative;
+}
+#container section.radius dl dd > div.direct:after {
+  content: "원";
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  right: 10px;
+}
+#container section.radius dl dd > div.direct input[inputmode=decimal] {
+  padding-right: 28px;
+}
+#container section.radius dl dd > div.kg_enter {
+  width: 100%;
+}
+#container section.radius dl dd > div.kg_enter ul {
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 5px;
+}
+#container section.radius dl dd > div.kg_enter ul li {
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 5px;
+}
+#container section.radius dl dd > div.kg_enter ul li > p {
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 5px;
+}
+#container section.radius dl dd > div.kg_enter ul li > p .og_select {
+  width: 100px;
+}
+#container section.radius dl dd > div.kg_enter ul li > div {
+  width: 100%;
+  position: relative;
+}
+#container section.radius dl dd > div.kg_enter ul li > div:after {
+  content: "원";
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  right: 10px;
+}
+#container section.radius dl dd > div.kg_enter ul li > div input[inputmode=decimal] {
+  padding-right: 28px;
+}
+#container section.radius dl dd > div.price_range {
+  position: relative;
+}
+#container section.radius dl dd > div.price_range:after {
+  content: "원대";
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  right: 10px;
+}
+#container section.radius dl dd > div.price_range input[inputmode=decimal] {
+  padding-right: 40px;
 }
 #container .search_open_btn {
   display: none;
@@ -2680,6 +2991,126 @@ footer a {
   }
   #container section.radius {
     border-radius: 2.4rem;
+  }
+  #container section.radius dl {
+    gap: 2rem;
+  }
+  #container section.radius dl.w15 {
+    width: 100%;
+  }
+  #container section.radius dl.w20 {
+    width: 100%;
+  }
+  #container section.radius dl.w25 {
+    width: 100%;
+  }
+  #container section.radius dl.w30 {
+    width: 100%;
+  }
+  #container section.radius dl.w50 {
+    width: 100%;
+  }
+  #container section.radius dl.w75 {
+    width: 100%;
+  }
+  #container section.radius dl.w85 {
+    width: 100%;
+  }
+  #container section.radius dl dt {
+    font-size: 2.6rem;
+  }
+  #container section.radius dl dd input.inputText {
+    width: 100% !important;
+  }
+  #container section.radius dl.approval {
+    padding-top: 4rem;
+  }
+  #container section.radius dl.approval .state {
+    width: 100%;
+    line-height: 8rem;
+    border-radius: 2rem;
+    padding: 0 3rem;
+    font-size: 2.6rem;
+  }
+  #container section.radius dl.volume dd {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 1rem;
+    -webkit-column-gap: 1rem;
+       -moz-column-gap: 1rem;
+            column-gap: 1rem;
+  }
+  #container section.radius dl.volume dd > div .inputText {
+    padding-right: 6rem;
+  }
+  #container section.radius dl.volume dd > div i {
+    position: absolute;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+            transform: translateY(-50%);
+    right: 2rem;
+    font-size: 2.6rem;
+  }
+  #container section.radius dl dd.has_input-select {
+    gap: 1rem;
+  }
+  #container section.radius dl dd.has_input-select select[name=packing_unit_select] {
+    width: 19rem;
+  }
+  #container section.radius dl dd > div.direct:after {
+    right: 1rem;
+    font-size: 2.6rem;
+  }
+  #container section.radius dl dd > div.direct input[inputmode=decimal] {
+    padding-right: 4rem;
+  }
+  #container section.radius dl dd > div.kg_enter ul {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    gap: 1rem;
+  }
+  #container section.radius dl dd > div.kg_enter ul li {
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    gap: 0.5rem;
+  }
+  #container section.radius dl dd > div.kg_enter ul li > p {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    gap: 0.5rem;
+  }
+  #container section.radius dl dd > div.kg_enter ul li > p .og_select {
+    width: 15rem;
+  }
+  #container section.radius dl dd > div.kg_enter ul li > div:after {
+    font-size: 2.6rem;
+    right: 1rem;
+  }
+  #container section.radius dl dd > div.kg_enter ul li > div input[inputmode=decimal] {
+    padding-right: 4rem;
+  }
+  #container section.radius dl dd > div.price_range:after {
+    right: 1rem;
+    font-size: 2.6rem;
+  }
+  #container section.radius dl dd > div.price_range input[inputmode=decimal] {
+    padding-right: 6rem;
   }
   #container .search_open_btn {
     width: 100%;
@@ -4266,230 +4697,6 @@ footer a {
   content: "*";
   color: #ff4c3d;
 }
-.content.registPage section.radius dl {
-  width: 100%;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-pack: start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
-  -webkit-box-align: stretch;
-      -ms-flex-align: stretch;
-          align-items: stretch;
-  gap: 10px;
-}
-.content.registPage section.radius dl.w15 {
-  width: calc(15% - 8px);
-}
-.content.registPage section.radius dl.w20 {
-  width: calc(20% - 8px);
-}
-.content.registPage section.radius dl.w25 {
-  width: calc(25% - 8px);
-}
-.content.registPage section.radius dl.w30 {
-  width: calc(33% - 5px);
-}
-.content.registPage section.radius dl.w50 {
-  width: calc(50% - 5px);
-}
-.content.registPage section.radius dl.w75 {
-  width: calc(75% - 5px);
-}
-.content.registPage section.radius dl.w85 {
-  width: calc(85% - 5px);
-}
-.content.registPage section.radius dl dt {
-  color: #595959;
-  font-weight: 500;
-}
-.content.registPage section.radius dl.not dt::after {
-  display: none;
-}
-.content.registPage section.radius dl.approval {
-  padding-top: 30px;
-  border-top: 1px solid #e6e8eb;
-}
-.content.registPage section.radius dl.approval .state {
-  width: 50%;
-  line-height: 40px;
-  border-radius: 10px;
-  border: 1px solid #e6e8eb;
-  padding: 0 15px;
-  color: #292929;
-  background-color: #f6f7f9;
-}
-.content.registPage section.radius dl.approval .state i.approval {
-  color: #612d44;
-}
-.content.registPage section.radius dl.approval .state i.refusal {
-  color: #ff4c3d;
-}
-.content.registPage section.radius dl.reason {
-  display: none;
-}
-.content.registPage section.radius dl.volume dd {
-  width: 100%;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
-  -webkit-box-pack: start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  gap: 10px;
-}
-.content.registPage section.radius dl.volume dd > div {
-  width: 100%;
-  position: relative;
-}
-.content.registPage section.radius dl.volume dd > div .inputText {
-  padding-right: 35px;
-  text-align: right;
-}
-.content.registPage section.radius dl.volume dd > div i {
-  position: absolute;
-  top: 50%;
-  -webkit-transform: translateY(-50%);
-          transform: translateY(-50%);
-  right: 10px;
-}
-.content.registPage section.radius dl.volume.min dd > div .inputText {
-  color: #ff4c3d;
-}
-.content.registPage section.radius dl dd.has_input-select {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
-  -webkit-box-pack: start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  gap: 5px;
-}
-.content.registPage section.radius dl dd.has_input-select select[name=packing_unit_select] {
-  width: 100px;
-}
-.content.registPage section.radius dl dd input[inputmode=decimal] {
-  text-align: right;
-}
-.content.registPage section.radius dl dd > div.direct {
-  position: relative;
-}
-.content.registPage section.radius dl dd > div.direct:after {
-  content: "원";
-  position: absolute;
-  top: 50%;
-  -webkit-transform: translateY(-50%);
-          transform: translateY(-50%);
-  right: 10px;
-}
-.content.registPage section.radius dl dd > div.direct input[inputmode=decimal] {
-  padding-right: 28px;
-}
-.content.registPage section.radius dl dd > div.kg_enter {
-  width: 100%;
-}
-.content.registPage section.radius dl dd > div.kg_enter ul {
-  width: 100%;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
-  -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  gap: 5px;
-}
-.content.registPage section.radius dl dd > div.kg_enter ul li {
-  width: 100%;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-pack: start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  gap: 5px;
-}
-.content.registPage section.radius dl dd > div.kg_enter ul li > p {
-  width: 100%;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
-  -webkit-box-pack: start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  gap: 5px;
-}
-.content.registPage section.radius dl dd > div.kg_enter ul li > p .og_select {
-  width: 100px;
-}
-.content.registPage section.radius dl dd > div.kg_enter ul li > div {
-  width: 100%;
-  position: relative;
-}
-.content.registPage section.radius dl dd > div.kg_enter ul li > div:after {
-  content: "원";
-  position: absolute;
-  top: 50%;
-  -webkit-transform: translateY(-50%);
-          transform: translateY(-50%);
-  right: 10px;
-}
-.content.registPage section.radius dl dd > div.kg_enter ul li > div input[inputmode=decimal] {
-  padding-right: 28px;
-}
-.content.registPage section.radius dl dd > div.price_range {
-  position: relative;
-}
-.content.registPage section.radius dl dd > div.price_range:after {
-  content: "원대";
-  position: absolute;
-  top: 50%;
-  -webkit-transform: translateY(-50%);
-          transform: translateY(-50%);
-  right: 10px;
-}
-.content.registPage section.radius dl dd > div.price_range input[inputmode=decimal] {
-  padding-right: 40px;
-}
 .content.registPage section.radius .rcvr_list {
   width: 100%;
   border: 1px solid #e6e8eb;
@@ -4735,126 +4942,6 @@ footer a {
   .content.registPage section.radius .top_info {
     font-size: 2.8rem;
   }
-  .content.registPage section.radius dl {
-    gap: 2rem;
-  }
-  .content.registPage section.radius dl.w15 {
-    width: 100%;
-  }
-  .content.registPage section.radius dl.w20 {
-    width: 100%;
-  }
-  .content.registPage section.radius dl.w25 {
-    width: 100%;
-  }
-  .content.registPage section.radius dl.w30 {
-    width: 100%;
-  }
-  .content.registPage section.radius dl.w50 {
-    width: 100%;
-  }
-  .content.registPage section.radius dl.w75 {
-    width: 100%;
-  }
-  .content.registPage section.radius dl.w85 {
-    width: 100%;
-  }
-  .content.registPage section.radius dl dt {
-    font-size: 2.6rem;
-  }
-  .content.registPage section.radius dl dd input.inputText {
-    width: 100% !important;
-  }
-  .content.registPage section.radius dl.approval {
-    padding-top: 4rem;
-  }
-  .content.registPage section.radius dl.approval .state {
-    width: 100%;
-    line-height: 8rem;
-    border-radius: 2rem;
-    padding: 0 3rem;
-    font-size: 2.6rem;
-  }
-  .content.registPage section.radius dl.volume dd {
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    row-gap: 1rem;
-    -webkit-column-gap: 1rem;
-       -moz-column-gap: 1rem;
-            column-gap: 1rem;
-  }
-  .content.registPage section.radius dl.volume dd > div .inputText {
-    padding-right: 6rem;
-  }
-  .content.registPage section.radius dl.volume dd > div i {
-    position: absolute;
-    top: 50%;
-    -webkit-transform: translateY(-50%);
-            transform: translateY(-50%);
-    right: 2rem;
-    font-size: 2.6rem;
-  }
-  .content.registPage section.radius dl dd.has_input-select {
-    gap: 1rem;
-  }
-  .content.registPage section.radius dl dd.has_input-select select[name=packing_unit_select] {
-    width: 19rem;
-  }
-  .content.registPage section.radius dl dd > div.direct:after {
-    right: 1rem;
-    font-size: 2.6rem;
-  }
-  .content.registPage section.radius dl dd > div.direct input[inputmode=decimal] {
-    padding-right: 4rem;
-  }
-  .content.registPage section.radius dl dd > div.kg_enter ul {
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
-    gap: 1rem;
-  }
-  .content.registPage section.radius dl dd > div.kg_enter ul li {
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: row;
-            flex-direction: row;
-    gap: 0.5rem;
-  }
-  .content.registPage section.radius dl dd > div.kg_enter ul li > p {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: row;
-            flex-direction: row;
-    -webkit-box-pack: start;
-        -ms-flex-pack: start;
-            justify-content: flex-start;
-    -webkit-box-align: center;
-        -ms-flex-align: center;
-            align-items: center;
-    gap: 0.5rem;
-  }
-  .content.registPage section.radius dl dd > div.kg_enter ul li > p .og_select {
-    width: 15rem;
-  }
-  .content.registPage section.radius dl dd > div.kg_enter ul li > div:after {
-    font-size: 2.6rem;
-    right: 1rem;
-  }
-  .content.registPage section.radius dl dd > div.kg_enter ul li > div input[inputmode=decimal] {
-    padding-right: 4rem;
-  }
-  .content.registPage section.radius dl dd > div.price_range:after {
-    right: 1rem;
-    font-size: 2.6rem;
-  }
-  .content.registPage section.radius dl dd > div.price_range input[inputmode=decimal] {
-    padding-right: 6rem;
-  }
   .content.registPage section.radius .rcvr_list {
     margin-top: 0.8rem;
     padding: 1rem;
@@ -5033,5 +5120,134 @@ footer a {
     height: 4rem;
     -webkit-mask-size: 4rem 4rem;
             mask-size: 4rem 4rem;
+  }
+}
+.content.workOrderList section.radius {
+  padding: 25px;
+  margin-top: 25px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+  row-gap: 25px;
+  -webkit-column-gap: 10px;
+     -moz-column-gap: 10px;
+          column-gap: 10px;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+.content.workOrderList section.radius .add_btn {
+  width: 100%;
+}
+.content.workOrderList section.radius .add_btn .Button {
+  width: 100%;
+  height: 40px;
+  border: 1px solid #612d44;
+  color: #612d44;
+  background-color: #fff;
+  font-weight: 500;
+  border-radius: 10px;
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+}
+.content.workOrderList section.radius .add_btn .Button:hover {
+  background-color: #612d44;
+  color: #fff;
+}
+.content.workOrderList section.radius .delRowBtn,
+.content.workOrderList section.radius .delPhaseBtn {
+  width: 20px;
+  height: 20px;
+  border-radius: 100%;
+  background: #fff url(/images/svg/trash-can-regular-full.svg) no-repeat center center;
+  background-size: 20px;
+  border: none;
+  text-indent: -99999px;
+}
+.content.workOrderList section.radius table.order_table thead th {
+  text-align: center;
+  height: 40px;
+}
+.content.workOrderList section.radius table.order_table tbody td {
+  padding: 5px;
+  border-bottom: 1px solid #e6e8eb;
+}
+.content.workOrderList section.radius table.order_table tbody td:first-child {
+  text-align: center;
+}
+.content.workOrderList section.radius table.order_table tbody tr:last-child td {
+  border-bottom: none;
+}
+.content.workOrderList section.radius table.order_table tfoot td {
+  padding: 5px;
+}
+.content.workOrderList section.radius table.order_table tfoot td:first-child {
+  text-align: center;
+  font-weight: 500;
+  font-size: 16px;
+}
+.content.workOrderList section.radius table.phase_table thead th {
+  text-align: center;
+  height: 40px;
+}
+.content.workOrderList section.radius table.phase_table tbody td {
+  padding: 5px;
+  border-bottom: 1px solid #e6e8eb;
+}
+.content.workOrderList section.radius table.phase_table tbody td:first-child {
+  text-align: center;
+}
+.content.workOrderList section.radius table.phase_table tbody td .phase_num {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 10px;
+}
+.content.workOrderList section.radius table.phase_table tfoot td {
+  padding: 5px;
+}
+.content.workOrderList section.radius .unit {
+  width: 100%;
+  position: relative;
+}
+.content.workOrderList section.radius .unit .inputText {
+  padding-right: 35px;
+  text-align: right;
+}
+.content.workOrderList section.radius .unit i {
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  right: 10px;
+}
+.content.workOrderList .bottom_btns {
+  margin-top: 40px;
+}
+
+@media screen and (max-width: 780px) {
+  .content.workOrderList section.radius {
+    padding: 4rem;
+    margin-top: 0;
+    gap: 4rem;
   }
 }

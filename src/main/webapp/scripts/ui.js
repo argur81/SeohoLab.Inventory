@@ -264,11 +264,8 @@ $(document).ready(function(){
             if($('h5.page_tit b').text() == '원료') {
                 $('header .gnb li.status .depth > div a.raw').addClass('on');
             }
-            if($('h5.page_tit b').text() == '제품') {
-                $('header .gnb li.status .depth > div a.product').addClass('on');
-            }
-            if($('h5.page_tit b').text() == '부자재') {
-                $('header .gnb li.status .depth > div a.subsidiary').addClass('on');
+            if($('h5.page_tit b').text() == 'Lot') {
+                $('header .gnb li.status .depth > div a.lot').addClass('on');
             }
         }
         if($('h5.page_tit p').text() == '계정관리'){

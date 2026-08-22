@@ -1,0 +1,132 @@
+.content {
+    &.workOrderList {
+        section {
+            &.radius {
+                padding: 25px;
+                margin-top: 25px;
+                @include flexLayout(row, flex-start, stretch);
+                row-gap: 25px;
+                column-gap: 10px;
+                flex-wrap: wrap;
+                .add_btn {
+                    width: 100%;
+                    .Button {
+                        width: 100%;
+                        height: 40px;
+                        border: 1px solid #612d44;
+                        color: #612d44;
+                        background-color: #fff;
+                        font-weight: 500;
+                        border-radius: 10px;
+                        transition: all .4s;
+                
+                        &:hover {
+                            background-color: #612d44;
+                            color: #fff;
+                        }
+                    }
+                }
+                .delRowBtn,
+                .delPhaseBtn {
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 100%;
+                    background: #fff url(/images/svg/trash-can-regular-full.svg) no-repeat center center;
+                    background-size: 20px;
+                    border: none;
+                    text-indent: -99999px;
+                }
+                table {
+                    &.order_table {
+                        thead {
+                            th {
+                                text-align: center;
+                                height: 40px;
+                            }
+                        }
+                        tbody {
+                            td {
+                                padding: 5px;
+                                border-bottom: 1px solid #e6e8eb;
+                                &:first-child {
+                                    text-align: center;
+                                }
+                            }
+                            tr {
+                                &:last-child {
+                                    td {
+                                        border-bottom: none;
+                                    }
+                                }
+                            }
+                        }
+                        tfoot {
+                            td {
+                                padding: 5px;
+                                &:first-child {
+                                    text-align: center;
+                                    font-weight: 500;
+                                    font-size: 16px;
+                                }
+                            }
+                        }
+                    }
+                    &.phase_table {
+                        thead {
+                            th {
+                                text-align: center;
+                                height: 40px;
+                            }
+                        }
+                        tbody {
+                            td {
+                                padding: 5px;
+                                border-bottom: 1px solid #e6e8eb;
+                                &:first-child {
+                                    text-align: center;
+                                }
+                                .phase_num {
+                                    @include flexLayout(row, flex-start, center);
+                                    gap: 10px;
+                                }
+                            }
+                        }
+                        tfoot {
+                            td {
+                                padding: 5px;
+                            }
+                        }
+                    }
+                }
+                .unit {
+                    width: 100%;
+                    position: relative;
+                    .inputText {
+                        padding-right: 35px;
+                        text-align: right;
+                    }
+                    i {
+                        @include positionLayout(absolute, y);
+                        right: 10px;
+                    }
+                }
+            }
+        }
+        .bottom_btns {
+            margin-top: 40px;
+        }
+    }
+}
+@include mediaQuery(mobile) {
+    .content {
+        &.workOrderList {
+            section {
+                &.radius {
+                    padding: 4rem;
+                    margin-top: 0;
+                    gap: 4rem;
+                }
+            }
+        }
+    }
+}

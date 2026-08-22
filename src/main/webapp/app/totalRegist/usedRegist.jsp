@@ -8,12 +8,12 @@
                     <h5 class="page_tit"><p>사용등록</p></h5>
                 </div>
                 <div class="top_control">
-                    <button type="button" class="raw" data-target="raw">원료</button>
+                    <button type="button" class="raw on" data-target="raw">원료</button>
                     <button type="button" class="subsidiary" data-target="subsidiary">부자재</button>
                 </div>
                 
                 <!--원료-->
-                <form class="raw" action="usedRegistAction.jsp" method="post">
+                <form class="raw" action="usedRegistAction.jsp" method="post" style="display: block;">
                     <input type="hidden" name="category" value="RAW">
                     <section class="radius">
                         <dl class="w75">

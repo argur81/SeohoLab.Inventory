@@ -72,7 +72,7 @@
             supplier = rs.getString("supplier") != null ? rs.getString("supplier") : "";
             maker = rs.getString("maker") != null ? rs.getString("maker") : "";
             
-            priceType = rs.getString("price_type") != null ? rs.getString("price_type") : "단가입력";
+            priceType = rs.getString("price_type") != null ? rs.getString("price_type") : "1kg·1g 당";
             price = rs.getDouble("price");
 
             kgQty1 = rs.getDouble("kg_qty_1"); kgUnit1 = rs.getString("kg_unit_1") != null ? rs.getString("kg_unit_1") : "kg"; kgPrice1 = rs.getDouble("kg_price_1");
@@ -166,8 +166,8 @@
                             <dt>단가구분</dt>
                             <dd>
                                 <select name="price_type" id="priceTypeSelect" class="og_select">
-                                    <option value="단가입력" <%= "단가입력".equals(priceType) ? "selected" : "" %>>단가입력</option>
-                                    <option value="kg당 입력" <%= "kg당 입력".equals(priceType) ? "selected" : "" %>>kg당 입력</option>
+                                    <option value="1kg·1g 당" <%= "1kg·1g 당".equals(priceType) ? "selected" : "" %>>1kg·1g 당</option>
+                                    <option value="무게당 입력" <%= "무게당 입력".equals(priceType) ? "selected" : "" %>>무게당 입력</option>
                                     <option value="가격대" <%= "가격대".equals(priceType) ? "selected" : "" %>>가격대</option>
                                     <option value="기타" <%= "기타".equals(priceType) ? "selected" : "" %>>기타</option>
                                 </select>
@@ -338,12 +338,12 @@
                     $priceDl.find('.price_div').hide();
                     $priceDl.find('input').prop('disabled', true);
 
-                    if (selectedVal === '단가입력') {
+                    if (selectedVal === '1kg·1g 당') {
                         $priceDl.removeClass('w100').addClass('w25');
                         let $target = $priceDl.find('.direct');
                         $target.show();
                         $target.find('input').prop('disabled', false);
-                    } else if (selectedVal === 'kg당 입력') {
+                    } else if (selectedVal === '무게당 입력') {
                         $priceDl.removeClass('w25').addClass('w100');
                         let $target = $priceDl.find('.kg_enter');
                         $target.show();

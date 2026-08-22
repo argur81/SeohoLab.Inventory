@@ -31,6 +31,16 @@
             <button type="button" onclick="location.href='/app/login/logoutProcess.jsp'">로그아웃</button>
         </div>
         <ul class="gnb">
+            <li class="has_depth order">
+                <p><img src="/images/svg/flask-solid-full.svg">제조 지시서</p>
+                <div class="depth">
+                    <div>
+                        <a href="/app/workOrder/workOrderMgmt.jsp" class="used">지시서 관리</a>
+                        <a href="#" class="used">제조요청</a>
+                        <a href="#" class="release">진행현황</a>
+                    </div>
+                </div>
+            </li>
             <li class="has_depth regist">
                 <p><img src="/images/svg/flask-solid-full.svg">사용·출고·입고</p>
                 <div class="depth">
@@ -56,6 +66,7 @@
                 <div class="depth">
                     <div>
                         <a href="/app/status/rawStatusList.jsp" class="raw">원료</a>
+                        <a href="/app/status/lotStatusList.jsp" class="lot">Lot</a>
                     </div>
                 </div>
             </li>

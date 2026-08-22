@@ -13,8 +13,55 @@
     PreparedStatement pstmt = null;
     ResultSet rs = null;
 %>
+<style>
+    /* [Style] 로딩 오버레이 디자인 */
+    #loadingOverlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 1);
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
 
+    /* [Style] 로딩 스피너 애니메이션 */
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #3498db;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    .loading_text {
+        margin-top: 15px;
+        font-weight: bold;
+        color: #333;
+        font-size: 14px;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
 <jsp:include page="/app/include/HeaderDocType.jsp" />
+    <!-- 로딩 오버레이 -->
+    <div id="loadingOverlay">
+        <div class="spinner"></div>
+        <p class="loading_text">데이터를 불러오는 중입니다...</p>
+    </div>
     <div id="wrap">
         <jsp:include page="/app/include/Header.jsp" />
         <div id="container">
@@ -25,6 +72,8 @@
                     </h5>
                 </div>
                 <button type="button" class="new_regist_btn" onclick="location.href='/app/subsidiary/subsidiaryRegist.jsp'">신규등록</button>
+                
+                <!-- 화면용 테이블 -->
                 <table id="stockTable" class="display cell-border hover" style="width:100%">
                     <thead>
                         <tr>
@@ -44,7 +93,7 @@
                                 Class.forName("org.mariadb.jdbc.Driver"); 
                                 conn = DriverManager.getConnection(url, dbUser, dbPass);
                                 
-                                // ★ 회원 테이블(users)과 JOIN하여 이름(user_name) 가져오기
+                                // 회원 테이블(users)과 JOIN하여 이름(user_name) 가져오기[cite: 7]
                                 String sql = "SELECT s.*, u.user_name "
                                            + "FROM subsidiary s "
                                            + "LEFT JOIN users u ON s.last_stock_user_id = u.user_id "
@@ -72,8 +121,9 @@
 
                                     String stockDisplay = df.format(stockQty) + " 개";
                                     String minDisplay = df.format(minQty) + " 개";
+                                    String statusStr = isLowStock ? "⚠️ 부족" : "정상";
 
-                                    // ★ 최종 작업자 이름 수신 (이름이 없으면 아이디, 둘 다 없으면 '-')
+                                    // 최종 작업자 이름 수신 (이름이 없으면 아이디, 둘 다 없으면 '-')[cite: 7]
                                     String lastStockUserName = rs.getString("user_name");
                                     if (lastStockUserName == null || lastStockUserName.trim().isEmpty()) {
                                         lastStockUserName = rs.getString("last_stock_user_id");
@@ -98,9 +148,9 @@
                             <td><%= stockDisplay %></td>
                             <td><%= minDisplay %></td>
                             <td class="state">
-                                <%= isLowStock ? "⚠️ 부족" : "정상" %>
+                                <%= statusStr %>
                             </td>
-                            <td><%= lastStockUserName %></td> <!-- ★ 이름 출력 -->
+                            <td><%= lastStockUserName %></td>
                             <td><%= updatedAtDisplay %></td>
                         </tr>
                         <% 
@@ -115,9 +165,69 @@
                         %>
                     </tbody>
                 </table>
+
+                <!-- 엑셀 다운로드 전용 숨겨진 테이블 ([종류], [제품명], [현재재고량], [최소재고량], [상태]) -->
+                <table id="excelExportTable" style="display:none;">
+                    <thead>
+                        <tr>
+                            <th>종류</th>
+                            <th>제품명</th>
+                            <th>현재재고량</th>
+                            <th>최소재고량</th>
+                            <th>상태</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <%
+                            try { 
+                                Class.forName("org.mariadb.jdbc.Driver"); 
+                                conn = DriverManager.getConnection(url, dbUser, dbPass);
+                                String sql = "SELECT * FROM subsidiary ORDER BY subsidiary_id DESC";
+                                pstmt = conn.prepareStatement(sql);
+                                rs = pstmt.executeQuery(); 
+                                java.text.DecimalFormat df = new java.text.DecimalFormat("#,##0");
+
+                                while(rs.next()) { 
+                                    String subsidiaryType = rs.getString("subsidiary_type");
+                                    if (subsidiaryType == null || subsidiaryType.trim().isEmpty()) {
+                                        subsidiaryType = "-";
+                                    }
+
+                                    String itemName = rs.getString("item_name");
+                                    if (itemName == null) itemName = "";
+                                    if (itemName.isEmpty()) continue; // 빈 행 방지
+
+                                    int stockQty = rs.getInt("stock_qty");
+                                    int minQty = rs.getInt("min_qty");
+                                    boolean isLowStock = stockQty < minQty;
+
+                                    String stockDisplay = df.format(stockQty) + " 개";
+                                    String minDisplay = df.format(minQty) + " 개";
+                                    String statusStr = isLowStock ? "부족" : "정상";
+                        %>
+                        <tr>
+                            <td><%= subsidiaryType %></td>
+                            <td><%= itemName %></td>
+                            <td><%= stockDisplay %></td>
+                            <td><%= minDisplay %></td>
+                            <td><%= statusStr %></td>
+                        </tr>
+                        <% 
+                                } 
+                            } catch(Exception e) { 
+                                e.printStackTrace(); 
+                            } finally { 
+                                if(rs != null) try { rs.close(); } catch(Exception e){} 
+                                if(pstmt != null) try { pstmt.close(); } catch(Exception e){} 
+                                if(conn != null) try { conn.close(); } catch(Exception e){} 
+                            } 
+                        %>
+                    </tbody>
+                </table>
+
                 <script>
                     $(document).ready(function () {
-                        $('#stockTable').DataTable({
+                        var table = $('#stockTable').DataTable({
                             autoWidth: false,
                             columnDefs: [
                                 { width: "60px", targets: 0, className: "dt-center" },
@@ -145,10 +255,58 @@
                                 }
                             },
                             pageLength: 25,
-                            order: [[0, 'asc']]
+                            order: [[0, 'asc']],
+                            initComplete: function (settings, json) {
+                                $('#loadingOverlay').fadeOut(1000);
+                                
+                                // lengthMenu 영역 안에 엑셀 다운로드 버튼 삽입
+                                $('<button type="button" class="Button" id="excelBtn"><img src="/images/svg/file-excel-regular-full.svg">엑셀 다운로드</button>')
+                                    .appendTo('.dataTables_length');
+                            }
                         });
+
+                        // 엑셀 다운로드 동작 이벤트
+                        $(document).on('click', '#excelBtn', function () {
+                            let html = '<html><head><meta charset="utf-8"/></head><body>';
+                            html += '<table border="1">';
+                            
+                            // 헤더 구성
+                            html += '<thead><tr>';
+                            $('#excelExportTable thead th').each(function() {
+                                html += '<th>' + $(this).text() + '</th>';
+                            });
+                            html += '</tr></thead>';
+                            
+                            // 바디 구성 및 빈 행 방지 필터링
+                            html += '<tbody>';
+                            $('#excelExportTable tbody tr').each(function() {
+                                let rowText = "";
+                                $(this).find('td').each(function() {
+                                    rowText += $(this).text();
+                                });
+                                
+                                if (rowText.trim() !== "") {
+                                    html += '<tr>';
+                                    $(this).find('td').each(function() {
+                                        html += '<td>' + $(this).text() + '</td>';
+                                    });
+                                    html += '</tr>';
+                                }
+                            });
+                            html += '</tbody>';
+                            
+                            html += '</table></body></html>';
+
+                            let blob = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+                            let link = document.createElement('a');
+                            link.href = URL.createObjectURL(blob);
+                            link.download = '재고현황_부자재_' + new Date().toISOString().slice(0,10) + '.xls';
+                            link.click();
+                        });
+
                         $('.dataTables_wrapper > .dataTables_length, .dataTables_wrapper > .dataTables_filter').wrapAll('<div class="top_group"></div>');
                         $('.dataTables_wrapper > .dataTables_info, .dataTables_wrapper > .dataTables_paginate').wrapAll('<div class="bottom_group"></div>');
+                        
                         function dataTableForMoblie() {
                             if ($(window).width() <= 780) {
                                 $('.dataTables_wrapper table.dataTable thead tr th').removeClass('last_th');

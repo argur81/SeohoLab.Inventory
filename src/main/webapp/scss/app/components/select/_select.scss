@@ -69,11 +69,14 @@ select {
         height: 40px;
         border-radius: 10px;
         border: 1px solid #e6e8eb;
-        font-size: 16px;
+        font-size: 14px;
         padding: 0 15px;
         transition: all .4s;
         &.focus {
             border: 1px solid #612d44;
+        }
+        &:disabled {
+            background-color: #f6f7f9;
         }
     }
 }

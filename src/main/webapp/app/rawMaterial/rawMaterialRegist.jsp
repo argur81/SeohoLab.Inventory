@@ -52,24 +52,24 @@
                             <dt>단가구분</dt>
                             <dd>
                                 <select name="price_type" id="priceTypeSelect" class="og_select">
-                                    <option value="단가입력">단가입력</option>
-                                    <option value="kg당 입력">kg당 입력</option>
+                                    <option value="1kg·1g 당">1kg·1g 당</option>
+                                    <option value="무게당 입력">무게당 입력</option>
                                     <option value="가격대">가격대</option>
                                     <option value="기타">기타</option>
                                 </select>
                             </dd>
                         </dl>
 
-                        <!-- 단가 항목 (kg당 입력일 때 w100, 그 외 w25) -->
+                        <!-- 단가 항목 (무게당 입력일 때 w100, 그 외 w25) -->
                         <dl class="w25" id="priceDl">
                             <dt>단가</dt>
                             <dd>
-                                <!-- 1. 단가입력 -->
+                                <!-- 1. 1kg·1g 당 -->
                                 <div class="price_div direct" style="display:none;">
                                     <input type="text" name="price" id="priceInput" class="inputText" placeholder="숫자 단가 입력" inputmode="decimal">
                                 </div>
 
-                                <!-- 2. kg당 입력 (4개 세트) -->
+                                <!-- 2. 무게당 입력 (4개 세트) -->
                                 <div class="price_div kg_enter" style="display:none;">
                                     <ul>
                                         <li>
@@ -221,7 +221,7 @@
                     return parts.join('.');
                 }
 
-                // 단가구분 변경 이벤트 (kg당 입력일 때 w100, 그 외 w25 및 해당 div 토글)
+                // 단가구분 변경 이벤트 (무게당 입력일 때 w100, 그 외 w25 및 해당 div 토글)
                 $('#priceTypeSelect').on('change', function() {
                     let selectedVal = $(this).val();
                     let $priceDl = $('#priceDl');
@@ -230,12 +230,12 @@
                     $priceDl.find('.price_div').hide();
                     $priceDl.find('input').prop('disabled', true);
 
-                    if (selectedVal === '단가입력') {
+                    if (selectedVal === '1kg·1g 당') {
                         $priceDl.removeClass('w100').addClass('w25');
                         let $target = $priceDl.find('.direct');
                         $target.show();
                         $target.find('input').prop('disabled', false);
-                    } else if (selectedVal === 'kg당 입력') {
+                    } else if (selectedVal === '무게당 입력') {
                         $priceDl.removeClass('w25').addClass('w100');
                         let $target = $priceDl.find('.kg_enter');
                         $target.show();

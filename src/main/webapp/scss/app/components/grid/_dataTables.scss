@@ -6,12 +6,23 @@
         margin-bottom: 20px;
         > div {
             float: inherit;
+            @include flexLayout(row, flex-start, center);
+            flex-direction: row-reverse;
+            gap: 5px;
             > label {
                 @include flexLayout(row, flex-start, center);
                 gap: 10px;
                 font-size: 16px;
                 font-weight: 500;
                 color: #595959;
+            }
+            #excelBtn {
+                border: none;
+                background-color: #27ae60;
+                color: #fff;
+                img {
+                    width: 30px;
+                }
             }
         }
         .dataTables_length {
@@ -88,7 +99,7 @@
             tbody {
                 tr {
                     td {
-                        padding: 15px 10px;
+                        padding: 10px;
                         border-right: 1px solid #d1d5d9;
                         word-break: break-all;
                         &:first-child {
@@ -211,10 +222,14 @@
             flex-direction: column-reverse;
             gap: 1rem;
             > div {
+                display: inline-block;
                 > label {
                     gap: 1rem;
                     font-size: 2.4rem;
                     white-space: nowrap;
+                }
+                #excelBtn {
+                    display: none;
                 }
             }
             .dataTables_length {
@@ -280,6 +295,40 @@
                             font-size: 2.4rem;
                             &.last_td {
                                 border-right: none;
+                            }
+                        }
+                        &.child {
+                            padding: 0;
+                            td {
+                                &.child {
+                                    padding: 0;
+                                    ul {
+                                        &.dtr-details {
+                                            width: 100%;
+                                            @include flexLayout(column, flex-start, stretch);
+                                            gap: 1.5rem;
+                                            padding: 1.5rem 0;
+                                            li {
+                                                width: 100%;
+                                                padding: 1.5rem 0;
+                                                border-bottom: 1px solid #d1d5d9;
+                                                @include flexLayout(row, flex-start, stretch);
+                                                font-size: 2.4rem;
+                                                gap:2rem;
+                                                .dtr-title {
+                                                    white-space: nowrap;
+                                                    line-height: 1.4;
+                                                }
+                                                .dtr-data {
+                                                    line-height: 1.4;
+                                                }
+                                                &:last-child {
+                                                    border-bottom: none;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

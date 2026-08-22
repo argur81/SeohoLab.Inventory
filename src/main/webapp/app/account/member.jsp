@@ -193,7 +193,6 @@
                 </div>
                 <div class="top_btn"><button type="button" id="create-user" class="Button bgBlue">직원추가</button></div>
                 <section class="radius">
-                    <!-- 직원 등록 다이얼로그 폼 -->
                     <div id="dialog-form" class="dialog-form" style="display:none;" title="직원 등록">
                         <form class="memberRegist">
                             <ul>
@@ -218,7 +217,6 @@
                         </form>
                     </div>
 
-                    <!-- 직급 수정 다이얼로그 폼 (신규 추가) -->
                     <div id="dialog-update-form" class="dialog-form" style="display:none;" title="직급 수정">
                         <form class="memberRegist">
                             <ul>
@@ -277,7 +275,6 @@
                                     <td data-roll="이름"><%= uName %></td>
                                     <td data-roll="ID"><%= uId %></td>
                                     <td>
-                                        <!-- 수정 버튼에 data 속성으로 기존 정보 전달 -->
                                         <button type="button" class="update-btn" data-userid="<%= uId %>" data-username="<%= uName %>" data-position="<%= uPos.equals("-") ? "" : uPos %>">수정</button>
                                         <button type="button" class="delete-btn" data-userid="<%= uId %>" data-username="<%= uName %>">삭제</button>
                                     </td>
