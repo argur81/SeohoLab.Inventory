@@ -6,10 +6,10 @@
     response.setContentType("text/html; charset=UTF-8");
     response.setCharacterEncoding("UTF-8");
 
-    // 세션에서 로그인한 사용자 아이디 가져오기 (세션 키 이름이 다를 경우 수정 필요)
+    // 세션에서 로그인한 사용자 아이디 가져오기
     String loginUserId = (String) session.getAttribute("userId");
     if (loginUserId == null || loginUserId.trim().isEmpty()) {
-        loginUserId = (String) session.getAttribute("loginId"); // 대체 키 확인용
+        loginUserId = (String) session.getAttribute("loginId");
     }
 
     // 1. PK 수신
@@ -63,7 +63,6 @@
     String kgUnit4 = request.getParameter("kg_unit_4");
     double kgPrice4 = parseDouble(request.getParameter("kg_price_4"));
 
-    String priceRange = request.getParameter("price_range");
     String priceEtc = request.getParameter("price_etc");
 
     // 원료추가정보
@@ -71,8 +70,6 @@
 
     // Function, Packing 단위, rHLB, HLB
     String func = request.getParameter("func");
-    
-    // ★ Packing 단위를 숫자 또는 텍스트 모두 받을 수 있도록 String으로 변경
     String packingUnit = request.getParameter("packing_unit");
     String packingUnitSelect = request.getParameter("packing_unit_select");
     
@@ -90,7 +87,6 @@
         return;
     }
 
-    // ★ DB URL에 한글 캐릭터셋 옵션 추가
     String url = "jdbc:mariadb://svc.sel3.cloudtype.app:32170/seoholabdb?useUnicode=true&characterEncoding=utf8";
     String dbUser = "root";
     String dbPass = System.getenv("DB_PASSWORD");
@@ -123,7 +119,7 @@
             return;
         }
 
-        // UPDATE 쿼리 수행 (user_id 컬럼 추가 반영)
+        // UPDATE 쿼리 수행 (price_range 제거 반영)
         String sql = "UPDATE items SET "
                 + "item_code = ?, item_name = ?, work_order_1 = ?, work_order_2 = ?, "
                 + "chem_name = ?, inci_name = ?, cas_no = ?, supplier = ?, maker = ?, "
@@ -132,11 +128,11 @@
                 + "kg_qty_2 = ?, kg_unit_2 = ?, kg_price_2 = ?, "
                 + "kg_qty_3 = ?, kg_unit_3 = ?, kg_price_3 = ?, "
                 + "kg_qty_4 = ?, kg_unit_4 = ?, kg_price_4 = ?, "
-                + "price_range = ?, price_etc = ?, "
+                + "price_etc = ?, "
                 + "extra_info = ?, "
                 + "func = ?, packing_unit = ?, packing_unit_select = ?, r_hlb = ?, hlb = ?, "
                 + "certification = ?, origin = ?, note = ?, lab_name = ?, "
-                + "user_id = ?, " // 수정자 아이디 반영
+                + "user_id = ?, "
                 + "updated_at = CURRENT_TIMESTAMP "
                 + "WHERE item_id = ?";
 
@@ -172,24 +168,23 @@
         pstmt.setString(22, kgUnit4);
         pstmt.setDouble(23, kgPrice4);
 
-        pstmt.setString(24, priceRange);
-        pstmt.setString(25, priceEtc);
+        pstmt.setString(24, priceEtc);
 
-        pstmt.setString(26, extraInfo);
+        pstmt.setString(25, extraInfo);
 
-        pstmt.setString(27, func);
-        pstmt.setString(28, packingUnit); // String으로 변경되어 setString 사용[cite: 13]
-        pstmt.setString(29, packingUnitSelect);
-        pstmt.setString(30, rHlb);
-        pstmt.setString(31, hlb);
+        pstmt.setString(26, func);
+        pstmt.setString(27, packingUnit);
+        pstmt.setString(28, packingUnitSelect);
+        pstmt.setString(29, rHlb);
+        pstmt.setString(30, hlb);
         
-        pstmt.setString(32, certification);
-        pstmt.setString(33, origin);
-        pstmt.setString(34, note);
-        pstmt.setString(35, labName);
-        pstmt.setString(36, loginUserId); // 세션 아이디 바인딩[cite: 13]
+        pstmt.setString(31, certification);
+        pstmt.setString(32, origin);
+        pstmt.setString(33, note);
+        pstmt.setString(34, labName);
+        pstmt.setString(35, loginUserId);
         
-        pstmt.setInt(37, itemId);
+        pstmt.setInt(36, itemId);
 
         int result = pstmt.executeUpdate();
 

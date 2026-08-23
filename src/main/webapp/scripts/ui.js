@@ -244,7 +244,19 @@ $(document).ready(function(){
             $('header .gnb li.regist').find('.depth').show();
             $('header .gnb li.regist .depth > div a.receiving').addClass('on');
         }
-
+        if($('h5.page_tit p').text() == '제조 지시서'){
+            $('header .gnb li.order').addClass('on');
+            $('header .gnb li.order').find('.depth').show();
+            if($('h5.page_tit b').text() == '관리·신규등록') {
+                $('header .gnb li.order .depth > div a.mgmt').addClass('on');
+            }
+            if($('h5.page_tit b').text() == '제조요청') {
+                $('header .gnb li.order .depth > div a.request').addClass('on');
+            }
+            if($('h5.page_tit b').text() == '진행현황') {
+                $('header .gnb li.order .depth > div a.progress').addClass('on');
+            }
+        }
         if($('h5.page_tit p').text() == '재고현황'){
             $('header .gnb li.stock').addClass('on');
             $('header .gnb li.stock').find('.depth').show();

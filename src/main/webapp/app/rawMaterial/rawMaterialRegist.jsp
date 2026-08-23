@@ -52,24 +52,24 @@
                             <dt>단가구분</dt>
                             <dd>
                                 <select name="price_type" id="priceTypeSelect" class="og_select">
-                                    <option value="1kg·1g 당">1kg·1g 당</option>
-                                    <option value="무게당 입력">무게당 입력</option>
-                                    <option value="가격대">가격대</option>
+                                    <option value="1kg기준">1kg기준</option>
+                                    <option value="1g기준">1g기준</option>
+                                    <option value="무게별">무게별</option>
                                     <option value="기타">기타</option>
                                 </select>
                             </dd>
                         </dl>
 
-                        <!-- 단가 항목 (무게당 입력일 때 w100, 그 외 w25) -->
+                        <!-- 단가 항목 (무게별일 때 w100, 그 외 w25) -->
                         <dl class="w25" id="priceDl">
                             <dt>단가</dt>
                             <dd>
-                                <!-- 1. 1kg·1g 당 -->
+                                <!-- 1. 1kg기준 / 2. 1g기준 공용 단가 입력 -->
                                 <div class="price_div direct" style="display:none;">
                                     <input type="text" name="price" id="priceInput" class="inputText" placeholder="숫자 단가 입력" inputmode="decimal">
                                 </div>
 
-                                <!-- 2. 무게당 입력 (4개 세트) -->
+                                <!-- 3. 무게별 (4개 세트) -->
                                 <div class="price_div kg_enter" style="display:none;">
                                     <ul>
                                         <li>
@@ -121,11 +121,6 @@
                                             <div><input type="text" name="kg_price_4" class="inputText" placeholder="숫자 입력" inputmode="decimal"></div>
                                         </li>
                                     </ul>
-                                </div>
-
-                                <!-- 3. 가격대 입력 -->
-                                <div class="price_div price_range" style="display:none;">
-                                    <input type="text" name="price_range" class="inputText" placeholder="가격대 입력 (예: 10,000 ~ 20,000)" inputmode="decimal">
                                 </div>
 
                                 <!-- 4. 기타 입력 -->
@@ -197,8 +192,8 @@
                         </dl>
 
                         <div class="bottom_btns">
-                            <button type="button" class="Button bgGray" data-width="100" onclick="history.back();">취소</button>
-                            <button type="submit" class="Button bgBlue" data-width="100">등록</button>
+                            <button type="button" class="Button bgGray" data-width="180" onclick="history.back();">취소</button>
+                            <button type="submit" class="Button bgBlue" data-width="180">등록</button>
                         </div>
                     </section>
                 </form>
@@ -221,7 +216,7 @@
                     return parts.join('.');
                 }
 
-                // 단가구분 변경 이벤트 (무게당 입력일 때 w100, 그 외 w25 및 해당 div 토글)
+                // 단가구분 변경 이벤트 (무게별일 때 w100, 그 외 w25 및 해당 div 토글)
                 $('#priceTypeSelect').on('change', function() {
                     let selectedVal = $(this).val();
                     let $priceDl = $('#priceDl');
@@ -230,19 +225,21 @@
                     $priceDl.find('.price_div').hide();
                     $priceDl.find('input').prop('disabled', true);
 
-                    if (selectedVal === '1kg·1g 당') {
+                    if (selectedVal === '1kg기준' || selectedVal === '1g기준') {
                         $priceDl.removeClass('w100').addClass('w25');
                         let $target = $priceDl.find('.direct');
                         $target.show();
                         $target.find('input').prop('disabled', false);
-                    } else if (selectedVal === '무게당 입력') {
+                        
+                        // 플레이스홀더를 기준에 맞게 동적으로 변경해주면 더욱 직관적입니다.
+                        if (selectedVal === '1kg기준') {
+                            $target.find('input').attr('placeholder', '1kg당 단가 입력');
+                        } else {
+                            $target.find('input').attr('placeholder', '1g당 단가 입력');
+                        }
+                    } else if (selectedVal === '무게별') {
                         $priceDl.removeClass('w25').addClass('w100');
                         let $target = $priceDl.find('.kg_enter');
-                        $target.show();
-                        $target.find('input').prop('disabled', false);
-                    } else if (selectedVal === '가격대') {
-                        $priceDl.removeClass('w100').addClass('w25');
-                        let $target = $priceDl.find('.price_range');
                         $target.show();
                         $target.find('input').prop('disabled', false);
                     } else if (selectedVal === '기타') {

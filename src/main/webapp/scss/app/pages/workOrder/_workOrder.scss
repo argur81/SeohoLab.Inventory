@@ -8,6 +8,10 @@
                 row-gap: 25px;
                 column-gap: 10px;
                 flex-wrap: wrap;
+                .top_btns {
+                    width: 100%;
+                    text-align: right;
+                }
                 .add_btn {
                     width: 100%;
                     .Button {
@@ -114,6 +118,104 @@
         }
         .bottom_btns {
             margin-top: 40px;
+        }
+    }
+}
+#container {
+    &.workOrderRequest {
+        padding: 0;
+        .content {
+            padding: 0;
+            .top_btn {
+                width: 100%;
+                padding: 10px 20px;
+                position: sticky;
+                left: 0;
+                top: 0;
+                z-index: 99;
+                @include flexLayout(row, space-between, center);
+                button {
+                    width: 30px;
+                    height: 30px;
+                    border: none;
+                    background: none;
+                }
+            }
+            .step1 {
+                .search_wrap {
+                    width: 100%;
+                    height: calc(100vh - 50px);
+                    @include flexLayout(row, center, center);
+                    .search_form {
+                        width: 700px;
+                        background-color: #fff;
+                        border: 1px solid #612d44;
+                        border-radius: 60px;
+                        padding: 0 20px;
+                        @include flexLayout(row, flex-start, center);
+                        > i {
+                            width: 30px;
+                            >img {
+                                width: 100%;
+                            }
+                        }
+                        input {
+                            width: calc(100% - 30px);
+                            height: 58px;
+                            font-size: 18px;
+                            padding-left: 10px;
+                            border: none;
+                            background-color: transparent;
+                            font-weight: 500;
+                        }
+                    }
+                }
+            }
+            .step2 {
+                .road_data {
+                    width: 100%;
+                    padding: 20px;
+                    table {
+                        table-layout: fixed;
+                        border: 1px solid #8d8d8d;
+                        border-collapse: collapse;
+                        thead {
+                            th {
+                                height: 50px;
+                            }
+                            td {
+                                text-align: center;
+                                &#load-product-name {
+                                    font-size: 16px;
+                                    font-weight: 700;
+                                }
+                            }
+                        }
+                        tbody {
+                            td {
+                                padding: 10px;
+                            }
+                        }
+                        tfoot {
+                            td {
+                                padding: 10px;
+                            }
+                        }
+                        td {
+                            &.al-center {
+                                text-align: center;
+                            }
+                            &.al-right {
+                                text-align: right;
+                            }
+                        }
+                        th,td {
+                            border: 1px solid #8d8d8d;
+                            padding: 0 10px;
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -1,79 +1,81 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.sql.*" %>
 <%
-    // 한글 인코딩 설정
     request.setCharacterEncoding("UTF-8");
-
-    // 수정 또는 임시저장 불러오기용 order_id 파라미터 수신
+    
     String orderIdStr = request.getParameter("order_id");
     int orderId = 0;
+    boolean isEditMode = false;
+
     if (orderIdStr != null && !orderIdStr.trim().isEmpty()) {
         try {
             orderId = Integer.parseInt(orderIdStr);
+            if (orderId > 0) {
+                isEditMode = true;
+            }
         } catch (NumberFormatException e) {
             orderId = 0;
         }
     }
 
-    // DB 연결 정보 설정 (MariaDB)
-    String url = "jdbc:mariadb://svc.sel3.cloudtype.app:32170/seoholabdb?useUnicode=true&characterEncoding=utf8";
+    String url = "jdbc:mariadb://svc.sel3.cloudtype.app:32170/seoholabdb";
     String dbUser = "root";
     String dbPass = System.getenv("DB_PASSWORD");
     if (dbPass == null) dbPass = "1234";
-
-    // 마스터 정보 변수 선언
-    String productName = "";
-    String targetQty = "";
-    String targetUnit = "kg";
-    String managerName = "박소희";
-    String machine = "AGI Mixer";
-    String appearance = "";
-    String scent = "";
-    String specificGravity = "";
-    String ph = "";
-    String theorQty = "";
-    String theorUnit = "kg";
-    String yieldRate = "";
-    String yieldStandard = "";
-    String status = "NORMAL";
 
     Connection conn = null;
     PreparedStatement pstmt = null;
     ResultSet rs = null;
 
-    if (orderId > 0) {
-        try {
-            Class.forName("org.mariadb.jdbc.Driver");
-            conn = DriverManager.getConnection(url, dbUser, dbPass);
+    // 상단 마스터 정보 변수 (신규일 때는 빈 값/기본값으로 초기화)
+    String productName = "";
+    double targetQty = 0;
+    String targetUnit = "kg";
+    String managerName = "";
+    String machine = "";
+    String appearance = "";
+    String scent = "";
+    String specificGravity = "";
+    String ph = "";
+    double theorQty = 0;
+    String theorUnit = "kg";
+    double yieldRate = 0;
+    String yieldStandard = "";
 
-            String masterSql = "SELECT * FROM work_orders WHERE order_id = ?";
-            pstmt = conn.prepareStatement(masterSql);
+    try {
+        Class.forName("org.mariadb.jdbc.Driver");
+        conn = DriverManager.getConnection(url, dbUser, dbPass);
+
+        // 수정 모드일 때만 기존 데이터를 조회
+        if (isEditMode) {
+            String sql = "SELECT * FROM work_orders WHERE order_id = ?";
+            pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, orderId);
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                productName = rs.getString("product_name") != null ? rs.getString("product_name") : "";
-                targetQty = rs.getString("target_qty") != null ? rs.getString("target_qty") : "";
-                targetUnit = rs.getString("target_unit") != null ? rs.getString("target_unit") : "kg";
-                managerName = rs.getString("manager_name") != null ? rs.getString("manager_name") : "박소희";
-                machine = rs.getString("machine") != null ? rs.getString("machine") : "AGI Mixer";
-                appearance = rs.getString("appearance") != null ? rs.getString("appearance") : "";
-                scent = rs.getString("scent") != null ? rs.getString("scent") : "";
-                specificGravity = rs.getString("specific_gravity") != null ? rs.getString("specific_gravity") : "";
-                ph = rs.getString("ph") != null ? rs.getString("ph") : "";
-                theorQty = rs.getString("theor_qty") != null ? rs.getString("theor_qty") : "";
-                theorUnit = rs.getString("theor_unit") != null ? rs.getString("theor_unit") : "kg";
-                yieldRate = rs.getString("yield_rate") != null ? rs.getString("yield_rate") : "";
-                yieldStandard = rs.getString("yield_standard") != null ? rs.getString("yield_standard") : "";
-                status = rs.getString("status") != null ? rs.getString("status") : "NORMAL";
+                productName = rs.getString("product_name");
+                targetQty = rs.getDouble("target_qty");
+                targetUnit = rs.getString("target_unit");
+                managerName = rs.getString("manager_name");
+                machine = rs.getString("machine");
+                appearance = rs.getString("appearance");
+                scent = rs.getString("scent");
+                specificGravity = rs.getString("specific_gravity");
+                ph = rs.getString("ph");
+                theorQty = rs.getDouble("theor_qty");
+                theorUnit = rs.getString("theor_unit");
+                yieldRate = rs.getDouble("yield_rate");
+                yieldStandard = rs.getString("yield_standard");
+            } else {
+                out.println("<script>alert('해당 제조 지시서를 찾을 수 없습니다.'); history.back();</script>");
+                return;
             }
             rs.close();
             pstmt.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (conn != null) try { conn.close(); } catch (SQLException e) {}
         }
+    } catch (Exception e) {
+        e.printStackTrace();
     }
 %>
 <jsp:include page="/app/include/HeaderDocType.jsp" />
@@ -82,26 +84,19 @@
         <div id="container">
             <div class="content workOrderList">
                 <div class="title_set">
-                    <h5 class="page_tit">
-                        <p>제조 지시서</p>
-                        <i><img src="/images/svg/location_arrow.svg"></i>
-                        <b>관리·신규등록</b>
-                        <i><img src="/images/svg/location_arrow.svg"></i>
-                        <%= (orderId == 0) ? "신규등록" : "수정" %>
-                    </h5>
+                    <h5 class="page_tit"><p>제조 지시서</p><i><img src="/images/svg/location_arrow.svg"></i><b>관리·신규등록</b><i><img src="/images/svg/location_arrow.svg"></i><%= isEditMode ? "수정" : "등록" %></h5>
                 </div>
-                <form id="regForm" method="post" action="<%= (orderId == 0) ? "workOrderRegistAction.jsp" : "workOrderTempSaveAction.jsp" %>">
+                <form id="modifyForm" method="post" action="workOrderModifyAction.jsp">
                     <input type="hidden" name="order_id" value="<%= orderId %>">
-
                     <section class="radius">
                         <dl class="w50">
                             <dt>제품명</dt>
-                            <dd><input type="text" name="product_name" class="inputText" placeholder="제품명 입력" value="<%= productName %>" required></dd>
+                            <dd><input type="text" name="product_name" class="inputText" value="<%= productName != null ? productName : "" %>" placeholder="제품명 입력" required></dd>
                         </dl>
                         <dl class="w25">
                             <dt>제조지시량</dt>
                             <dd class="has_input-select">
-                                <input type="text" name="target_qty" class="inputText top-target-qty" inputmode="decimal" value="<%= targetQty %>">
+                                <input type="text" name="target_qty" class="inputText top-target-qty" value="<%= targetQty > 0 ? targetQty : "" %>" inputmode="decimal">
                                 <select name="target_unit" class="og_select top-target-unit">
                                     <option value="kg" <%= "kg".equals(targetUnit) ? "selected" : "" %>>kg</option>
                                     <option value="g" <%= "g".equals(targetUnit) ? "selected" : "" %>>g</option>
@@ -110,7 +105,7 @@
                         </dl>
                         <dl class="w25">
                             <dt>제조지시자</dt>
-                            <dd><input type="text" name="manager_name" class="inputText" value="<%= managerName %>"></dd>
+                            <dd><input type="text" name="manager_name" class="inputText" value="<%= managerName != null ? managerName : "" %>"></dd>
                         </dl>
                         <dl class="w25">
                             <dt>제조기기</dt>
@@ -124,24 +119,24 @@
                         </dl>
                         <dl class="w25">
                             <dt>성상</dt>
-                            <dd><input type="text" name="appearance" class="inputText" value="<%= appearance %>"></dd>
+                            <dd><input type="text" name="appearance" class="inputText" value="<%= appearance != null ? appearance : "" %>"></dd>
                         </dl>
                         <dl class="w25">
                             <dt>향취</dt>
-                            <dd><input type="text" name="scent" class="inputText" value="<%= scent %>"></dd>
+                            <dd><input type="text" name="scent" class="inputText" value="<%= scent != null ? scent : "" %>"></dd>
                         </dl>
                         <dl class="w25">
                             <dt>비중</dt>
-                            <dd><input type="text" name="specific_gravity" class="inputText" value="<%= specificGravity %>"></dd>
+                            <dd><input type="text" name="specific_gravity" class="inputText" value="<%= specificGravity != null ? specificGravity : "" %>"></dd>
                         </dl>
                         <dl class="w25">
                             <dt>pH</dt>
-                            <dd><input type="text" name="ph" class="inputText" value="<%= ph %>"></dd>
+                            <dd><input type="text" name="ph" class="inputText" value="<%= ph != null ? ph : "" %>"></dd>
                         </dl>
                         <dl class="w25">
                             <dt>이론제조량</dt>
                             <dd class="has_input-select">
-                                <input type="text" name="theor_qty" class="inputText" inputmode="decimal" value="<%= theorQty %>">
+                                <input type="text" name="theor_qty" class="inputText" value="<%= theorQty > 0 ? theorQty : "" %>" inputmode="decimal">
                                 <select name="theor_unit" class="og_select">
                                     <option value="kg" <%= "kg".equals(theorUnit) ? "selected" : "" %>>kg</option>
                                     <option value="g" <%= "g".equals(theorUnit) ? "selected" : "" %>>g</option>
@@ -150,16 +145,17 @@
                         </dl>
                         <dl class="w25">
                             <dt>제조수율</dt>
-                            <dd><input type="text" name="yield_rate" class="inputText" placeholder="제조수율 = (실제제조량/이론제조량) * 100" value="<%= yieldRate %>"></dd>
+                            <dd><input type="text" name="yield_rate" class="inputText" value="<%= yieldRate > 0 ? yieldRate : "" %>" placeholder="제조수율 = (실제제조량/이론제조량) * 100"></dd>
                         </dl>
                         <dl class="w25">
                             <dt>제조수율 기준</dt>
-                            <dd><input type="text" name="yield_standard" class="inputText" value="<%= yieldStandard %>"></dd>
+                            <dd><input type="text" name="yield_standard" class="inputText" value="<%= yieldStandard != null ? yieldStandard : "" %>"></dd>
                         </dl>
                     </section>
-
-                    <!-- 하단 원료 투입 목록 섹션 -->
                     <section class="radius">
+                        <div class="top_btns">
+                            <button type="button" id="updatePriceBtn" class="Button bgGray">현재 단가 적용</button>
+                        </div>
                         <table class="order_table">
                             <colgroup>
                                 <col width="100">
@@ -183,47 +179,49 @@
                             </thead>
                             <tbody>
 <%
-    boolean hasItems = false;
-    if (orderId > 0) {
-        try {
-            Class.forName("org.mariadb.jdbc.Driver");
-            conn = DriverManager.getConnection(url, dbUser, dbPass);
+    try {
+        boolean hasItem = false;
+        int rowIdx = 1;
+
+        if (isEditMode) {
             String itemSql = "SELECT * FROM work_order_items WHERE order_id = ? ORDER BY item_row_id ASC";
             pstmt = conn.prepareStatement(itemSql);
             pstmt.setInt(1, orderId);
             rs = pstmt.executeQuery();
 
-            int itemIdx = 1;
             while (rs.next()) {
-                hasItems = true;
+                hasItem = true;
+                String rawName = rs.getString("raw_material_name");
+                String testNum = rs.getString("test_number");
+                double contentPct = rs.getDouble("content_pct");
+                double orderKg = rs.getDouble("order_qty_kg");
+                double orderG = rs.getDouble("order_qty_g");
+                double unitPrice = rs.getDouble("unit_price");
+                long roundedPrice = Math.round(unitPrice);
+                String formattedPrice = (roundedPrice > 0) ? String.format("%,d", roundedPrice) : "";
 %>
                                 <tr>
                                     <td>
-                                        <span class="row-num"><%= itemIdx %></span>
-                                        <% if (itemIdx > 1) { %>
+                                        <span class="row-num"><%= rowIdx %></span>
+                                        <% if (rowIdx > 1) { %>
                                         <button type="button" class="delRowBtn" title="삭제">삭제</button>
                                         <% } %>
                                     </td>
-                                    <td><input type="text" name="raw_material_name" class="inputText item-autocomplete" placeholder="원료명 입력" value="<%= rs.getString("raw_material_name") != null ? rs.getString("raw_material_name") : "" %>"></td>
-                                    <td><input type="text" name="test_number" class="inputText" value="<%= rs.getString("test_number") != null ? rs.getString("test_number") : "" %>"></td>
-                                    <td><div class="unit"><input type="text" name="content_pct" class="inputText row-content-pct" inputmode="decimal" value="<%= rs.getString("content_pct") %>"><i>%</i></div></td>
-                                    <td><div class="unit"><input type="text" name="order_qty_kg" class="inputText order-kg" inputmode="decimal" value="<%= rs.getString("order_qty_kg") %>"><i>kg</i></div></td>
-                                    <td><div class="unit"><input type="text" name="order_qty_g" class="inputText order-g" inputmode="decimal" value="<%= rs.getString("order_qty_g") %>"><i>g</i></div></td>
-                                    <td><div class="unit"><input type="text" name="unit_price" class="inputText item-price" inputmode="decimal" value="<%= rs.getString("unit_price") %>"><i>원</i></div></td>
+                                    <td><input type="text" name="raw_material_name" class="inputText item-autocomplete" value="<%= rawName != null ? rawName : "" %>" placeholder="원료명 입력"></td>
+                                    <td><input type="text" name="test_number" class="inputText" value="<%= testNum != null ? testNum : "" %>"></td>
+                                    <td><div class="unit"><input type="text" name="content_pct" class="inputText row-content-pct" value="<%= contentPct > 0 ? contentPct : "" %>" inputmode="decimal"><i>%</i></div></td>
+                                    <td><div class="unit"><input type="text" name="order_qty_kg" class="inputText order-kg" value="<%= orderKg > 0 ? orderKg : "" %>" inputmode="decimal"><i>kg</i></div></td>
+                                    <td><div class="unit"><input type="text" name="order_qty_g" class="inputText order-g" value="<%= orderG > 0 ? orderG : "" %>" inputmode="decimal"><i>g</i></div></td>
+                                    <td><div class="unit"><input type="text" name="unit_price" class="inputText item-price" value="<%= formattedPrice %>" inputmode="decimal"><i>원</i></div></td>
                                 </tr>
 <%
-                itemIdx++;
+                rowIdx++;
             }
             rs.close();
             pstmt.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (conn != null) try { conn.close(); } catch (SQLException e) {}
         }
-    }
 
-    if (!hasItems) {
+        if (!hasItem) {
 %>
                                 <tr>
                                     <td>
@@ -237,6 +235,9 @@
                                     <td><div class="unit"><input type="text" name="unit_price" class="inputText item-price" inputmode="decimal"><i>원</i></div></td>
                                 </tr>
 <%
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
     }
 %>
                             </tbody>
@@ -254,15 +255,11 @@
                             <button type="button" id="addRowBtn" class="Button">원료 행 추가</button>
                         </div>
                     </section>
-
-                    <!-- 제조방법 및 상(Phase) 관리 섹션 -->
                     <section class="radius">
                         <table class="phase_table">
                             <colgroup>
                                 <col width="100">
                                 <col width="230">
-                                <col width="auto">
-                                <col width="auto">
                             </colgroup>
                             <thead>
                                 <tr>
@@ -274,50 +271,53 @@
                             </thead>
                             <tbody>
 <%
-    boolean hasPhases = false;
-    if (orderId > 0) {
-        try {
-            Class.forName("org.mariadb.jdbc.Driver");
-            conn = DriverManager.getConnection(url, dbUser, dbPass);
+    try {
+        boolean hasPhase = false;
+        int pIdx = 0;
+
+        if (isEditMode) {
             String phaseSql = "SELECT * FROM work_order_phases WHERE order_id = ? ORDER BY phase_row_id ASC";
             pstmt = conn.prepareStatement(phaseSql);
             pstmt.setInt(1, orderId);
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                hasPhases = true;
+                hasPhase = true;
+                String phaseTitle = rs.getString("phase_name");
+                String phaseStart = rs.getString("phase_select_start");
+                String phaseEnd = rs.getString("phase_select_end");
+                String methodDesc = rs.getString("method_desc");
+                String noteDesc = rs.getString("note_desc");
 %>
                                 <tr>
                                     <th>
-                                        <span class="phase-name"><%= rs.getString("phase_name") %></span>
-                                        <input type="hidden" name="phase_title" value="<%= rs.getString("phase_name") %>" class="phase-title-input">
+                                        <span class="phase-name"><%= phaseTitle != null ? phaseTitle : "A상" %></span><input type="hidden" name="phase_title" value="<%= phaseTitle != null ? phaseTitle : "A상" %>" class="phase-title-input">
+                                        <% if (pIdx > 0) { %>
+                                        <button type="button" class="delPhaseBtn" title="삭제">삭제</button>
+                                        <% } %>
                                     </th>
                                     <td>
                                         <div class="phase_num">
-                                            <select name="phase_start" class="og_select phase-start-sel"></select>
+                                            <select name="phase_start" class="og_select phase-start-sel" data-selected="<%= phaseStart != null ? phaseStart : "1" %>"></select>
                                             <i>~</i>
-                                            <select name="phase_end" class="og_select phase-end-sel"></select>
+                                            <select name="phase_end" class="og_select phase-end-sel" data-selected="<%= phaseEnd != null ? phaseEnd : "1" %>"></select>
                                         </div>
                                     </td>
                                     <td>
-                                        <textarea name="method_desc" class="textArea" placeholder="제조방법 입력"><%= rs.getString("method_desc") != null ? rs.getString("method_desc") : "" %></textarea>
+                                        <textarea name="method_desc" class="textArea" placeholder="제조방법 입력"><%= methodDesc != null ? methodDesc : "" %></textarea>
                                     </td>
                                     <td>
-                                        <textarea name="note_desc" class="textArea" placeholder="비고 입력"><%= rs.getString("note_desc") != null ? rs.getString("note_desc") : "" %></textarea>
+                                        <textarea name="note_desc" class="textArea" placeholder="비고 입력"><%= noteDesc != null ? noteDesc : "" %></textarea>
                                     </td>
                                 </tr>
 <%
+                pIdx++;
             }
             rs.close();
             pstmt.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (conn != null) try { conn.close(); } catch (SQLException e) {}
         }
-    }
 
-    if (!hasPhases) {
+        if (!hasPhase) {
 %>
                                 <tr>
                                     <th>
@@ -338,6 +338,11 @@
                                     </td>
                                 </tr>
 <%
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    } finally {
+        if (conn != null) try { conn.close(); } catch(Exception e){}
     }
 %>
                             </tbody>
@@ -346,11 +351,13 @@
                             <button type="button" id="addPhaseBtn" class="Button">추가</button>
                         </div>
                     </section>
-
                     <div class="bottom_btns">
-                        <button type="button" class="Button bgGray" data-width="180" onclick="history.back();">취소</button>
-                        <button type="button" id="tempSaveBtn" class="Button brdrYellow" data-width="180">임시저장</button>
-                        <button type="submit" class="Button bgBlue" data-width="180"><%= (orderId == 0) ? "신규등록" : "수정완료" %></button>
+                        <button type="button" class="Button bgGray" data-width="180" onclick="location.href='workOrderMgmtList.jsp';">목록</button>
+                        <button type="button" class="Button brdrYellow" data-width="180" id="tempSaveBtn">임시저장</button>
+                        <button type="submit" class="Button bgBlue" data-width="180"><%= isEditMode ? "수정" : "등록" %></button>
+                        <% if (isEditMode) { %>
+                        <button type="button" class="Button brdrGray" data-width="180" id="deleteBtn">삭제</button>
+                        <% } %>
                     </div>
                 </form>
             </div>
@@ -369,7 +376,7 @@
             let val = parseFloat($(".top-target-qty").val().replace(/,/g, '')) || 0;
             let unit = $(".top-target-unit").val();
             if (unit === 'kg') {
-                return val * 1000; // 정밀 계산을 위해 소수점 포함 유지
+                return val * 1000;
             } else {
                 return val;
             }
@@ -383,40 +390,27 @@
             let pct = parseFloat($row.find('.row-content-pct').val().replace(/,/g, '')) || 0;
 
             let calculatedPrice = 0;
-
             if (priceType === '1kg기준') {
                 let rowKg = topTargetKg * (pct / 100);
                 calculatedPrice = basePrice * rowKg;
             } else if (priceType === '1g기준') {
                 let rowGrams = topTargetGrams * (pct / 100);
                 calculatedPrice = basePrice * rowGrams;
-            } else if (priceType === '무게별') {
-                let rowKg = topTargetKg * (pct / 100);
-                let q1 = parseFloat($row.find('.item-price').data('kg-qty-1')) || 0;
-                let p1 = parseFloat($row.find('.item-price').data('kg-price-1')) || 0;
-                if (q1 > 0 && p1 > 0) {
-                    calculatedPrice = (p1 / q1) * rowKg;
-                } else {
-                    calculatedPrice = basePrice * rowKg;
-                }
             } else {
                 let rowKg = topTargetKg * (pct / 100);
                 calculatedPrice = basePrice * rowKg;
             }
 
-            if (calculatedPrice > 0 && pct > 0) {
-                $row.find('.item-price').val(formatWithComma(Math.round(calculatedPrice)));
-            } else if (pct === 0) {
-                $row.find('.item-price').val('');
-            }
+            $row.find('.item-price').val(formatWithComma(Math.round(calculatedPrice)));
         }
 
-        // [수정된 재계산 함수: kg 소수점 한자리 추가 및 g 정밀도 4자리 확장 적용]
+        // 전체 행의 수치 동기화 및 오차 없는 g/kg 재계산 함수
         function recalculateAllQuantities() {
             let topTargetGrams = getTopTargetGrams();
             let $rows = $(".order_table tbody tr");
             let totalRows = $rows.length;
 
+            let accumulatedG = 0;
             let totalPct = 0;
             let totalKg = 0;
             let totalG = 0;
@@ -429,19 +423,22 @@
 
                 let rowGrams = 0;
                 if (topTargetGrams > 0 && pct > 0) {
-                    // g단위: 첨부이미지 기준보다 소수점 아래 4자리가 더 표현되도록 총 소수점 4~5자리까지 정밀 유지 (예: 12.1935 등)
-                    rowGrams = (topTargetGrams * pct) / 100;
-                    rowGrams = Math.round(rowGrams * 10000) / 10000; 
+                    if (index === totalRows - 1) {
+                        // 마지막 행은 남은 잔여 g을 모두 흡수하여 오차 원천 차단 (소수점 4자리 기준)
+                        rowGrams = Math.round((topTargetGrams - accumulatedG) * 10000) / 10000;
+                        if (rowGrams < 0) rowGrams = 0;
+                    } else {
+                        rowGrams = (topTargetGrams * pct) / 100;
+                        accumulatedG += rowGrams;
+                        rowGrams = Math.round(rowGrams * 10000) / 10000; 
+                    }
                 }
 
-                // kg단위: g을 1000으로 나누어 기존보다 소수점 자릿수를 한자리 더 확보 (예: 소수점 이하 4~5자리 확보)
                 let rowKg = rowGrams / 1000;
 
                 if (pct > 0 || rowGrams > 0) {
-                    // g은 소수점 아래 4자리 정밀도 표시 (원하시는 콤마/소수점 형태 반영)
-                    $row.find('.order-g').val(rowGrams > 0 ? formatWithComma(rowGrams.toFixed(4)) : "");
-                    // kg은 기존보다 소수점 자릿수를 한자리 더 풍부하게 표시 (소수점 5자리 표현)
-                    $row.find('.order-kg').val(rowKg > 0 ? rowKg.toFixed(5) : "");
+                    $row.find('.order-g').val(rowGrams > 0 ? formatWithComma(rowGrams) : "");
+                    $row.find('.order-kg').val(rowKg > 0 ? rowKg : "");
                 } else {
                     $row.find('.order-g').val("");
                     $row.find('.order-kg').val("");
@@ -456,10 +453,8 @@
             });
 
             $(".order_table tfoot .total-pct").val(formatWithComma(Number(totalPct.toFixed(4))));
-            
-            // 합계 kg 및 g 도 정밀도 맞춤 표현
             $(".order_table tfoot .total-kg").val(formatWithComma(Math.round(totalKg)));
-            $(".order_table tfoot .total-g").val(formatWithComma(totalG.toFixed(4)));
+            $(".order_table tfoot .total-g").val(formatWithComma(Math.round(totalG * 10000) / 10000));
             $(".order_table tfoot .total-price").val(formatWithComma(Math.round(totalPrice)));
         }
 
@@ -470,16 +465,88 @@
                     minLength: 1,
                     select: function (event, ui) {
                         let $row = $(this).closest('tr');
+                        let roundedBasePrice = Math.round(ui.item.price || 0);
                         
                         $row.find('.item-price').data('price-type', ui.item.priceType);
-                        $row.find('.item-price').data('base-price', ui.item.price);
-                        $row.find('.item-price').data('kg-qty-1', ui.item.kgQty1);
-                        $row.find('.item-price').data('kg-price-1', ui.item.kgPrice1);
+                        $row.find('.item-price').data('base-price', roundedBasePrice);
                         
+                        calculateRowPrice($row);
                         recalculateAllQuantities();
                     }
                 });
             }
+
+            $("#updatePriceBtn").on("click", function() {
+                let $rows = $(".order_table tbody tr");
+                let totalRows = $rows.length;
+                let checkedCount = 0;
+                let hasChanged = false;
+
+                if (totalRows === 0) return;
+
+                $rows.each(function() {
+                    let $row = $(this);
+                    let rawName = $row.find('.item-autocomplete').val();
+                    
+                    if (!rawName) {
+                        checkedCount++;
+                        if (checkedCount === totalRows) {
+                            recalculateAllQuantities();
+                            checkAndAlert(hasChanged);
+                        }
+                        return;
+                    }
+
+                    let $priceInput = $row.find('.item-price');
+                    let currentUIPrice = parseFloat($priceInput.val().replace(/,/g, '')) || 0;
+
+                    $.ajax({
+                        url: "getItemAutoComplete.jsp",
+                        type: "GET",
+                        data: { term: rawName },
+                        dataType: "json",
+                        success: function(data) {
+                            let foundItem = null;
+                            if (data && data.length > 0) {
+                                for (let i = 0; i < data.length; i++) {
+                                    if (data[i].label === rawName || data[i].value === rawName) {
+                                        foundItem = data[i];
+                                        break;
+                                    }
+                                }
+                                if (!foundItem) foundItem = data[0];
+                            }
+
+                            if (foundItem && foundItem.price) {
+                                let newDbPrice = Math.round(parseFloat(foundItem.price) || 0);
+
+                                if (currentUIPrice !== newDbPrice) {
+                                    hasChanged = true;
+                                }
+
+                                $priceInput.data('price-type', foundItem.priceType);
+                                $priceInput.data('base-price', newDbPrice);
+                                calculateRowPrice($row);
+                            }
+                        },
+                        complete: function() {
+                            checkedCount++;
+                            if (checkedCount === totalRows) {
+                                recalculateAllQuantities();
+                                checkAndAlert(hasChanged);
+                            }
+                        }
+                    });
+                });
+
+                function checkAndAlert(changed) {
+                    if (changed) {
+                        alert("현재 단가가 적용되었습니다.");
+                    } else {
+                        alert("현재 원료에 변동 된 단가가 없습니다.");
+                    }
+                }
+            });
 
             function updatePhaseNamesAndDeletes() {
                 let totalPhases = $(".phase_table tbody tr").length;
@@ -508,14 +575,20 @@
                     let $startSel = $(this).find(".phase-start-sel");
                     let $endSel = $(this).find(".phase-end-sel");
 
-                    let currentStartVal = parseInt($startSel.val()) || (previousEnd + 1);
-                    let currentEndVal = parseInt($endSel.val()) || totalRows;
+                    let savedStart = parseInt($startSel.attr("data-selected")) || (previousEnd + 1);
+                    let savedEnd = parseInt($endSel.attr("data-selected")) || totalRows;
+
+                    let currentStartVal = parseInt($startSel.val()) || savedStart;
+                    let currentEndVal = parseInt($endSel.val()) || savedEnd;
+
+                    $startSel.removeAttr("data-selected");
+                    $endSel.removeAttr("data-selected");
 
                     if (currentStartVal > totalRows) currentStartVal = totalRows;
                     if (currentEndVal > totalRows) currentEndVal = totalRows;
                     if (currentEndVal < currentStartVal) currentEndVal = currentStartVal;
 
-                    if (index > 0) {
+                    if (index > 0 && currentStartVal <= previousEnd) {
                         currentStartVal = previousEnd + 1;
                         if (currentStartVal > totalRows) currentStartVal = totalRows;
                         if (currentEndVal < currentStartVal) currentEndVal = currentStartVal;
@@ -543,6 +616,24 @@
                 updateAllPhaseSelects();
             }
 
+            // 수정 모드 진입 시 기존에 저장된 금액이 틀어지지 않도록 base-price 역산 세팅
+            $(".order_table tbody tr").each(function () {
+                let $row = $(this);
+                let $priceInput = $row.find('.item-price');
+                let existingPrice = parseFloat($priceInput.val().replace(/,/g, '')) || 0;
+                let topTargetKg = getTopTargetGrams() / 1000;
+                let pct = parseFloat($row.find('.row-content-pct').val().replace(/,/g, '')) || 0;
+
+                if (existingPrice > 0 && topTargetKg > 0 && pct > 0) {
+                    let calculatedKg = topTargetKg * (pct / 100);
+                    if (calculatedKg > 0) {
+                        let basePricePerKg = existingPrice / calculatedKg;
+                        $priceInput.data('base-price', basePricePerKg);
+                        $priceInput.data('price-type', '1kg기준');
+                    }
+                }
+            });
+
             initAutocomplete($(".item-autocomplete"));
             updatePhaseNamesAndDeletes();
             updateAllPhaseSelects();
@@ -564,7 +655,6 @@
                     </tr>
                 `;
                 $(".order_table tbody").append(newRow);
-                
                 updateRowIndices();
                 initAutocomplete($(".order_table tbody tr:last-child .item-autocomplete"));
                 recalculateAllQuantities();
@@ -578,7 +668,6 @@
 
             $("#addPhaseBtn").on("click", function () {
                 let totalRows = $(".order_table tbody tr").length;
-                
                 let lastEnd = 1;
                 let $lastEndSel = $(".phase_table tbody tr:last-child .phase-end-sel");
                 if ($lastEndSel.length > 0) {
@@ -638,12 +727,14 @@
                 let value = $this.val().replace(/[^0-9.]/g, '');
                 let parts = value.split('.');
                 if (parts.length > 2) value = parts[0] + '.' + parts.slice(1).join('');
-
                 $this.val(formatWithComma(value));
             });
 
             $(document).on('input change', '.top-target-qty, .top-target-unit', function() {
                 recalculateAllQuantities();
+                $(".order_table tbody tr").each(function () {
+                    calculateRowPrice($(this));
+                });
             });
 
             $(document).on('input', '.row-content-pct', function() {
@@ -651,7 +742,6 @@
                 let value = $this.val().replace(/[^0-9.]/g, '');
                 let parts = value.split('.');
                 if (parts.length > 2) value = parts[0] + '.' + parts.slice(1).join('');
-                
                 let enteredVal = parseFloat(value) || 0;
 
                 let $row = $this.closest('tr');
@@ -670,92 +760,35 @@
                 }
 
                 $this.val(formatWithComma(value));
-                recalculateAllQuantities();
-            });
-
-            $(document).on('input', '.order_table input[inputmode="decimal"]', function() {
-                let $this = $(this);
-                if ($this.is(':disabled') || $this.prop('readonly') || $this.hasClass('row-content-pct')) return;
-
-                let value = $this.val().replace(/[^0-9.]/g, '');
-                const parts = value.split('.');
-                if (parts.length > 2) value = parts[0] + '.' + parts.slice(1).join('');
-
-                let $row = $this.closest('tr');
-                if (!value || value === '.') {
-                    $this.val('');
-                    if ($this.hasClass('order-kg')) $row.find('.order-g').val('');
-                    else if ($this.hasClass('order-g')) $row.find('.order-kg').val('');
-                    $row.find('.row-content-pct').val('');
-                    recalculateAllQuantities();
-                    return;
-                }
-
-                let numValue = parseFloat(value.replace(/,/g, ''));
-                if (isNaN(numValue)) return;
-
-                let topLimitGrams = getTopTargetGrams();
-
-                if (topLimitGrams > 0) {
-                    let otherGrams = 0;
-                    $(".order_table tbody tr").not($row).each(function() {
-                        otherGrams += parseFloat($(this).find('.order-g').val().replace(/,/g, '')) || 0;
-                    });
-
-                    let maxAllowedGrams = topLimitGrams - otherGrams;
-                    if (maxAllowedGrams < 0) maxAllowedGrams = 0;
-
-                    let currentGrams = $this.hasClass('order-kg') ? (numValue * 1000) : numValue;
-
-                    if (currentGrams > maxAllowedGrams + 0.001) {
-                        alert("합계 제조지시량은 상단의 제조지시량(" + $(".top-target-qty").val() + " " + $(".top-target-unit").val() + ")을 초과할 수 없습니다.");
-                        if ($this.hasClass('order-kg')) {
-                            numValue = maxAllowedGrams / 1000;
-                        } else {
-                            numValue = maxAllowedGrams;
-                        }
-                        value = Number(numValue.toFixed(5)).toString();
-                    }
-                }
-
-                let currentGramsForCalc = $this.hasClass('order-kg') ? (numValue * 1000) : numValue;
-                if (topLimitGrams > 0) {
-                    let calculatedPct = (currentGramsForCalc / topLimitGrams) * 100;
-                    $row.find('.row-content-pct').val(formatWithComma(Number(calculatedPct.toFixed(4))));
-                }
-
-                $this.val(formatWithComma(value));
-
-                if ($this.hasClass('order-kg')) {
-                    let calculatedG = numValue * 1000;
-                    $row.find('.order-g').val(formatWithComma(calculatedG.toFixed(4)));
-                }
-                else if ($this.hasClass('order-g')) {
-                    let calculatedKg = numValue / 1000;
-                    $row.find('.order-kg').val(formatWithComma(calculatedKg.toFixed(5)));
-                }
-
                 calculateRowPrice($row);
                 recalculateAllQuantities();
             });
 
-            $('#tempSaveBtn').on('click', function() {
-                if (!confirm("현재 작성 중인 내용을 임시저장하시겠습니까?")) {
-                    return;
+            // [임시저장] 버튼 클릭 이벤트
+            $("#tempSaveBtn").on("click", function() {
+                if (confirm("현재 작성 중인 내용을 임시저장하시겠습니까?")) {
+                    let $form = $('#modifyForm');
+                    $form.find('input[inputmode="decimal"]').not(':disabled').each(function () {
+                        let rawVal = $(this).val().replace(/,/g, '');
+                        if(rawVal === '') rawVal = '0';
+                        $(this).val(rawVal);
+                    });
+                    $form.attr('action', 'workOrderTempSaveAction.jsp');
+                    $form.submit();
                 }
-
-                let $form = $('#regForm');
-                $form.find('input[inputmode="decimal"]').not(':disabled').each(function () {
-                    let rawVal = $(this).val().replace(/,/g, '');
-                    if(rawVal === '') rawVal = '0';
-                    $(this).val(rawVal);
-                });
-
-                $form.attr('action', 'workOrderTempSaveAction.jsp');
-                $form.submit();
             });
 
-            $('#regForm').on('submit', function (e) {
+            <% if (isEditMode) { %>
+            $("#deleteBtn").on("click", function() {
+                if (confirm("정말 이 제조 지시서를 삭제하시겠습니까?")) {
+                    location.href = "workOrderDeleteAction.jsp?order_id=<%= orderId %>";
+                }
+            });
+            <% } %>
+
+            $('#modifyForm').on('submit', function (e) {
+                if ($(document.activeElement).attr('id') === 'tempSaveBtn') return;
+                
                 $(this).find('input[inputmode="decimal"]').not(':disabled').each(function () {
                     let rawVal = $(this).val().replace(/,/g, '');
                     if(rawVal === '') rawVal = '0';

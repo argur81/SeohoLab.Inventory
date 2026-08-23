@@ -91,8 +91,8 @@
                     </dd></dl>
 
                     <div class="bottom_btns">
-                        <button type="button" class="Button bgGray" onclick="history.back();" data-width="100">취소</button>
-                        <button type="submit" class="Button bgBlue" data-width="100">수정</button>
+                        <button type="button" class="Button bgGray" onclick="history.back();" data-width="180">취소</button>
+                        <button type="submit" class="Button bgBlue" data-width="180">수정</button>
                     </div>
                 </section>
             </form>

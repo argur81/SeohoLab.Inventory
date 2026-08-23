@@ -34,8 +34,8 @@
                             </dd>
                         </dl>
                         <div class="bottom_btns">
-                            <button type="button" class="Button bgGray" data-width="100" onclick="history.back();">취소</button>
-                            <button type="submit" class="Button bgBlue" data-width="100">사용등록</button>
+                            <button type="button" class="Button bgGray" data-width="180" onclick="history.back();">취소</button>
+                            <button type="submit" class="Button bgBlue" data-width="180">사용등록</button>
                         </div>
                         <!--Lot 리스트 팝업-->
                         <div class="layer_popup" id="itemLotPopup" style="display: none;">
@@ -50,7 +50,7 @@
                                     </ul>
                                 </div>
                                 <div class="bottom_btns">
-                                    <button type="button" id="btn_item_apply_lots" class="Button bgBlue" data-width="100">적용</button>
+                                    <button type="button" id="btn_item_apply_lots" class="Button bgBlue" data-width="180">적용</button>
                                 </div>
                             </div>
                         </div>
@@ -73,8 +73,8 @@
                             </dd>
                         </dl>
                         <div class="bottom_btns">
-                            <button type="button" class="Button bgGray" data-width="100" onclick="history.back();">취소</button>
-                            <button type="submit" class="Button bgBlue" data-width="100">사용등록</button>
+                            <button type="button" class="Button bgGray" data-width="180" onclick="history.back();">취소</button>
+                            <button type="submit" class="Button bgBlue" data-width="180">사용등록</button>
                         </div>
                     </section>
                 </form>

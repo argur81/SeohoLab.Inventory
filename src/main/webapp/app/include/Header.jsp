@@ -32,12 +32,12 @@
         </div>
         <ul class="gnb">
             <li class="has_depth order">
-                <p><img src="/images/svg/flask-solid-full.svg">제조 지시서</p>
+                <p><img src="/images/svg/scroll-solid-full.svg">제조 지시서</p>
                 <div class="depth">
                     <div>
-                        <a href="/app/workOrder/workOrderMgmt.jsp" class="used">지시서 관리</a>
-                        <a href="#" class="used">제조요청</a>
-                        <a href="#" class="release">진행현황</a>
+                        <a href="/app/workOrder/workOrderMgmtList.jsp" class="mgmt">관리·신규등록</a>
+                        <a href="/app/workOrderRequest/workOrderRequest.jsp" class="request">제조요청</a>
+                        <a href="#" class="progress">진행현황</a>
                     </div>
                 </div>
             </li>

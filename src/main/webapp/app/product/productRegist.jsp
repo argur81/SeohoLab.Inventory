@@ -43,8 +43,8 @@
                             </dd>
                         </dl>
                         <div class="bottom_btns">
-                            <button type="button" class="Button bgGray" data-width="100" onclick="history.back();">취소</button>
-                            <button type="submit" class="Button bgBlue" data-width="100">등록</button>
+                            <button type="button" class="Button bgGray" data-width="180" onclick="history.back();">취소</button>
+                            <button type="submit" class="Button bgBlue" data-width="180">등록</button>
                         </div>
                     </section>
                 </form>

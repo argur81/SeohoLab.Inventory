@@ -46,8 +46,8 @@
                             </dd>
                         </dl>
                         <div class="bottom_btns">
-                            <button type="button" class="Button bgGray" data-width="100" onclick="history.back();">취소</button>
-                            <button type="submit" class="Button bgBlue" data-width="100">입고등록</button>
+                            <button type="button" class="Button bgGray" data-width="180" onclick="history.back();">취소</button>
+                            <button type="submit" class="Button bgBlue" data-width="180">입고등록</button>
                         </div>
                     </section>
                 </form>
@@ -102,8 +102,8 @@
                             </dd>
                         </dl>
                         <div class="bottom_btns">
-                            <button type="button" class="Button bgGray" data-width="100" onclick="history.back();">취소</button>
-                            <button type="submit" class="Button bgBlue" data-width="100">입고등록</button>
+                            <button type="button" class="Button bgGray" data-width="180" onclick="history.back();">취소</button>
+                            <button type="submit" class="Button bgBlue" data-width="180">입고등록</button>
                         </div>
                     </section>
                 </form>
@@ -149,8 +149,8 @@
                             </dd>
                         </dl>
                         <div class="bottom_btns">
-                            <button type="button" class="Button bgGray" data-width="100" onclick="history.back();">취소</button>
-                            <button type="submit" class="Button bgBlue" data-width="100">입고등록</button>
+                            <button type="button" class="Button bgGray" data-width="180" onclick="history.back();">취소</button>
+                            <button type="submit" class="Button bgBlue" data-width="180">입고등록</button>
                         </div>
                     </section>
                 </form>

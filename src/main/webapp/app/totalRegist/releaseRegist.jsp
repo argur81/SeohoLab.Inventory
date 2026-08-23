@@ -34,8 +34,8 @@
                             </dd>
                         </dl>
                         <div class="bottom_btns">
-                            <button type="button" class="Button bgGray" data-width="100" onclick="history.back();">취소</button>
-                            <button type="submit" class="Button bgBlue" data-width="100">출고등록</button>
+                            <button type="button" class="Button bgGray" data-width="180" onclick="history.back();">취소</button>
+                            <button type="submit" class="Button bgBlue" data-width="180">출고등록</button>
                         </div>
                         <!--Lot 리스트 팝업-->
                         <div class="layer_popup" id="itemLotPopup" style="display: none;">
@@ -50,7 +50,7 @@
                                     </ul>
                                 </div>
                                 <div class="bottom_btns">
-                                    <button type="button" id="btn_item_apply_lots" class="Button bgBlue" data-width="100">적용</button>
+                                    <button type="button" id="btn_item_apply_lots" class="Button bgBlue" data-width="180">적용</button>
                                 </div>
                             </div>
                         </div>
@@ -100,8 +100,8 @@
                             </dd>
                         </dl>
                         <div class="bottom_btns">
-                            <button type="button" class="Button bgGray" data-width="100" onclick="history.back();">취소</button>
-                            <button type="submit" class="Button bgBlue" data-width="100">출고등록</button>
+                            <button type="button" class="Button bgGray" data-width="180" onclick="history.back();">취소</button>
+                            <button type="submit" class="Button bgBlue" data-width="180">출고등록</button>
                         </div>
                         <!-- 제품 Lot 리스트 팝업 추가 -->
                         <div class="layer_popup" id="productLotPopup" style="display: none;">
@@ -114,7 +114,7 @@
                                     <ul id="product_lot_list_ul"></ul>
                                 </div>
                                 <div class="bottom_btns">
-                                    <button type="button" id="btn_product_apply_lots" class="Button bgBlue" data-width="100">적용</button>
+                                    <button type="button" id="btn_product_apply_lots" class="Button bgBlue" data-width="180">적용</button>
                                 </div>
                             </div>
                         </div>

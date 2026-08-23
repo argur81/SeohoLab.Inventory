@@ -2,7 +2,6 @@
 <%@ page import="java.sql.*" %>
 <%
     request.setCharacterEncoding("UTF-8");
-    // ★ alert 및 페이지 한글 깨짐 방지를 위한 응답 인코딩 설정 추가
     response.setContentType("text/html; charset=UTF-8");
     response.setCharacterEncoding("UTF-8");
 
@@ -45,14 +44,13 @@
     String kgUnit4 = request.getParameter("kg_unit_4");
     double kgPrice4 = parseDouble(request.getParameter("kg_price_4"));
 
-    String priceRange = request.getParameter("price_range");
+    // price_range는 화면에서 삭제되었으므로 제외 또는 빈 값 처리
     String priceEtc = request.getParameter("price_etc");
 
     String extraInfo = request.getParameter("extra_info");
 
     String func = request.getParameter("func");
     
-    // ★ Packing 단위를 숫자 또는 텍스트 모두 받을 수 있도록 String으로 변경
     String packingUnit = request.getParameter("packing_unit");
     String packingUnitSelect = request.getParameter("packing_unit_select");
     
@@ -76,7 +74,6 @@
         return;
     }
 
-    // ★ DB URL에 한글 캐릭터셋 옵션 추가
     String url = "jdbc:mariadb://svc.sel3.cloudtype.app:32170/seoholabdb?useUnicode=true&characterEncoding=utf8";
     String dbUser = "root";
     String dbPass = System.getenv("DB_PASSWORD");
@@ -107,6 +104,7 @@
             return;
         }
 
+        // INSERT 쿼리에서 price_range 컬럼 및 파라미터 제거
         String sql = "INSERT INTO items ("
                 + "category, item_code, item_name, work_order_1, work_order_2, "
                 + "chem_name, inci_name, cas_no, supplier, maker, "
@@ -115,13 +113,13 @@
                 + "kg_qty_2, kg_unit_2, kg_price_2, "
                 + "kg_qty_3, kg_unit_3, kg_price_3, "
                 + "kg_qty_4, kg_unit_4, kg_price_4, "
-                + "price_range, price_etc, "
+                + "price_etc, "
                 + "extra_info, "
                 + "func, packing_unit, packing_unit_select, r_hlb, hlb, "
                 + "certification, origin, note, lab_name, "
                 + "min_qty_t, min_qty_kg, min_qty_g, min_qty_mg, total_min_kg, "
                 + "user_id, created_at, updated_at) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
 
         pstmt = conn.prepareStatement(sql);
 
@@ -137,7 +135,7 @@
         pstmt.setString(9, supplier);
         pstmt.setString(10, maker);
         
-        pstmt.setString(11, priceType);
+        pstmt.setString(11, priceType); // '1kg기준', '1g기준', '무게별', '기타' 값이 그대로 저장됨
         pstmt.setDouble(12, price);
 
         pstmt.setDouble(13, kgQty1);
@@ -156,28 +154,27 @@
         pstmt.setString(23, kgUnit4);
         pstmt.setDouble(24, kgPrice4);
 
-        pstmt.setString(25, priceRange);
-        pstmt.setString(26, priceEtc);
+        pstmt.setString(25, priceEtc);
 
-        pstmt.setString(27, extraInfo);
+        pstmt.setString(26, extraInfo);
 
-        pstmt.setString(28, func);
-        pstmt.setString(29, packingUnit); // String으로 변경되어 setString 사용
-        pstmt.setString(30, packingUnitSelect);
-        pstmt.setString(31, rHlb);
-        pstmt.setString(32, hlb);
+        pstmt.setString(27, func);
+        pstmt.setString(28, packingUnit);
+        pstmt.setString(29, packingUnitSelect);
+        pstmt.setString(30, rHlb);
+        pstmt.setString(31, hlb);
         
-        pstmt.setString(33, certification);
-        pstmt.setString(34, origin);
-        pstmt.setString(35, note);
-        pstmt.setString(36, labName);
+        pstmt.setString(32, certification);
+        pstmt.setString(33, origin);
+        pstmt.setString(34, note);
+        pstmt.setString(35, labName);
         
-        pstmt.setDouble(37, minQtyT);
-        pstmt.setDouble(38, minQtyKg);
-        pstmt.setDouble(39, minQtyG);
-        pstmt.setDouble(40, minQtyMg);
-        pstmt.setDouble(41, totalMinKg);
-        pstmt.setString(42, loginUserId);
+        pstmt.setDouble(36, minQtyT);
+        pstmt.setDouble(37, minQtyKg);
+        pstmt.setDouble(38, minQtyG);
+        pstmt.setDouble(39, minQtyMg);
+        pstmt.setDouble(40, totalMinKg);
+        pstmt.setString(41, loginUserId);
 
         int result = pstmt.executeUpdate();
 

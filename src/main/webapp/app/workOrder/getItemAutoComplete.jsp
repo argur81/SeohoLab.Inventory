@@ -1,9 +1,3 @@
-원료명(item_name)뿐만 아니라 work_order_1, work_order_2, chem_name 항목 중 어느 것에든 검색어가 포함되면 자동완성 결과로 조회되도록 SQL의 WHERE 조건을 OR 연산자로 확장하면 됩니다.
-
-수정된 getItemAutoComplete.jsp 코드는 다음과 같습니다.
-
-getItemAutoComplete.jsp
-Java
 <%@ page language="java" contentType="application/json; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*" %>
 <%
@@ -15,7 +9,7 @@ Java
         term = "";
     }
 
-    String url = "jdbc:mariadb://svc.sel3.cloudtype.app:32170/seoholabdb";
+    String url = "jdbc:mariadb://svc.sel3.cloudtype.app:32170/seoholabdb?useUnicode=true&characterEncoding=utf8";
     String dbUser = "root";
     String dbPass = System.getenv("DB_PASSWORD");
     if (dbPass == null) dbPass = "1234";
@@ -31,11 +25,10 @@ Java
         Class.forName("org.mariadb.jdbc.Driver");
         conn = DriverManager.getConnection(url, dbUser, dbPass);
 
-        // item_name, work_order_1, work_order_2, chem_name 중 하나라도 일치하면 조회
-        String sql = "SELECT item_name, price FROM items " +
-                     "WHERE item_name LIKE ? OR work_order_1 LIKE ? OR work_order_2 LIKE ? OR chem_name LIKE ? " +
-                     "ORDER BY item_name ASC LIMIT 20";
-                     
+        // price_type 및 세부 단가 관련 컬럼 추가 조회
+        String sql = "SELECT item_name, price_type, price, kg_qty_1, kg_price_1 FROM items " +
+                    "WHERE item_name LIKE ? OR work_order_1 LIKE ? OR work_order_2 LIKE ? OR chem_name LIKE ? " +
+                    "ORDER BY item_name ASC LIMIT 20";
         pstmt = conn.prepareStatement(sql);
         String searchKeyword = "%" + term + "%";
         pstmt.setString(1, searchKeyword);
@@ -51,12 +44,18 @@ Java
                 jsonBuilder.append(",");
             }
             String itemName = rs.getString("item_name");
+            String priceType = rs.getString("price_type");
             double price = rs.getDouble("price");
+            double kgQty1 = rs.getDouble("kg_qty_1");
+            double kgPrice1 = rs.getDouble("kg_price_1");
 
             jsonBuilder.append("{");
             jsonBuilder.append("\"label\": \"").append(itemName).append("\",");
             jsonBuilder.append("\"value\": \"").append(itemName).append("\",");
-            jsonBuilder.append("\"price\": ").append(price);
+            jsonBuilder.append("\"priceType\": \"").append(priceType != null ? priceType : "1kg기준").append("\",");
+            jsonBuilder.append("\"price\": ").append(price).append(",");
+            jsonBuilder.append("\"kgQty1\": ").append(kgQty1).append(",");
+            jsonBuilder.append("\"kgPrice1\": ").append(kgPrice1);
             jsonBuilder.append("}");
 
             first = false;

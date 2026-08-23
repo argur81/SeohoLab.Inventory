@@ -30,16 +30,15 @@
     double price = 0;
     double kgQty1 = 0, kgPrice1 = 0, kgQty2 = 0, kgPrice2 = 0, kgQty3 = 0, kgPrice3 = 0, kgQty4 = 0, kgPrice4 = 0;
     String kgUnit1 = "kg", kgUnit2 = "kg", kgUnit3 = "kg", kgUnit4 = "kg";
-    String priceRange = "", priceEtc = "";
+    String priceEtc = "";
 
-    // Packing 단위 (숫자/텍스트 모두 수용 가능하도록 String으로 변경)
+    // Packing 단위
     String packingUnit = "";
     String packingUnitSelect = "kg";
 
     // 기타 항목
     String func = "", rHlb = "", hlb = "", certification = "", extraInfo = "", labName = "", origin = "", note = "";
 
-    // ★ DB URL에 한글 캐릭터셋 옵션 추가
     String url = "jdbc:mariadb://svc.sel3.cloudtype.app:32170/seoholabdb?useUnicode=true&characterEncoding=utf8";
     String dbUser = "root";
     String dbPass = System.getenv("DB_PASSWORD");
@@ -72,7 +71,7 @@
             supplier = rs.getString("supplier") != null ? rs.getString("supplier") : "";
             maker = rs.getString("maker") != null ? rs.getString("maker") : "";
             
-            priceType = rs.getString("price_type") != null ? rs.getString("price_type") : "1kg·1g 당";
+            priceType = rs.getString("price_type") != null ? rs.getString("price_type") : "1kg기준";
             price = rs.getDouble("price");
 
             kgQty1 = rs.getDouble("kg_qty_1"); kgUnit1 = rs.getString("kg_unit_1") != null ? rs.getString("kg_unit_1") : "kg"; kgPrice1 = rs.getDouble("kg_price_1");
@@ -80,10 +79,8 @@
             kgQty3 = rs.getDouble("kg_qty_3"); kgUnit3 = rs.getString("kg_unit_3") != null ? rs.getString("kg_unit_3") : "kg"; kgPrice3 = rs.getDouble("kg_price_3");
             kgQty4 = rs.getDouble("kg_qty_4"); kgUnit4 = rs.getString("kg_unit_4") != null ? rs.getString("kg_unit_4") : "kg"; kgPrice4 = rs.getDouble("kg_price_4");
 
-            priceRange = rs.getString("price_range") != null ? rs.getString("price_range") : "";
             priceEtc = rs.getString("price_etc") != null ? rs.getString("price_etc") : "";
 
-            // Packing 단위 처리 수정
             packingUnit = rs.getString("packing_unit") != null ? rs.getString("packing_unit") : "";
             packingUnitSelect = rs.getString("packing_unit_select") != null ? rs.getString("packing_unit_select") : "kg";
 
@@ -166,9 +163,9 @@
                             <dt>단가구분</dt>
                             <dd>
                                 <select name="price_type" id="priceTypeSelect" class="og_select">
-                                    <option value="1kg·1g 당" <%= "1kg·1g 당".equals(priceType) ? "selected" : "" %>>1kg·1g 당</option>
-                                    <option value="무게당 입력" <%= "무게당 입력".equals(priceType) ? "selected" : "" %>>무게당 입력</option>
-                                    <option value="가격대" <%= "가격대".equals(priceType) ? "selected" : "" %>>가격대</option>
+                                    <option value="1kg기준" <%= "1kg기준".equals(priceType) ? "selected" : "" %>>1kg기준</option>
+                                    <option value="1g기준" <%= "1g기준".equals(priceType) ? "selected" : "" %>>1g기준</option>
+                                    <option value="무게별" <%= "무게별".equals(priceType) ? "selected" : "" %>>무게별</option>
                                     <option value="기타" <%= "기타".equals(priceType) ? "selected" : "" %>>기타</option>
                                 </select>
                             </dd>
@@ -233,9 +230,6 @@
                                         </li>
                                     </ul>
                                 </div>
-                                <div class="price_div price_range" style="display:none;">
-                                    <input type="text" name="price_range" class="inputText" value="<%= priceRange %>" placeholder="가격대 입력 (예: 10,000 ~ 20,000)">
-                                </div>
                                 <div class="price_div etc_price" style="display:none;">
                                     <input type="text" name="price_etc" class="inputText" value="<%= priceEtc %>" placeholder="(예: 인상이슈, 가격인상 등)">
                                 </div>
@@ -293,11 +287,11 @@
                             <dd><input type="text" name="lab_name" class="inputText" value="<%= labName %>"></dd>
                         </dl>
 
-                        <!-- 하단 버튼 영역 (삭제 버튼 추가) -->
+                        <!-- 하단 버튼 영역 -->
                         <div class="bottom_btns">
-                            <button type="button" class="Button bgGray" data-width="100" onclick="history.back();">취소</button>
-                            <button type="submit" class="Button bgBlue" data-width="100">수정</button>
-                            <button type="button" class="Button brdrGray" data-width="100" onclick="deleteItem(<%= itemId %>);">삭제</button>
+                            <button type="button" class="Button bgGray" data-width="180" onclick="history.back();">취소</button>
+                            <button type="submit" class="Button bgBlue" data-width="180">수정</button>
+                            <button type="button" class="Button brdrGray" data-width="180" onclick="deleteItem(<%= itemId %>);">삭제</button>
                         </div>
                     </section>
                 </form>
@@ -305,7 +299,6 @@
         </div>
 
         <script>
-            // 삭제 확인 및 처리 함수
             function deleteItem(itemId) {
                 if (confirm('정말 이 원료 정보를 삭제하시겠습니까?')) {
                     const form = document.createElement('form');
@@ -338,19 +331,20 @@
                     $priceDl.find('.price_div').hide();
                     $priceDl.find('input').prop('disabled', true);
 
-                    if (selectedVal === '1kg·1g 당') {
+                    if (selectedVal === '1kg기준' || selectedVal === '1g기준') {
                         $priceDl.removeClass('w100').addClass('w25');
                         let $target = $priceDl.find('.direct');
                         $target.show();
                         $target.find('input').prop('disabled', false);
-                    } else if (selectedVal === '무게당 입력') {
+
+                        if (selectedVal === '1kg기준') {
+                            $target.find('input').attr('placeholder', '1kg당 단가 입력');
+                        } else {
+                            $target.find('input').attr('placeholder', '1g당 단가 입력');
+                        }
+                    } else if (selectedVal === '무게별') {
                         $priceDl.removeClass('w25').addClass('w100');
                         let $target = $priceDl.find('.kg_enter');
-                        $target.show();
-                        $target.find('input').prop('disabled', false);
-                    } else if (selectedVal === '가격대') {
-                        $priceDl.removeClass('w100').addClass('w25');
-                        let $target = $priceDl.find('.price_range');
                         $target.show();
                         $target.find('input').prop('disabled', false);
                     } else if (selectedVal === '기타') {

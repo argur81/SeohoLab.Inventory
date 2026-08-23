@@ -123,9 +123,9 @@
                             </dd>
                         </dl>
                         <div class="bottom_btns">
-                            <button type="button" class="Button bgGray" data-width="100" onclick="history.back();">취소</button>
-                            <button type="submit" class="Button bgBlue" data-width="100">수정</button>
-                            <button type="button" id="deleteBtn" class="Button brdrGray" data-width="100">삭제</button>
+                            <button type="button" class="Button bgGray" data-width="180" onclick="history.back();">취소</button>
+                            <button type="submit" class="Button bgBlue" data-width="180">수정</button>
+                            <button type="button" id="deleteBtn" class="Button brdrGray" data-width="180">삭제</button>
                         </div>
                     </section>
                 </form>

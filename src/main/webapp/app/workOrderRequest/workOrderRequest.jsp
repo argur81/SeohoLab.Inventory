@@ -1,0 +1,268 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="java.time.LocalDate" %>
+<%
+    // 오늘 날짜 계산 (YYYY-MM-DD)
+    String todayDate = LocalDate.now().toString();
+%>
+<jsp:include page="/app/include/HeaderDocType.jsp" />
+    <!-- jQuery UI 스타일 및 스크립트 (자동완성용) -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="//code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+    <div id="wrap">
+        <div id="container" class="workOrderRequest">
+            <div class="content">
+                <div class="top_btn">
+                        <button class="back" title="돌아가기" onclick="history.back();"><img src="/images/svg/arrow-left-solid-full.svg"></button>
+                        <button class="home" title="홈으로" onclick="location.href='/app/home/main.jsp';"><img src="/images/svg/house-regular-full.svg"></button>
+                        <button class="back" title="리셋" onclick="location.reload();"><img src="/images/svg/rotate-solid-full.svg"></button>
+                </div>
+                <!--Step1-->
+                <div class="step1" id="step1Area">
+                    <div class="search_wrap">
+                        <div class="search_form">
+                            <i><img src="/images/logo/symbol.svg"></i>
+                            <input type="text" id="searchProductName" placeholder="제품명을 입력하여 검색하세요.">
+                        </div>
+                    </div>
+                </div>
+                <!--//Step1-->
+                <!--Step2-->
+                <div class="step2" id="step2Area" style="display: none;">
+                    <div class="road_data">
+                        <table>
+                            <colgroup>
+                                <col width="100">
+                                <col width="60">
+                                <col width="auto">
+                                <col width="120">
+                                <col width="120">
+                                <col width="120">
+                                <col width="120">
+                                <col width="110">
+                                <col width="110">
+                                <col width="110">
+                                <col width="110">
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th>제품명</th>
+                                    <td colspan="5" id="load-product-name"></td>
+                                    <th colspan="3">제조지시량</th>
+                                    <td colspan="2"><span id="load-target-qty"></span> <span id="load-target-unit"></span></td>
+                                </tr>
+                                <tr>
+                                    <th>제조기기</th>
+                                    <td colspan="5" id="load-machine"></td>
+                                    <th>제조지시자</th>
+                                    <td id="load-manager-name"></td>
+                                    <th>제조지시일</th>
+                                    <td colspan="2"><%= todayDate %></td>
+                                </tr>
+                                <tr>
+                                    <th>상</th>
+                                    <th>No.</th>
+                                    <th>원료명</th>
+                                    <th>원료시험번호</th>
+                                    <th>함량(%)</th>
+                                    <th>제조지시량(kg)</th>
+                                    <th>제조지시량(g)</th>
+                                    <th colspan="2">제조방법</th>
+                                    <th colspan="2">비고</th>
+                                </tr>
+                            </thead>
+                            <tbody id="load-items-tbody">
+                                <!-- AJAX를 통해 동적 행 및 rowspan이 적용된 Phase가 삽입됩니다 -->
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="4">합계</th>
+                                    <td id="load-total-pct" class="al-right"></td>
+                                    <td id="load-total-kg" class="al-right"></td>
+                                    <td id="load-total-g" class="al-right"></td>
+                                    <td colspan="4">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <th>성상</th>
+                                    <td colspan="5" id="load-appearance"></td>
+                                    <th>이론제조량</th>
+                                    <td colspan="4"><span id="load-theor-qty"></span> <span id="load-theor-unit"></span></td>
+                                </tr>
+                                <tr>
+                                    <th>향취</th>
+                                    <td colspan="5" id="load-scent"></td>
+                                    <th>제조수율</th>
+                                    <td colspan="4"><span id="load-yield-rate"></span>%</td>
+                                </tr>
+                                <tr>
+                                    <th>비중</th>
+                                    <td colspan="5" id="load-specific-gravity"></td>
+                                    <th>제조수율기준</th>
+                                    <td colspan="4" id="load-yield-standard"></td>
+                                </tr>
+                                <tr>
+                                    <th>ph</th>
+                                    <td colspan="5" id="load-ph"></td>
+                                    <td colspan="5" class="al-center">제조수율 = (실제제조량/이론제조량) * 100</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <!--//Step2-->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 천단위 콤마 포맷 함수
+        function formatWithComma(value) {
+            if (!value && value !== 0) return "";
+            let parts = value.toString().split('.');
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return parts.join('.');
+        }
+
+        $(document).ready(function() {
+            // 1. jQuery UI 자동완성 설정 (제품명 검색)
+            $("#searchProductName").autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: "getWorkOrderAutoComplete.jsp",
+                        type: "GET",
+                        data: { term: request.term },
+                        dataType: "json",
+                        success: function(data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 1,
+                select: function(event, ui) {
+                    $("#searchProductName").val(ui.item.label);
+                    // 2. 선택된 제품의 order_id로 상세 데이터 로드 함수 호출
+                    loadWorkOrderData(ui.item.orderId);
+                    return false;
+                }
+            });
+        });
+
+        // 2 & 4. 선택된 제품의 DB 데이터를 가져와서 테이블에 렌더링 (phase rowspan 계산 포함)
+        function loadWorkOrderData(orderId) {
+            $.ajax({
+                url: "getWorkOrderDetail.jsp",
+                type: "GET",
+                data: { order_id: orderId },
+                dataType: "json",
+                success: function(res) {
+                    if (!res || !res.master) {
+                        alert("데이터를 불러오지 못했습니다.");
+                        return;
+                    }
+
+                    let m = res.master;
+                    let items = res.items || [];
+                    let phases = res.phases || [];
+
+                    // 마스터 정보 맵핑
+                    $("#load-product-name").text(m.product_name || "");
+                    $("#load-target-qty").text(m.target_qty || 0);
+                    $("#load-target-unit").text(m.target_unit || "kg");
+                    $("#load-machine").text(m.machine || "");
+                    $("#load-manager-name").text(m.manager_name || "");
+                    $("#load-appearance").text(m.appearance || "");
+                    $("#load-scent").text(m.scent || "");
+                    $("#load-specific-gravity").text(m.specific_gravity || "");
+                    $("#load-ph").text(m.ph || "");
+                    $("#load-theor-qty").text(m.theor_qty || 0);
+                    $("#load-theor-unit").text(m.theor_unit || "kg");
+                    $("#load-yield-rate").text(m.yield_rate || 0);
+                    $("#load-yield-standard").text(m.yield_standard || "");
+
+                    let tbodyHtml = "";
+                    let totalPct = 0;
+                    let totalKg = 0;
+                    let totalG = 0;
+
+                    let rowPhaseMap = {};
+                    phases.forEach(function(p) {
+                        let start = parseInt(p.phase_select_start) || 1;
+                        let end = parseInt(p.phase_select_end) || 1;
+                        let spanCount = (end - start) + 1;
+                        
+                        rowPhaseMap[start] = {
+                            phaseName: p.phase_name,
+                            methodDesc: p.method_desc,
+                            noteDesc: p.note_desc,
+                            rowspan: spanCount
+                        };
+                        for (let r = start + 1; r <= end; r++) {
+                            rowPhaseMap[r] = { skip: true };
+                        }
+                    });
+
+                    // 원료 목록 테이블 렌더링
+                    items.forEach(function(item, idx) {
+                        let rowNum = idx + 1;
+                        totalPct += parseFloat(item.content_pct) || 0;
+                        totalKg += parseFloat(item.order_qty_kg) || 0;
+                        totalG += parseFloat(item.order_qty_g) || 0;
+
+                        tbodyHtml += `<tr>`;
+
+                        if (rowPhaseMap[rowNum]) {
+                            if (!rowPhaseMap[rowNum].skip) {
+                                let pInfo = rowPhaseMap[rowNum];
+                                // [수정] 제조방법에 괄호가 있을 경우 앞에 <br> 태그 추가
+                                let formattedMethod = (pInfo.methodDesc || '').replace(/\(/g, '<br>(');
+
+                                tbodyHtml += `<td class="al-center" rowspan="\${pInfo.rowspan}">\${pInfo.phaseName}</td>`;
+                                tbodyHtml += `<td class="al-center">\${rowNum}</td>`;
+                                tbodyHtml += `<td>\${item.raw_material_name || ''}</td>`;
+                                tbodyHtml += `<td class="al-center">\${item.test_number || ''}</td>`;
+                                tbodyHtml += `<td class="al-right">\${formatWithComma(item.content_pct || 0)} %</td>`;
+                                tbodyHtml += `<td class="al-right">\${formatWithComma(item.order_qty_kg || 0)} kg</td>`;
+                                tbodyHtml += `<td class="al-right">\${formatWithComma(item.order_qty_g || 0)} g</td>`;
+                                tbodyHtml += `<td class="al-center" colspan="2" rowspan="\${pInfo.rowspan}">\${formattedMethod}</td>`;
+                                tbodyHtml += `<td class="al-center" colspan="2" rowspan="\${pInfo.rowspan}">\${pInfo.noteDesc || ''}</td>`;
+                            } else {
+                                tbodyHtml += `<td class="al-center">\${rowNum}</td>`;
+                                tbodyHtml += `<td>\${item.raw_material_name || ''}</td>`;
+                                tbodyHtml += `<td class="al-center">\${item.test_number || ''}</td>`;
+                                tbodyHtml += `<td class="al-right">\${formatWithComma(item.content_pct || 0)} %</td>`;
+                                tbodyHtml += `<td class="al-right">\${formatWithComma(item.order_qty_kg || 0)} kg</td>`;
+                                tbodyHtml += `<td class="al-right">\${formatWithComma(item.order_qty_g || 0)} g</td>`;
+                            }
+                        } else {
+                            tbodyHtml += `<td>-</td>`;
+                            tbodyHtml += `<td class="al-center">\${rowNum}</td>`;
+                            tbodyHtml += `<td>\${item.raw_material_name || ''}</td>`;
+                            tbodyHtml += `<td class="al-center">\${item.test_number || ''}</td>`;
+                            tbodyHtml += `<td class="al-right">\${formatWithComma(item.content_pct || 0)} %</td>`;
+                            tbodyHtml += `<td class="al-right">\${formatWithComma(item.order_qty_kg || 0)} kg</td>`;
+                            tbodyHtml += `<td class="al-right">\${formatWithComma(item.order_qty_g || 0)} g</td>`;
+                            tbodyHtml += `<td class="al-center" colspan="2"></td>`;
+                            tbodyHtml += `<td class="al-center" colspan="2"></td>`;
+                        }
+
+                        tbodyHtml += `</tr>`;
+                    });
+
+                    $("#load-items-tbody").html(tbodyHtml);
+
+                    // 합계 영역 소수점 제거 및 단위 부착
+                    $("#load-total-pct").text(formatWithComma(Math.round(totalPct)) + " %");
+                    $("#load-total-kg").text(formatWithComma(Math.round(totalKg)) + " kg");
+                    $("#load-total-g").text(formatWithComma(Math.round(totalG)) + " g");
+
+                    // Step2 영역 노출
+                    $("#step1Area").hide();
+                    $("#step2Area").show();
+                },
+                error: function() {
+                    alert("상세 데이터를 가져오는 중 오류가 발생했습니다.");
+                }
+            });
+        }
+    </script>
+<jsp:include page="/app/include/FooterDocType.jsp" />

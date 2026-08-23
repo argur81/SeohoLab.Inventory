@@ -1394,6 +1394,15 @@ button.Button.brdrGray:hover {
   border-color: #292929;
   color: #fff;
 }
+button.Button.brdrYellow {
+  background-color: #fff;
+  border: 1px solid #f5b136;
+  color: #f5b136;
+}
+button.Button.brdrYellow:hover {
+  background-color: #f5b136;
+  color: #292929;
+}
 
 @media screen and (max-width: 780px) {
   button.Button {
@@ -5145,6 +5154,10 @@ footer a {
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
 }
+.content.workOrderList section.radius .top_btns {
+  width: 100%;
+  text-align: right;
+}
 .content.workOrderList section.radius .add_btn {
   width: 100%;
 }
@@ -5242,6 +5255,127 @@ footer a {
 }
 .content.workOrderList .bottom_btns {
   margin-top: 40px;
+}
+
+#container.workOrderRequest {
+  padding: 0;
+}
+#container.workOrderRequest .content {
+  padding: 0;
+}
+#container.workOrderRequest .content .top_btn {
+  width: 100%;
+  padding: 10px 20px;
+  position: sticky;
+  left: 0;
+  top: 0;
+  z-index: 99;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+#container.workOrderRequest .content .top_btn button {
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: none;
+}
+#container.workOrderRequest .content .step1 .search_wrap {
+  width: 100%;
+  height: calc(100vh - 50px);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+#container.workOrderRequest .content .step1 .search_wrap .search_form {
+  width: 700px;
+  background-color: #fff;
+  border: 1px solid #612d44;
+  border-radius: 60px;
+  padding: 0 20px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+#container.workOrderRequest .content .step1 .search_wrap .search_form > i {
+  width: 30px;
+}
+#container.workOrderRequest .content .step1 .search_wrap .search_form > i > img {
+  width: 100%;
+}
+#container.workOrderRequest .content .step1 .search_wrap .search_form input {
+  width: calc(100% - 30px);
+  height: 58px;
+  font-size: 18px;
+  padding-left: 10px;
+  border: none;
+  background-color: transparent;
+  font-weight: 500;
+}
+#container.workOrderRequest .content .step2 .road_data {
+  width: 100%;
+  padding: 20px;
+}
+#container.workOrderRequest .content .step2 .road_data table {
+  table-layout: fixed;
+  border: 1px solid #8d8d8d;
+  border-collapse: collapse;
+}
+#container.workOrderRequest .content .step2 .road_data table thead th {
+  height: 50px;
+}
+#container.workOrderRequest .content .step2 .road_data table thead td {
+  text-align: center;
+}
+#container.workOrderRequest .content .step2 .road_data table thead td#load-product-name {
+  font-size: 16px;
+  font-weight: 700;
+}
+#container.workOrderRequest .content .step2 .road_data table tbody td {
+  padding: 10px;
+}
+#container.workOrderRequest .content .step2 .road_data table tfoot td {
+  padding: 10px;
+}
+#container.workOrderRequest .content .step2 .road_data table td.al-center {
+  text-align: center;
+}
+#container.workOrderRequest .content .step2 .road_data table td.al-right {
+  text-align: right;
+}
+#container.workOrderRequest .content .step2 .road_data table th, #container.workOrderRequest .content .step2 .road_data table td {
+  border: 1px solid #8d8d8d;
+  padding: 0 10px;
 }
 
 @media screen and (max-width: 780px) {
