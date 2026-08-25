@@ -108,6 +108,11 @@
                             </tfoot>
                         </table>
                     </div>
+                    <div class="bottom_btns">
+                        <button type="button" id="cancelBtn" class="Button bgGray" data-width="180">취소</button>
+                        <button type="submit" class="Button bgBlue" data-width="180">요청</button>
+                        <button type="button" id="modifyBtn" class="Button brdrGreen" data-width="180">수정</button>
+                    </div>
                 </div>
                 <!--//Step2-->
             </div>
@@ -115,6 +120,9 @@
     </div>
 
     <script>
+        // 현재 선택된 order_id를 담아둘 전역 변수
+        let currentOrderId = null;
+
         // 천단위 콤마 포맷 함수
         function formatWithComma(value) {
             if (!value && value !== 0) return "";
@@ -139,16 +147,35 @@
                 },
                 minLength: 1,
                 select: function(event, ui) {
-                    $("#searchProductName").val(ui.item.label);
-                    // 2. 선택된 제품의 order_id로 상세 데이터 로드 함수 호출
+                    $("#searchProductName").val(ui.item.value); // 입력창엔 제품명 입력
+                    currentOrderId = ui.item.orderId; // 선택된 order_id 저장
                     loadWorkOrderData(ui.item.orderId);
                     return false;
                 }
             });
+
+            // 2. 취소 버튼 클릭 이벤트: Step2 숨기고 Step1(검색창) 노출 및 초기화
+            $("#cancelBtn").on("click", function() {
+                $("#step2Area").hide();
+                $("#step1Area").show();
+                $("#searchProductName").val("");
+                currentOrderId = null;
+            });
+
+            // 3. 수정 버튼 클릭 이벤트: 연결된 order_id를 들고 workOrderModify.jsp로 이동
+            $("#modifyBtn").on("click", function() {
+                if (!currentOrderId) {
+                    alert("수정할 데이터의 정보가 없습니다.");
+                    return;
+                }
+                location.href = "/app/workOrder/workOrderModify.jsp?order_id=" + currentOrderId;
+            });
         });
 
-        // 2 & 4. 선택된 제품의 DB 데이터를 가져와서 테이블에 렌더링 (phase rowspan 계산 포함)
+        // 4. 선택된 제품의 DB 데이터를 가져와서 테이블에 렌더링 (phase rowspan 계산 포함)
         function loadWorkOrderData(orderId) {
+            currentOrderId = orderId; // 함수 호출 시에도 안전하게 세팅
+
             $.ajax({
                 url: "getWorkOrderDetail.jsp",
                 type: "GET",
@@ -213,7 +240,6 @@
                         if (rowPhaseMap[rowNum]) {
                             if (!rowPhaseMap[rowNum].skip) {
                                 let pInfo = rowPhaseMap[rowNum];
-                                // [수정] 제조방법에 괄호가 있을 경우 앞에 <br> 태그 추가
                                 let formattedMethod = (pInfo.methodDesc || '').replace(/\(/g, '<br>(');
 
                                 tbodyHtml += `<td class="al-center" rowspan="\${pInfo.rowspan}">\${pInfo.phaseName}</td>`;

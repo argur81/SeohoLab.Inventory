@@ -44,6 +44,15 @@ button {
                 color: #292929;
             }
         }
+        &.brdrGreen {
+            background-color: #fff;
+            border: 1px solid #19a74f;
+            color: #19a74f;
+            &:hover {
+                background-color: #19a74f;
+                color: #fff;
+            }
+        }
     }
 }
 @include mediaQuery(mobile) {

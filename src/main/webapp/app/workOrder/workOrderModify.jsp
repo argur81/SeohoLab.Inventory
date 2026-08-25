@@ -27,7 +27,6 @@
     PreparedStatement pstmt = null;
     ResultSet rs = null;
 
-    // 상단 마스터 정보 변수 (신규일 때는 빈 값/기본값으로 초기화)
     String productName = "";
     double targetQty = 0;
     String targetUnit = "kg";
@@ -46,7 +45,6 @@
         Class.forName("org.mariadb.jdbc.Driver");
         conn = DriverManager.getConnection(url, dbUser, dbPass);
 
-        // 수정 모드일 때만 기존 데이터를 조회
         if (isEditMode) {
             String sql = "SELECT * FROM work_orders WHERE order_id = ?";
             pstmt = conn.prepareStatement(sql);
@@ -152,7 +150,7 @@
                             <dd><input type="text" name="yield_standard" class="inputText" value="<%= yieldStandard != null ? yieldStandard : "" %>"></dd>
                         </dl>
                     </section>
-                    <section class="radius">
+                    <section class="radius order">
                         <div class="top_btns">
                             <button type="button" id="updatePriceBtn" class="Button bgGray">현재 단가 적용</button>
                         </div>
@@ -354,7 +352,13 @@
                     <div class="bottom_btns">
                         <button type="button" class="Button bgGray" data-width="180" onclick="location.href='workOrderMgmtList.jsp';">목록</button>
                         <button type="button" class="Button brdrYellow" data-width="180" id="tempSaveBtn">임시저장</button>
+                        
                         <button type="submit" class="Button bgBlue" data-width="180"><%= isEditMode ? "수정" : "등록" %></button>
+                        
+                        <% if (isEditMode) { %>
+                        <button type="button" class="Button brdrGreen" data-width="180" id="saveAsNewBtn">새 이름으로 저장</button>
+                        <% } %>
+
                         <% if (isEditMode) { %>
                         <button type="button" class="Button brdrGray" data-width="180" id="deleteBtn">삭제</button>
                         <% } %>
@@ -404,7 +408,6 @@
             $row.find('.item-price').val(formatWithComma(Math.round(calculatedPrice)));
         }
 
-        // 전체 행의 수치 동기화 및 오차 없는 g/kg 재계산 함수
         function recalculateAllQuantities() {
             let topTargetGrams = getTopTargetGrams();
             let $rows = $(".order_table tbody tr");
@@ -424,7 +427,6 @@
                 let rowGrams = 0;
                 if (topTargetGrams > 0 && pct > 0) {
                     if (index === totalRows - 1) {
-                        // 마지막 행은 남은 잔여 g을 모두 흡수하여 오차 원천 차단 (소수점 4자리 기준)
                         rowGrams = Math.round((topTargetGrams - accumulatedG) * 10000) / 10000;
                         if (rowGrams < 0) rowGrams = 0;
                     } else {
@@ -616,7 +618,6 @@
                 updateAllPhaseSelects();
             }
 
-            // 수정 모드 진입 시 기존에 저장된 금액이 틀어지지 않도록 base-price 역산 세팅
             $(".order_table tbody tr").each(function () {
                 let $row = $(this);
                 let $priceInput = $row.find('.item-price');
@@ -642,16 +643,16 @@
             $("#addRowBtn").on("click", function () {
                 let newRow = `
                     <tr>
-                        <td>
+                        <td data-roll="No">
                             <span class="row-num"></span>
                             <button type="button" class="delRowBtn" title="삭제">삭제</button>
                         </td>
-                        <td><input type="text" name="raw_material_name" class="inputText item-autocomplete" placeholder="원료명 입력"></td>
-                        <td><input type="text" name="test_number" class="inputText"></td>
-                        <td><div class="unit"><input type="text" name="content_pct" class="inputText row-content-pct" inputmode="decimal"><i>%</i></div></td>
-                        <td><div class="unit"><input type="text" name="order_qty_kg" class="inputText order-kg" inputmode="decimal"><i>kg</i></div></td>
-                        <td><div class="unit"><input type="text" name="order_qty_g" class="inputText order-g" inputmode="decimal"><i>g</i></div></td>
-                        <td><div class="unit"><input type="text" name="unit_price" class="inputText item-price" inputmode="decimal"><i>원</i></div></td>
+                        <td data-roll="원료명"><input type="text" name="raw_material_name" class="inputText item-autocomplete" placeholder="원료명 입력"></td>
+                        <td data-roll="원료시험번호"><input type="text" name="test_number" class="inputText"></td>
+                        <td data-roll="함량(%)"><div class="unit"><input type="text" name="content_pct" class="inputText row-content-pct" inputmode="decimal"><i>%</i></div></td>
+                        <td data-roll="제조지시량(kg)"><div class="unit"><input type="text" name="order_qty_kg" class="inputText order-kg" inputmode="decimal"><i>kg</i></div></td>
+                        <td data-roll="제조지시량(g)"><div class="unit"><input type="text" name="order_qty_g" class="inputText order-g" inputmode="decimal"><i>g</i></div></td>
+                        <td data-roll="단가"><div class="unit"><input type="text" name="unit_price" class="inputText item-price" inputmode="decimal"><i>원</i></div></td>
                     </tr>
                 `;
                 $(".order_table tbody").append(newRow);
@@ -688,17 +689,17 @@
                         <th>
                             <span class="phase-name"></span><input type="hidden" name="phase_title" value="" class="phase-title-input">
                         </th>
-                        <td>
+                        <td data-roll="선택">
                             <div class="phase_num">
                                 <select name="phase_start" class="og_select phase-start-sel">` + optionsHtml + `</select>
                                 <i>~</i>
                                 <select name="phase_end" class="og_select phase-end-sel">` + optionsHtml + `</select>
                             </div>
                         </td>
-                        <td>
+                        <td data-roll="제조방법">
                             <textarea name="method_desc" class="textArea" placeholder="제조방법 입력"></textarea>
                         </td>
-                        <td>
+                        <td data-roll="비고">
                             <textarea name="note_desc" class="textArea" placeholder="비고 입력"></textarea>
                         </td>
                     </tr>
@@ -778,6 +779,27 @@
                 }
             });
 
+            // [추가됨] [새 이름으로 저장] 버튼 클릭 이벤트
+            $("#saveAsNewBtn").on("click", function() {
+                if (confirm("현재 내용을 새 제조 지시서로 신규 등록하시겠습니까?")) {
+                    let $form = $('#modifyForm');
+                    
+                    // 입력 필드 콤마 제거
+                    $form.find('input[inputmode="decimal"]').not(':disabled').each(function () {
+                        let rawVal = $(this).val().replace(/,/g, '');
+                        if(rawVal === '') rawVal = '0';
+                        $(this).val(rawVal);
+                    });
+
+                    // order_id를 0으로 만들어 신규 등록(INSERT)을 유도
+                    $form.find('input[name="order_id"]').val("0"); 
+                    
+                    // 등록 처리 액션 파일(workOrderRegistAction.jsp)로 action 변경
+                    $form.attr('action', 'workOrderRegistAction.jsp'); 
+                    $form.submit();
+                }
+            });
+
             <% if (isEditMode) { %>
             $("#deleteBtn").on("click", function() {
                 if (confirm("정말 이 제조 지시서를 삭제하시겠습니까?")) {
@@ -787,7 +809,8 @@
             <% } %>
 
             $('#modifyForm').on('submit', function (e) {
-                if ($(document.activeElement).attr('id') === 'tempSaveBtn') return;
+                let activeBtnId = $(document.activeElement).attr('id');
+                if (activeBtnId === 'tempSaveBtn' || activeBtnId === 'saveAsNewBtn') return;
                 
                 $(this).find('input[inputmode="decimal"]').not(':disabled').each(function () {
                     let rawVal = $(this).val().replace(/,/g, '');

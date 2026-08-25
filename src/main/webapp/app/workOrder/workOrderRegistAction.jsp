@@ -23,7 +23,7 @@
     String appearance = request.getParameter("appearance");
     String scent = request.getParameter("scent");
     String specificGravityStr = request.getParameter("specific_gravity");
-    String phStr = request.getParameter("ph");
+    String ph = request.getParameter("ph");
     String theorQtyStr = request.getParameter("theor_qty");
     String theorUnit = request.getParameter("theor_unit");
     String yieldRateStr = request.getParameter("yield_rate");
@@ -64,14 +64,21 @@
         // 트랜잭션 시작
         conn.setAutoCommit(false);
 
-        double targetQty = (targetQtyStr != null && !targetQtyStr.trim().isEmpty()) ? Double.parseDouble(targetQtyStr.replace(",", "")) : 0.0;
-        double specificGravity = (specificGravityStr != null && !specificGravityStr.trim().isEmpty()) ? Double.parseDouble(specificGravityStr.replace(",", "")) : 0.0;
-        double ph = (phStr != null && !phStr.trim().isEmpty()) ? Double.parseDouble(phStr.replace(",", "")) : 0.0;
-        double theorQty = (theorQtyStr != null && !theorQtyStr.trim().isEmpty()) ? Double.parseDouble(theorQtyStr.replace(",", "")) : 0.0;
-        double yieldRate = (yieldRateStr != null && !yieldRateStr.trim().isEmpty()) ? Double.parseDouble(yieldRateStr.replace(",", "")) : 0.0;
+        // [모든 숫자 파싱에 안전장치 적용] "0.95~1.05" 같은 문자열이 들어가도 에러 대신 0.0으로 처리되어 앱이 멈추지 않습니다.
+        double targetQty = 0.0;
+        try { if (targetQtyStr != null && !targetQtyStr.trim().isEmpty()) targetQty = Double.parseDouble(targetQtyStr.replace(",", "")); } catch (Exception e) {}
+
+        double specificGravity = 0.0;
+        try { if (specificGravityStr != null && !specificGravityStr.trim().isEmpty()) specificGravity = Double.parseDouble(specificGravityStr.replace(",", "")); } catch (Exception e) {}
+
+        double theorQty = 0.0;
+        try { if (theorQtyStr != null && !theorQtyStr.trim().isEmpty()) theorQty = Double.parseDouble(theorQtyStr.replace(",", "")); } catch (Exception e) {}
+
+        double yieldRate = 0.0;
+        try { if (yieldRateStr != null && !yieldRateStr.trim().isEmpty()) yieldRate = Double.parseDouble(yieldRateStr.replace(",", "")); } catch (Exception e) {}
 
         if (orderId == 0) {
-            String masterSql = "INSERT INTO work_orders (product_name, target_qty, target_unit, manager_name, machine, appearance, scent, specific_gravity, ph, theor_qty, theor_unit, yield_rate, yield_standard, status, reg_date) " +
+            String masterSql = "INSERT INTO work_orders (product_name, target_qty, target_unit, manager_name, machine, appearance, scent, specific_gravity, ph, theor_qty, theor_unit, yield_rate, yield_standard, status, created_at) " +
                                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'NORMAL', NOW())";
             
             pstmt = conn.prepareStatement(masterSql, Statement.RETURN_GENERATED_KEYS);
@@ -83,7 +90,7 @@
             pstmt.setString(6, appearance);
             pstmt.setString(7, scent);
             pstmt.setDouble(8, specificGravity);
-            pstmt.setDouble(9, ph);
+            pstmt.setString(9, ph);
             pstmt.setDouble(10, theorQty);
             pstmt.setString(11, theorUnit);
             pstmt.setDouble(12, yieldRate);
@@ -109,7 +116,7 @@
             pstmt.setString(6, appearance);
             pstmt.setString(7, scent);
             pstmt.setDouble(8, specificGravity);
-            pstmt.setDouble(9, ph);
+            pstmt.setString(9, ph);
             pstmt.setDouble(10, theorQty);
             pstmt.setString(11, theorUnit);
             pstmt.setDouble(12, yieldRate);
@@ -133,25 +140,26 @@
 
         // 원료 투입 목록 저장
         if (rawMaterialNames != null) {
-            String itemSql = "INSERT INTO work_order_items (order_id, item_row_id, raw_material_name, test_number, content_pct, order_qty_kg, order_qty_g, unit_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            String itemSql = "INSERT INTO work_order_items (order_id, item_row_id, row_index, raw_material_name, test_number, content_pct, order_qty_kg, order_qty_g, unit_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             pstmt = conn.prepareStatement(itemSql);
 
             for (int i = 0; i < rawMaterialNames.length; i++) {
                 if (rawMaterialNames[i] == null || rawMaterialNames[i].trim().isEmpty()) continue;
 
-                double contentPct = (contentPcts != null && i < contentPcts.length && contentPcts[i] != null && !contentPcts[i].trim().isEmpty()) ? Double.parseDouble(contentPcts[i].replace(",", "")) : 0.0;
-                double orderKg = (orderQtyKgs != null && i < orderQtyKgs.length && orderQtyKgs[i] != null && !orderQtyKgs[i].trim().isEmpty()) ? Double.parseDouble(orderQtyKgs[i].replace(",", "")) : 0.0;
-                double orderG = (orderQtyGs != null && i < orderQtyGs.length && orderQtyGs[i] != null && !orderQtyGs[i].trim().isEmpty()) ? Double.parseDouble(orderQtyGs[i].replace(",", "")) : 0.0;
-                double unitPrice = (unitPrices != null && i < unitPrices.length && unitPrices[i] != null && !unitPrices[i].trim().isEmpty()) ? Double.parseDouble(unitPrices[i].replace(",", "")) : 0.0;
+                double contentPct = 0.0; try { if (contentPcts != null && i < contentPcts.length && contentPcts[i] != null) contentPct = Double.parseDouble(contentPcts[i].replace(",", "")); } catch(Exception e){}
+                double orderKg = 0.0; try { if (orderQtyKgs != null && i < orderQtyKgs.length && orderQtyKgs[i] != null) orderKg = Double.parseDouble(orderQtyKgs[i].replace(",", "")); } catch(Exception e){}
+                double orderG = 0.0; try { if (orderQtyGs != null && i < orderQtyGs.length && orderQtyGs[i] != null) orderG = Double.parseDouble(orderQtyGs[i].replace(",", "")); } catch(Exception e){}
+                double unitPrice = 0.0; try { if (unitPrices != null && i < unitPrices.length && unitPrices[i] != null) unitPrice = Double.parseDouble(unitPrices[i].replace(",", "")); } catch(Exception e){}
 
                 pstmt.setInt(1, orderId);
                 pstmt.setInt(2, i + 1);
-                pstmt.setString(3, rawMaterialNames[i]);
-                pstmt.setString(4, (testNumbers != null && i < testNumbers.length) ? testNumbers[i] : "");
-                pstmt.setDouble(5, contentPct);
-                pstmt.setDouble(6, orderKg);
-                pstmt.setDouble(7, orderG);
-                pstmt.setDouble(8, unitPrice);
+                pstmt.setInt(3, i + 1);
+                pstmt.setString(4, rawMaterialNames[i]);
+                pstmt.setString(5, (testNumbers != null && i < testNumbers.length) ? testNumbers[i] : "");
+                pstmt.setDouble(6, contentPct);
+                pstmt.setDouble(7, orderKg);
+                pstmt.setDouble(8, orderG);
+                pstmt.setDouble(9, unitPrice);
                 
                 pstmt.addBatch();
             }
@@ -161,18 +169,18 @@
 
         // 상(Phase) 관리 정보 저장
         if (phaseTitles != null) {
-            String phaseSql = "INSERT INTO work_order_phases (order_id, phase_row_id, phase_name, phase_start, phase_end, method_desc, note_desc) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String phaseSql = "INSERT INTO work_order_phases (order_id, phase_row_id, phase_name, phase_select_start, phase_select_end, method_desc, note_desc) VALUES (?, ?, ?, ?, ?, ?, ?)";
             pstmt = conn.prepareStatement(phaseSql);
 
             for (int i = 0; i < phaseTitles.length; i++) {
-                int pStart = (phaseStarts != null && i < phaseStarts.length && phaseStarts[i] != null && !phaseStarts[i].trim().isEmpty()) ? Integer.parseInt(phaseStarts[i]) : 1;
-                int pEnd = (phaseEnds != null && i < phaseEnds.length && phaseEnds[i] != null && !phaseEnds[i].trim().isEmpty()) ? Integer.parseInt(phaseEnds[i]) : 1;
+                String pStart = (phaseStarts != null && i < phaseStarts.length) ? phaseStarts[i] : "1";
+                String pEnd = (phaseEnds != null && i < phaseEnds.length) ? phaseEnds[i] : "1";
 
                 pstmt.setInt(1, orderId);
                 pstmt.setInt(2, i + 1);
                 pstmt.setString(3, phaseTitles[i]);
-                pstmt.setInt(4, pStart);
-                pstmt.setInt(5, pEnd);
+                pstmt.setString(4, pStart);
+                pstmt.setString(5, pEnd);
                 pstmt.setString(6, (methodDescs != null && i < methodDescs.length) ? methodDescs[i] : "");
                 pstmt.setString(7, (noteDescs != null && i < noteDescs.length) ? noteDescs[i] : "");
 
@@ -200,7 +208,7 @@
 <script>
     <% if (isSuccess) { %>
         alert("정상적으로 처리되었습니다.");
-        location.href = "workOrderList.jsp";
+        location.href = "workOrderMgmtList.jsp";
     <% } else { %>
         alert("처리 중 오류가 발생했습니다.\n오류 내용: <%= errorMessage != null ? errorMessage.replace("\"", "\\\"").replace("\n", " ") : "알 수 없는 오류" %>");
         history.back();

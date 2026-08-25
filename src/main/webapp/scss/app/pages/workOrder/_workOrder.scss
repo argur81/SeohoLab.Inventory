@@ -220,6 +220,10 @@
                     }
                 }
             }
+            .bottom_btns {
+                padding-bottom: 40px;
+                margin-top: 20px;
+            }
         }
     }
 }
@@ -271,9 +275,23 @@
                     margin-top: 0;
                     gap: 4rem;
                     margin-bottom: 4rem;
+                    &.order {
+                        position: relative;
+                        padding-bottom: 14rem;
+                        .top_btns {
+                            width: calc(100% - 8rem);
+                            position: absolute;
+                            left: 4rem;
+                            bottom: 4rem;
+                            .Button {
+                                width: 100%;
+                            }
+                        }
+                    }
                     .add_btn {
                         .Button {
                             height: 8rem;
+                            border-radius: 2rem;
                         }
                     }
                     .delRowBtn,

@@ -1403,6 +1403,15 @@ button.Button.brdrYellow:hover {
   background-color: #f5b136;
   color: #292929;
 }
+button.Button.brdrGreen {
+  background-color: #fff;
+  border: 1px solid #19a74f;
+  color: #19a74f;
+}
+button.Button.brdrGreen:hover {
+  background-color: #19a74f;
+  color: #fff;
+}
 
 @media screen and (max-width: 940px) {
   button.Button {
@@ -5437,6 +5446,10 @@ footer a {
   border: 1px solid #8d8d8d;
   padding: 0 10px;
 }
+#container.workOrderRequest .content .bottom_btns {
+  padding-bottom: 40px;
+  margin-top: 20px;
+}
 
 @media screen and (max-width: 1500px) {
   .content.workOrderList section.radius table colgroup {
@@ -5462,8 +5475,22 @@ footer a {
     gap: 4rem;
     margin-bottom: 4rem;
   }
+  .content.workOrderList section.radius.order {
+    position: relative;
+    padding-bottom: 14rem;
+  }
+  .content.workOrderList section.radius.order .top_btns {
+    width: calc(100% - 8rem);
+    position: absolute;
+    left: 4rem;
+    bottom: 4rem;
+  }
+  .content.workOrderList section.radius.order .top_btns .Button {
+    width: 100%;
+  }
   .content.workOrderList section.radius .add_btn .Button {
     height: 8rem;
+    border-radius: 2rem;
   }
   .content.workOrderList section.radius .delRowBtn,
   .content.workOrderList section.radius .delPhaseBtn {
