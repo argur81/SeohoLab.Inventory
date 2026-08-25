@@ -298,9 +298,18 @@
 .mobile_chk_fix {
     display: none;
 }
-@include mediaQuery(mobile){
+@include mediaQuery(tablet) {
     #container {
         min-height: auto;
+        padding: 70px 0 0 0;
+        .content {
+            width: 100%;
+            padding: 20px 20px 40px 20px;
+        }
+    }
+}
+@include mediaQuery(mobile){
+    #container {
         padding: 12rem 0 0 0;
         .content {
             width: 100%;

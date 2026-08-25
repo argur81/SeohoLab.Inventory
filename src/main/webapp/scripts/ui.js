@@ -179,15 +179,30 @@ $(document).ready(function () {
     });
     //모바일 타이틀
     function viewportMobieDevice(){
-        if($(window).width() <= 780){
+        if($(window).width() <= 940){
             $('#container .content').addClass('for_mobile');
         }else{
             $('#container .content').removeClass('for_mobile');
         }
     }
     viewportMobieDevice();
+    //모바일 GNB
+    function mobieGNBmaxHeight(){
+        if($(window).width() <= 940){
+            var moMenuCtrl = $('header .menu .mobile_ctrl').outerHeight();
+            var moMenuUser = $('header .menu .user_wrap').outerHeight();
+            var outObjectSize = moMenuCtrl + moMenuUser
+            var windowHT = $(window).height();
+            var clacSize = windowHT - outObjectSize
+            $('header .gnb').css('max-height' , clacSize);
+        }else{
+            $('header .gnb').css('max-height' , 'auto');
+        }
+    }
+    mobieGNBmaxHeight();
     $(window).resize(function(){
         viewportMobieDevice();
+        mobieGNBmaxHeight();
     });
     //그리드 Hover 모바일용
     function gridHoverFunction(){

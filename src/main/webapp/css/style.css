@@ -166,7 +166,7 @@ table {
           box-sizing: border-box;
 }
 
-@media (max-width: 780px) {
+@media (max-width: 940px) {
   html {
     font-size: 62.5%;
     -webkit-text-size-adjust: none;
@@ -364,7 +364,7 @@ h6.page_sub_tit {
   font-weight: 400;
 }
 
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 940px) {
   .title_set {
     margin-bottom: 5rem;
   }
@@ -577,7 +577,7 @@ h6.page_sub_tit {
   color: #595959;
 }
 
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 940px) {
   .default_girid {
     padding: 0 4rem;
   }
@@ -829,7 +829,7 @@ h6.page_sub_tit {
   background-color: #fff;
 }
 
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 940px) {
   .works_grid table {
     min-width: 120rem;
   }
@@ -1135,7 +1135,7 @@ h6.page_sub_tit {
     width: auto !important;
   }
 }
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 940px) {
   .dataTables_wrapper .top_group {
     margin-bottom: 2rem;
     -webkit-box-orient: vertical;
@@ -1340,7 +1340,7 @@ h6.page_sub_tit {
   bottom: -1px;
 }
 
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 940px) {
   .comm_tab {
     gap: 0;
     width: calc(100% - 8rem);
@@ -1404,7 +1404,7 @@ button.Button.brdrYellow:hover {
   color: #292929;
 }
 
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 940px) {
   button.Button {
     height: 8rem;
     border-radius: 2rem;
@@ -1525,7 +1525,7 @@ select.og_select:disabled {
   background-color: #f6f7f9;
 }
 
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 940px) {
   .Select > .value {
     height: 8rem;
     border-radius: 2rem;
@@ -1601,7 +1601,7 @@ select.og_select:disabled {
   color: #595959;
 }
 
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 940px) {
   .checkBox {
     gap: 1rem;
   }
@@ -1643,7 +1643,7 @@ input.inputText[readonly=readonly] {
   background-color: #f6f7f9;
 }
 
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 940px) {
   input.inputText {
     height: 8rem;
     border-radius: 2rem;
@@ -1721,7 +1721,7 @@ textarea.textArea.input_size {
   color: #c3c3c5;
 }
 
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 940px) {
   textarea.textArea {
     height: 20rem;
     border-radius: 2rem;
@@ -1801,7 +1801,7 @@ textarea.textArea.input_size {
   color: #595959;
 }
 
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 940px) {
   .radioGroup {
     gap: 8rem;
   }
@@ -2054,7 +2054,7 @@ ul.ui-autocomplete ul.ui-autocomplete::-webkit-scrollbar-thumb {
   color: #fff;
 }
 
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 940px) {
   /* 자동완성 전체 박스 스타일 */
   ul.ui-autocomplete {
     position: absolute !important;
@@ -2358,19 +2358,18 @@ header .gnb li.has_depth .depth a.on, header .gnb li.has_depth .depth a:hover {
   color: #292929;
 }
 
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 1500px) {
   header {
     width: 100%;
-    height: 12rem;
+    height: 70px;
     border-left: none;
     border-bottom: 1px solid #dde1e6;
     z-index: 15;
-    padding: 0 2rem;
+    padding: 0 20px;
   }
   header .logo {
     width: 100%;
     height: 100%;
-    border-bottom: 1px solid #f6f7f9;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -2385,22 +2384,17 @@ header .gnb li.has_depth .depth a.on, header .gnb li.has_depth .depth a:hover {
         -ms-flex-align: center;
             align-items: center;
     position: relative;
-    gap: 3rem;
+    gap: 30px;
   }
   header .logo .mo_menu {
     display: block;
+    cursor: pointer;
   }
   header .logo .mo_menu > img {
-    width: 4.8rem;
-  }
-  header .logo .title {
-    display: block;
-    height: 3rem;
-    font-size: 4rem;
-    font-weight: 500;
+    width: 28px;
   }
   header .logo a {
-    width: 27.6rem;
+    width: 175px;
     position: absolute;
     left: 50%;
     top: 50%;
@@ -2414,7 +2408,7 @@ header .gnb li.has_depth .depth a.on, header .gnb li.has_depth .depth a:hover {
     position: fixed;
     left: -100%;
     top: 0;
-    padding: 0 4rem;
+    padding: 0 20px;
   }
   header .menu .mobile_ctrl {
     display: -webkit-box;
@@ -2430,17 +2424,51 @@ header .gnb li.has_depth .depth a.on, header .gnb li.has_depth .depth a:hover {
     -webkit-box-align: center;
         -ms-flex-align: center;
             align-items: center;
-    padding: 3.4rem 0;
     border-bottom: 1px solid #f6f7f9;
+    padding: 15px 0;
+  }
+  header .menu .mobile_ctrl > img {
+    width: 175px;
+  }
+  header .menu .mobile_ctrl .close {
+    width: 16px;
+  }
+  header .menu .mobile_ctrl .close > img {
+    width: 100%;
+  }
+}
+@media screen and (max-width: 940px) {
+  header {
+    width: 100%;
+    height: 12rem;
+    padding: 0 2rem;
+  }
+  header .logo {
+    gap: 3rem;
+  }
+  header .logo .mo_menu > img {
+    width: 4.8rem;
+  }
+  header .logo .title {
+    display: block;
+    height: 3rem;
+    font-size: 4rem;
+    font-weight: 500;
+  }
+  header .logo a {
+    width: 27.6rem;
+  }
+  header .menu {
+    padding: 0 4rem;
+  }
+  header .menu .mobile_ctrl {
+    padding: 3.4rem 0;
   }
   header .menu .mobile_ctrl > img {
     width: 27.6rem;
   }
   header .menu .mobile_ctrl .close {
     width: 2.8rem;
-  }
-  header .menu .mobile_ctrl .close > img {
-    width: 100%;
   }
   header .user_wrap {
     height: auto;
@@ -2465,6 +2493,26 @@ header .gnb li.has_depth .depth a.on, header .gnb li.has_depth .depth a:hover {
   }
   header .gnb {
     padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+  header .gnb::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+  }
+  header .gnb::-webkit-scrollbar-thumb {
+    background: #d1d6db;
+    border-radius: 5px;
+  }
+  header .gnb::-webkit-scrollbar-track {
+    border-radius: 5px;
+  }
+  header .gnb::-webkit-scrollbar-thumb:hover {
+    background: #d1d6db;
+    border-radius: 5px;
+  }
+  header .gnb {
+    overflow-y: auto;
+    overflow-x: hidden;
   }
   header .gnb li {
     border-radius: 2rem;
@@ -2524,7 +2572,7 @@ footer a {
   color: #c3c3c5;
 }
 
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 940px) {
   footer {
     height: auto;
     padding: 4rem;
@@ -2989,9 +3037,18 @@ footer a {
   display: none;
 }
 
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 1500px) {
   #container {
     min-height: auto;
+    padding: 70px 0 0 0;
+  }
+  #container .content {
+    width: 100%;
+    padding: 20px 20px 40px 20px;
+  }
+}
+@media screen and (max-width: 940px) {
+  #container {
     padding: 12rem 0 0 0;
   }
   #container .content {
@@ -3427,7 +3484,7 @@ footer a {
   color: #292929;
 }
 
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 940px) {
   .paging {
     margin-top: 8rem;
   }
@@ -3517,7 +3574,7 @@ footer a {
   border: none;
 }
 
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 940px) {
   .layer_popup .pop_data {
     width: calc(100% - 8rem) !important;
     padding: 6rem 4rem;
@@ -3600,7 +3657,7 @@ footer a {
   color: #595959;
 }
 
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 940px) {
   .layer_popup .pop_data.image_pop .body .img_data {
     min-width: 100%;
     border-radius: 3rem;
@@ -3853,7 +3910,7 @@ footer a {
   margin-top: 35px;
 }
 
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 940px) {
   .layer_popup .pop_data.people_pop {
     width: 100% !important;
     height: 100vh;
@@ -4213,7 +4270,7 @@ footer a {
   height: 50px;
 }
 
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 940px) {
   .bottom_btns {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -4260,7 +4317,7 @@ footer a {
   opacity: 0.4;
 }
 
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 940px) {
   .no_data {
     gap: 4rem;
     font-size: 2.8rem;
@@ -4523,7 +4580,7 @@ footer a {
   border: 1px solid #612d44;
 }
 
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 940px) {
   #container.login {
     height: 100vh;
   }
@@ -4942,7 +4999,7 @@ footer a {
   display: none;
 }
 
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 940px) {
   .content.registPage section.radius {
     padding: 5rem 4rem 12rem 4rem;
     margin-top: 0;
@@ -5092,7 +5149,7 @@ footer a {
   display: none;
 }
 
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 940px) {
   .content.totalReg .top_control {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -5234,6 +5291,9 @@ footer a {
       -ms-flex-align: center;
           align-items: center;
   gap: 10px;
+}
+.content.workOrderList section.radius table.phase_table tbody td .phase_num .og_select {
+  min-width: auto;
 }
 .content.workOrderList section.radius table.phase_table tfoot td {
   padding: 5px;
@@ -5378,10 +5438,178 @@ footer a {
   padding: 0 10px;
 }
 
-@media screen and (max-width: 780px) {
+@media screen and (max-width: 1500px) {
+  .content.workOrderList section.radius table colgroup {
+    display: none;
+  }
+  .content.workOrderList section.radius table.order_table thead th:first-child {
+    width: 60px;
+  }
+  .content.workOrderList section.radius table.order_table thead th:nth-child(2) {
+    width: 260px;
+  }
+  .content.workOrderList section.radius table.phase_table thead th:first-child {
+    width: 60px;
+  }
+  .content.workOrderList section.radius table.phase_table thead th:nth-child(2) {
+    width: 200px;
+  }
+}
+@media screen and (max-width: 940px) {
   .content.workOrderList section.radius {
     padding: 4rem;
     margin-top: 0;
     gap: 4rem;
+    margin-bottom: 4rem;
+  }
+  .content.workOrderList section.radius .add_btn .Button {
+    height: 8rem;
+  }
+  .content.workOrderList section.radius .delRowBtn,
+  .content.workOrderList section.radius .delPhaseBtn {
+    width: 4rem;
+    height: 4rem;
+    background-size: 4rem;
+  }
+  .content.workOrderList section.radius table {
+    width: 100%;
+    display: block;
+  }
+  .content.workOrderList section.radius table thead {
+    display: none;
+  }
+  .content.workOrderList section.radius table tbody,
+  .content.workOrderList section.radius table tfoot {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -webkit-box-align: stretch;
+        -ms-flex-align: stretch;
+            align-items: stretch;
+    gap: 4rem;
+  }
+  .content.workOrderList section.radius table tbody tr,
+  .content.workOrderList section.radius table tfoot tr {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    row-gap: 4rem;
+    -webkit-column-gap: 1rem;
+       -moz-column-gap: 1rem;
+            column-gap: 1rem;
+    padding-bottom: 4rem;
+    border-bottom: 1px solid #e6e8eb;
+  }
+  .content.workOrderList section.radius table td {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -webkit-box-align: stretch;
+        -ms-flex-align: stretch;
+            align-items: stretch;
+    gap: 1rem;
+    font-size: 2.6rem;
+    border: none;
+  }
+  .content.workOrderList section.radius table td::before {
+    content: attr(data-roll);
+    font-size: 2.6rem;
+    color: #595959;
+    font-weight: 500;
+  }
+  .content.workOrderList section.radius table.order_table tbody td {
+    padding: 0;
+    border: none;
+  }
+  .content.workOrderList section.radius table.order_table tbody td:first-child {
+    width: 100%;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    gap: 1rem;
+  }
+  .content.workOrderList section.radius table.order_table tbody td:nth-child(2), .content.workOrderList section.radius table.order_table tbody td:nth-child(7) {
+    width: 100%;
+  }
+  .content.workOrderList section.radius table.order_table tbody td:nth-child(3), .content.workOrderList section.radius table.order_table tbody td:nth-child(4), .content.workOrderList section.radius table.order_table tbody td:nth-child(5), .content.workOrderList section.radius table.order_table tbody td:nth-child(6) {
+    width: calc(50% - 0.5rem);
+  }
+  .content.workOrderList section.radius table.order_table tfoot {
+    padding-top: 4rem;
+  }
+  .content.workOrderList section.radius table.order_table tfoot td {
+    padding: 0;
+    border: none;
+    width: 100%;
+  }
+  .content.workOrderList section.radius table.order_table tfoot td:first-child {
+    display: none;
+  }
+  .content.workOrderList section.radius table.phase_table tbody th:first-child {
+    width: calc(30% - 0.5rem);
+    font-size: 2.6rem;
+    font-weight: 500;
+  }
+  .content.workOrderList section.radius table.phase_table tbody td {
+    padding: 0;
+    border: none;
+  }
+  .content.workOrderList section.radius table.phase_table tbody td:nth-child(2) {
+    width: calc(70% - 0.5rem);
+  }
+  .content.workOrderList section.radius table.phase_table tbody td:nth-child(2)::before {
+    display: none;
+  }
+  .content.workOrderList section.radius table.phase_table tbody td:nth-child(3), .content.workOrderList section.radius table.phase_table tbody td:nth-child(4) {
+    width: 100%;
+  }
+  .content.workOrderList section.radius table.phase_table tbody td:nth-child(3) .textArea, .content.workOrderList section.radius table.phase_table tbody td:nth-child(4) .textArea {
+    height: 12rem;
+  }
+  .content.workOrderList section.radius .unit .inputText {
+    padding-right: 6rem;
+  }
+  .content.workOrderList section.radius .unit i {
+    right: 2rem;
+    font-size: 2.6rem;
+  }
+  .content.workOrderList .bottom_btns {
+    margin-top: 0;
   }
 }

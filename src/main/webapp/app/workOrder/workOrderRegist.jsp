@@ -198,18 +198,18 @@
                 hasItems = true;
 %>
                                 <tr>
-                                    <td>
+                                    <td data-roll="No">
                                         <span class="row-num"><%= itemIdx %></span>
                                         <% if (itemIdx > 1) { %>
                                         <button type="button" class="delRowBtn" title="삭제">삭제</button>
                                         <% } %>
                                     </td>
-                                    <td><input type="text" name="raw_material_name" class="inputText item-autocomplete" placeholder="원료명 입력" value="<%= rs.getString("raw_material_name") != null ? rs.getString("raw_material_name") : "" %>"></td>
-                                    <td><input type="text" name="test_number" class="inputText" value="<%= rs.getString("test_number") != null ? rs.getString("test_number") : "" %>"></td>
-                                    <td><div class="unit"><input type="text" name="content_pct" class="inputText row-content-pct" inputmode="decimal" value="<%= rs.getString("content_pct") %>"><i>%</i></div></td>
-                                    <td><div class="unit"><input type="text" name="order_qty_kg" class="inputText order-kg" inputmode="decimal" value="<%= rs.getString("order_qty_kg") %>"><i>kg</i></div></td>
-                                    <td><div class="unit"><input type="text" name="order_qty_g" class="inputText order-g" inputmode="decimal" value="<%= rs.getString("order_qty_g") %>"><i>g</i></div></td>
-                                    <td><div class="unit"><input type="text" name="unit_price" class="inputText item-price" inputmode="decimal" value="<%= rs.getString("unit_price") %>"><i>원</i></div></td>
+                                    <td data-roll="원료명"><input type="text" name="raw_material_name" class="inputText item-autocomplete" placeholder="원료명 입력" value="<%= rs.getString("raw_material_name") != null ? rs.getString("raw_material_name") : "" %>"></td>
+                                    <td data-roll="원료시험번호"><input type="text" name="test_number" class="inputText" value="<%= rs.getString("test_number") != null ? rs.getString("test_number") : "" %>"></td>
+                                    <td data-roll="함량(%)"><div class="unit"><input type="text" name="content_pct" class="inputText row-content-pct" inputmode="decimal" value="<%= rs.getString("content_pct") %>"><i>%</i></div></td>
+                                    <td data-roll="제조지시량(kg)"><div class="unit"><input type="text" name="order_qty_kg" class="inputText order-kg" inputmode="decimal" value="<%= rs.getString("order_qty_kg") %>"><i>kg</i></div></td>
+                                    <td data-roll="제조지시량(g)"><div class="unit"><input type="text" name="order_qty_g" class="inputText order-g" inputmode="decimal" value="<%= rs.getString("order_qty_g") %>"><i>g</i></div></td>
+                                    <td data-roll="단가"><div class="unit"><input type="text" name="unit_price" class="inputText item-price" inputmode="decimal" value="<%= rs.getString("unit_price") %>"><i>원</i></div></td>
                                 </tr>
 <%
                 itemIdx++;
@@ -226,15 +226,15 @@
     if (!hasItems) {
 %>
                                 <tr>
-                                    <td>
+                                    <td data-roll="No">
                                         <span class="row-num">1</span>
                                     </td>
-                                    <td><input type="text" name="raw_material_name" class="inputText item-autocomplete" placeholder="원료명 입력"></td>
-                                    <td><input type="text" name="test_number" class="inputText"></td>
-                                    <td><div class="unit"><input type="text" name="content_pct" class="inputText row-content-pct" inputmode="decimal"><i>%</i></div></td>
-                                    <td><div class="unit"><input type="text" name="order_qty_kg" class="inputText order-kg" inputmode="decimal"><i>kg</i></div></td>
-                                    <td><div class="unit"><input type="text" name="order_qty_g" class="inputText order-g" inputmode="decimal"><i>g</i></div></td>
-                                    <td><div class="unit"><input type="text" name="unit_price" class="inputText item-price" inputmode="decimal"><i>원</i></div></td>
+                                    <td data-roll="원료명"><input type="text" name="raw_material_name" class="inputText item-autocomplete" placeholder="원료명 입력"></td>
+                                    <td data-roll="원료시험번호"><input type="text" name="test_number" class="inputText"></td>
+                                    <td data-roll="함량(%)"><div class="unit"><input type="text" name="content_pct" class="inputText row-content-pct" inputmode="decimal"><i>%</i></div></td>
+                                    <td data-roll="제조지시량(kg)"><div class="unit"><input type="text" name="order_qty_kg" class="inputText order-kg" inputmode="decimal"><i>kg</i></div></td>
+                                    <td data-roll="제조지시량(g)"><div class="unit"><input type="text" name="order_qty_g" class="inputText order-g" inputmode="decimal"><i>g</i></div></td>
+                                    <td data-roll="단가"><div class="unit"><input type="text" name="unit_price" class="inputText item-price" inputmode="decimal"><i>원</i></div></td>
                                 </tr>
 <%
     }
@@ -243,10 +243,10 @@
                             <tfoot>
                                 <tr>
                                     <td colspan="3">합계</td>
-                                    <td><div class="unit"><input type="text" name="total_content_pct" class="inputText total-pct" inputmode="decimal" readonly><i>%</i></div></td>
-                                    <td><div class="unit"><input type="text" name="total_kg" class="inputText total-kg" inputmode="decimal" readonly><i>kg</i></div></td>
-                                    <td><div class="unit"><input type="text" name="total_g" class="inputText total-g" inputmode="decimal" readonly><i>g</i></div></td>
-                                    <td><div class="unit"><input type="text" name="total_price" class="inputText total-price" inputmode="decimal" readonly><i>원</i></div></td>
+                                    <td data-roll="합계 : 함량(%)"><div class="unit"><input type="text" name="total_content_pct" class="inputText total-pct" inputmode="decimal" readonly><i>%</i></div></td>
+                                    <td data-roll="합계 : 제조지시량(kg)"><div class="unit"><input type="text" name="total_kg" class="inputText total-kg" inputmode="decimal" readonly><i>kg</i></div></td>
+                                    <td data-roll="합계 : 제조지시량(g)"><div class="unit"><input type="text" name="total_g" class="inputText total-g" inputmode="decimal" readonly><i>g</i></div></td>
+                                    <td data-roll="합계 : 단가"><div class="unit"><input type="text" name="total_price" class="inputText total-price" inputmode="decimal" readonly><i>원</i></div></td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -292,17 +292,17 @@
                                         <span class="phase-name"><%= rs.getString("phase_name") %></span>
                                         <input type="hidden" name="phase_title" value="<%= rs.getString("phase_name") %>" class="phase-title-input">
                                     </th>
-                                    <td>
+                                    <td data-roll="선택">
                                         <div class="phase_num">
                                             <select name="phase_start" class="og_select phase-start-sel"></select>
                                             <i>~</i>
                                             <select name="phase_end" class="og_select phase-end-sel"></select>
                                         </div>
                                     </td>
-                                    <td>
+                                    <td data-roll="제조방법">
                                         <textarea name="method_desc" class="textArea" placeholder="제조방법 입력"><%= rs.getString("method_desc") != null ? rs.getString("method_desc") : "" %></textarea>
                                     </td>
-                                    <td>
+                                    <td data-roll="비고">
                                         <textarea name="note_desc" class="textArea" placeholder="비고 입력"><%= rs.getString("note_desc") != null ? rs.getString("note_desc") : "" %></textarea>
                                     </td>
                                 </tr>
@@ -323,17 +323,17 @@
                                     <th>
                                         <span class="phase-name">A상</span><input type="hidden" name="phase_title" value="A상" class="phase-title-input">
                                     </th>
-                                    <td>
+                                    <td data-roll="선택">
                                         <div class="phase_num">
                                             <select name="phase_start" class="og_select phase-start-sel"></select>
                                             <i>~</i>
                                             <select name="phase_end" class="og_select phase-end-sel"></select>
                                         </div>
                                     </td>
-                                    <td>
+                                    <td data-roll="제조방법">
                                         <textarea name="method_desc" class="textArea" placeholder="제조방법 입력"></textarea>
                                     </td>
-                                    <td>
+                                    <td data-roll="비고">
                                         <textarea name="note_desc" class="textArea" placeholder="비고 입력"></textarea>
                                     </td>
                                 </tr>
@@ -551,16 +551,16 @@
             $("#addRowBtn").on("click", function () {
                 let newRow = `
                     <tr>
-                        <td>
+                        <td data-roll="No">
                             <span class="row-num"></span>
                             <button type="button" class="delRowBtn" title="삭제">삭제</button>
                         </td>
-                        <td><input type="text" name="raw_material_name" class="inputText item-autocomplete" placeholder="원료명 입력"></td>
-                        <td><input type="text" name="test_number" class="inputText"></td>
-                        <td><div class="unit"><input type="text" name="content_pct" class="inputText row-content-pct" inputmode="decimal"><i>%</i></div></td>
-                        <td><div class="unit"><input type="text" name="order_qty_kg" class="inputText order-kg" inputmode="decimal"><i>kg</i></div></td>
-                        <td><div class="unit"><input type="text" name="order_qty_g" class="inputText order-g" inputmode="decimal"><i>g</i></div></td>
-                        <td><div class="unit"><input type="text" name="unit_price" class="inputText item-price" inputmode="decimal"><i>원</i></div></td>
+                        <td data-roll="원료명"><input type="text" name="raw_material_name" class="inputText item-autocomplete" placeholder="원료명 입력"></td>
+                        <td data-roll="원료시험번호"><input type="text" name="test_number" class="inputText"></td>
+                        <td data-roll="함량(%)"><div class="unit"><input type="text" name="content_pct" class="inputText row-content-pct" inputmode="decimal"><i>%</i></div></td>
+                        <td data-roll="제조지시량(kg)"><div class="unit"><input type="text" name="order_qty_kg" class="inputText order-kg" inputmode="decimal"><i>kg</i></div></td>
+                        <td data-roll="제조지시량(g)"><div class="unit"><input type="text" name="order_qty_g" class="inputText order-g" inputmode="decimal"><i>g</i></div></td>
+                        <td data-roll="단가"><div class="unit"><input type="text" name="unit_price" class="inputText item-price" inputmode="decimal"><i>원</i></div></td>
                     </tr>
                 `;
                 $(".order_table tbody").append(newRow);
@@ -599,17 +599,17 @@
                         <th>
                             <span class="phase-name"></span><input type="hidden" name="phase_title" value="" class="phase-title-input">
                         </th>
-                        <td>
+                        <td data-roll="선택">
                             <div class="phase_num">
                                 <select name="phase_start" class="og_select phase-start-sel">` + optionsHtml + `</select>
                                 <i>~</i>
                                 <select name="phase_end" class="og_select phase-end-sel">` + optionsHtml + `</select>
                             </div>
                         </td>
-                        <td>
+                        <td data-roll="제조방법">
                             <textarea name="method_desc" class="textArea" placeholder="제조방법 입력"></textarea>
                         </td>
-                        <td>
+                        <td data-roll="비고">
                             <textarea name="note_desc" class="textArea" placeholder="비고 입력"></textarea>
                         </td>
                     </tr>
