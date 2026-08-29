@@ -107,6 +107,18 @@
                                     String progressStatus = rs.getString("progress_status");
                                     if (progressStatus == null || progressStatus.trim().isEmpty()) progressStatus = "요청";
 
+                                    // 상태별 상세/작업 페이지 URL 분기
+                                    String detailUrl = "workOrderProgressDetail.jsp?request_id=" + requestId;
+                                    if ("제조중".equals(progressStatus)) {
+                                        detailUrl = "workOrderProgressMaking.jsp?request_id=" + requestId;
+                                    } else if ("제조완료".equals(progressStatus)) {
+                                        detailUrl = "workOrderProgressCompleted.jsp?request_id=" + requestId;
+                                    } else if ("충진중".equals(progressStatus)) {
+                                        detailUrl = "workOrderProgressFilling.jsp?request_id=" + requestId;
+                                    } else if ("생산완료".equals(progressStatus)) {
+                                        detailUrl = "workOrderProgressDone.jsp?request_id=" + requestId;
+                                    }
+
                                     String badgeClass = "req";
                                     if ("제조중".equals(progressStatus)) badgeClass = "making";
                                     else if ("제조완료".equals(progressStatus)) badgeClass = "completed";
@@ -119,8 +131,7 @@
                         <tr>
                             <td><%= count++ %></td>
                             <td>
-                                <!-- 상세 페이지는 추후 제작 예정 -->
-                                <a href="workOrderProgressDetail.jsp?request_id=<%= requestId %>" class="item-link"><%= productName %></a>
+                                <a href="<%= detailUrl %>" class="item-link"><%= productName %></a>
                             </td>
                             <td><%= targetQtyStr %></td>
                             <td><%= requestDateDisplay %></td>
@@ -179,16 +190,12 @@
             $('.dataTables_wrapper > .dataTables_info, .dataTables_wrapper > .dataTables_paginate').wrapAll('<div class="bottom_group"></div>');
 
             function dataTableForMoblie() {
-                if ($(window).width() <= 780) {
-                    $('.dataTables_wrapper table.dataTable thead tr th').removeClass('last_th');
-                    $('th.dtr-hidden').first().prev('th').addClass('last_th');
-                    $('.dataTables_wrapper table.dataTable tbody tr').each(function(){
-                        $(this).find('td').removeClass('last_td');
-                        $(this).find('td.dtr-hidden').first().prev('td').addClass('last_td');
+                if ($(window).width() <= 780) {$('.dataTables_wrapper table.dataTable thead tr th').removeClass('last_th');
+                    $('th.dtr-hidden').first().prev('th').addClass('last_th');$('.dataTables_wrapper table.dataTable tbody tr').each(function(){
+                        $(this).find('td').removeClass('last_td');$(this).find('td.dtr-hidden').first().prev('td').addClass('last_td');
                     });
                 } else {
-                    $('.dataTables_wrapper table.dataTable thead tr th').removeClass('last_th');
-                    $('.dataTables_wrapper table.dataTable tbody tr td').removeClass('last_td');
+                    $('.dataTables_wrapper table.dataTable thead tr th').removeClass('last_th');$('.dataTables_wrapper table.dataTable tbody tr td').removeClass('last_td');
                 }
             }
             dataTableForMoblie();

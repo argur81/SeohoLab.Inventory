@@ -76,7 +76,8 @@
                                     <td id="load-total-pct" class="al-right"></td>
                                     <td id="load-total-kg" class="al-right"></td>
                                     <td id="load-total-g" class="al-right"></td>
-                                    <td colspan="4">&nbsp;</td>
+                                    <td id="load-total-g" class="al-right"></td>
+                                    <td colspan="3">&nbsp;</td>
                                 </tr>
                                 <tr>
                                     <th>성상</th>
