@@ -69,7 +69,7 @@
             pstmt.setString(1, productName != null ? productName : "");
             pstmt.setDouble(2, targetQty);
             pstmt.setString(3, targetUnit != null ? targetUnit : "kg");
-            pstmt.setString(4, managerName != null ? managerName : "박소희");
+            pstmt.setString(4, managerName != null ? managerName : "이소희");
             pstmt.setString(5, machine != null ? machine : "");
             pstmt.setString(6, appearance != null ? appearance : "");
             pstmt.setString(7, scent != null ? scent : "");

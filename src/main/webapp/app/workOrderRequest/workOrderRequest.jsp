@@ -5,10 +5,6 @@
     String todayDate = LocalDate.now().toString();
 %>
 <jsp:include page="/app/include/HeaderDocType.jsp" />
-    <!-- jQuery UI 스타일 및 스크립트 (자동완성용) -->
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-    <script src="//code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-
     <div id="wrap">
         <div id="container" class="workOrderRequest">
             <div class="content">
@@ -110,7 +106,7 @@
                     </div>
                     <div class="bottom_btns">
                         <button type="button" id="cancelBtn" class="Button bgGray" data-width="180">취소</button>
-                        <button type="submit" class="Button bgBlue" data-width="180">요청</button>
+                        <button type="button" id="requestBtn" class="Button bgBlue" data-width="180">요청</button>
                         <button type="button" id="modifyBtn" class="Button brdrGreen" data-width="180">수정</button>
                     </div>
                 </div>
@@ -170,9 +166,44 @@
                 }
                 location.href = "/app/workOrder/workOrderModify.jsp?order_id=" + currentOrderId;
             });
+
+            // 4. 요청 버튼 클릭 이벤트: 제조요청 등록 + 구글챗 알림 전송 (workOrderRequestAction.jsp)
+            $("#requestBtn").on("click", function() {
+                if (!currentOrderId) {
+                    alert("요청할 데이터의 정보가 없습니다.");
+                    return;
+                }
+
+                if (!confirm("해당 제품의 제조요청을 등록하시겠습니까?")) {
+                    return;
+                }
+
+                let $btn = $(this);
+                $btn.prop("disabled", true); // 중복 클릭 방지
+
+                $.ajax({
+                    url: "workOrderRequestAction.jsp",
+                    type: "POST",
+                    data: { order_id: currentOrderId },
+                    dataType: "json",
+                    success: function(res) {
+                        if (res && res.success) {
+                            alert(res.message || "제조요청이 등록되었습니다.");
+                            location.href = "/app/workOrderProgress/workOrderProgressList.jsp";
+                        } else {
+                            alert(res && res.message ? res.message : "제조요청 등록에 실패했습니다.");
+                            $btn.prop("disabled", false);
+                        }
+                    },
+                    error: function() {
+                        alert("서버 통신 중 오류가 발생했습니다.");
+                        $btn.prop("disabled", false);
+                    }
+                });
+            });
         });
 
-        // 4. 선택된 제품의 DB 데이터를 가져와서 테이블에 렌더링 (phase rowspan 계산 포함)
+        // 5. 선택된 제품의 DB 데이터를 가져와서 테이블에 렌더링 (phase rowspan 계산 포함)
         function loadWorkOrderData(orderId) {
             currentOrderId = orderId; // 함수 호출 시에도 안전하게 세팅
 

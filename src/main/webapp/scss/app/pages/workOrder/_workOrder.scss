@@ -1,3 +1,4 @@
+/*작업지시서*/
 .content {
     &.workOrderList {
         section {
@@ -124,7 +125,7 @@
         }
     }
 }
-
+/*작업요청*/
 #container {
     &.workOrderRequest {
         padding: 0;
@@ -244,7 +245,97 @@
         }
     }
 }
+/*진행현황*/
+.content{
+    &.workOrderProgressList{
+        .progress-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .progress-badge.req {
+            background: #eef2ff;
+            color: #4f46e5;
+        }
+        .progress-badge.making {
+            background: #fff7ed;
+            color: #ea580c;
+        }
+        .progress-badge.completed {
+            background: #fff7ed;
+            color: #8e0fb4;
+        }
+        .progress-badge.filling {
+            background: #ecfeff;
+            color: #0891b2;
+        }
+        .progress-badge.done {
+            background: #f0fdf4;
+            color: #16a34a;
+        }
+    }
+    &.workOrderProgressDetail{
+        .road_data {
+            width: 100%;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            table {
+                table-layout: fixed;
+                border: 1px solid #8d8d8d;
+                border-collapse: collapse;
+        
+                thead {
+                    th {
+                        height: 50px;
+                    }
+        
+                    td {
+                        text-align: center;
+        
+                        &#load-product-name {
+                            font-size: 16px;
+                            font-weight: 700;
+                        }
+                    }
+                }
+        
+                tbody {
+                    td {
+                        padding: 10px;
+                    }
+                }
+        
+                tfoot {
+                    td {
+                        padding: 10px;
+                    }
+                }
+        
+                td {
+                    &.al-center {
+                        text-align: center;
+                    }
+        
+                    &.al-right {
+                        text-align: right;
+                    }
+                }
+        
+                th,
+                td {
+                    border: 1px solid #8d8d8d;
+                    padding: 0 10px;
+                }
+            }
+        }
+    }
+}
+
 @include mediaQuery(tablet) {
+    /*작업지시서*/
     .content {
         &.workOrderList {
             section {
@@ -282,8 +373,37 @@
             }
         }
     }
+    /*작업요청*/
+    #container {
+        &.workOrderRequest {
+            .content {
+                .road_data {
+                    width: 100%;
+                    @include scrollbar();
+                    overflow-x: auto;
+                    > table {
+                        min-width: 1400px;
+                    }
+                }
+            }
+        }
+    }
+    /*진행현황*/
+    .content {
+        &.workOrderProgressDetail {
+            .road_data {
+                width: 100%;
+                @include scrollbar();
+                overflow-x: auto;
+                > table {
+                    min-width: 1400px;
+                }
+            }
+        }
+    }
 }
 @include mediaQuery(mobile) {
+    /*작업지시서*/
     .content {
         &.workOrderList {
             section {
@@ -427,6 +547,7 @@
             }
         }
     }
+    /*작업요청*/
     #container {
         &.workOrderRequest {
             .content {

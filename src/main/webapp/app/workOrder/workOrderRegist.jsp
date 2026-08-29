@@ -25,7 +25,7 @@
     String productName = "";
     String targetQty = "";
     String targetUnit = "kg";
-    String managerName = "박소희";
+    String managerName = "이소희";
     String machine = "AGI Mixer";
     String appearance = "";
     String scent = "";
@@ -55,7 +55,7 @@
                 productName = rs.getString("product_name") != null ? rs.getString("product_name") : "";
                 targetQty = rs.getString("target_qty") != null ? rs.getString("target_qty") : "";
                 targetUnit = rs.getString("target_unit") != null ? rs.getString("target_unit") : "kg";
-                managerName = rs.getString("manager_name") != null ? rs.getString("manager_name") : "박소희";
+                managerName = rs.getString("manager_name") != null ? rs.getString("manager_name") : "이소희";
                 machine = rs.getString("machine") != null ? rs.getString("machine") : "AGI Mixer";
                 appearance = rs.getString("appearance") != null ? rs.getString("appearance") : "";
                 scent = rs.getString("scent") != null ? rs.getString("scent") : "";
