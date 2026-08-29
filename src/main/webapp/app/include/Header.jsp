@@ -37,7 +37,7 @@
                     <div>
                         <a href="/app/workOrder/workOrderMgmtList.jsp" class="mgmt">관리·신규등록</a>
                         <a href="/app/workOrderRequest/workOrderRequest.jsp" class="request">제조요청</a>
-                        <a href="#" class="progress">진행현황</a>
+                        <a href="/app/workOrderProgress/workOrderProgressList.jsp" class="progress">진행현황</a>
                     </div>
                 </div>
             </li>
