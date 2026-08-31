@@ -193,7 +193,7 @@
                 $("#load-target-qty").text(req.target_qty || 0);
                 $("#load-target-unit").text(req.target_unit || "kg");
                 $("#load-machine").text(m.machine || "");
-                $("#load-manager-name").text(m.manager_name || "이소희");
+                $("#load-manager-name").text(req.manager_name || m.manager_name || "");
                 
                 if (req.request_date) {
                     $("#load-request-date").text(req.request_date.substring(0, 16));

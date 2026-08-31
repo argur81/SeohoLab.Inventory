@@ -302,7 +302,7 @@
             // 마지막 상태를 먼저 저장한 뒤 완료 처리
             saveMakingData(function () {
                 $.ajax({
-                    url: "workOrderProgressCompleteAction.jsp",
+                    url: "workOrderProgressMakingCompleteAction.jsp",
                     type: "POST",
                     data: { request_id: currentRequestId },
                     dataType: "json",
@@ -484,7 +484,7 @@
                 $("#load-target-qty").text(req.target_qty || 0);
                 $("#load-target-unit").text(req.target_unit || "kg");
                 $("#load-machine").text(m.machine || "");
-                $("#load-manager-name").text(m.manager_name || "");
+                $("#load-manager-name").text(req.manager_name || m.manager_name || "");
                 if (req.request_date) {
                     $("#load-request-date").text(req.request_date.substring(0, 10));
                 }

@@ -60,7 +60,7 @@
         pstmt.close();
 
         // 2. work_orders (마스터) 조회
-        String masterSql = "SELECT machine, appearance, scent, specific_gravity, ph, theor_qty, theor_unit, yield_rate, yield_standard FROM work_orders WHERE order_id = ?";
+        String masterSql = "SELECT machine, appearance, scent, specific_gravity, ph, theor_qty, theor_unit, yield_rate, yield_standard, manager_name FROM work_orders WHERE order_id = ?";
         pstmt = conn.prepareStatement(masterSql);
         pstmt.setInt(1, orderId);
         rs = pstmt.executeQuery();
@@ -75,7 +75,8 @@
             json.append("\"theor_qty\":").append(rs.getDouble("theor_qty")).append(",");
             json.append("\"theor_unit\":\"").append(escapeJson(rs.getString("theor_unit"))).append("\",");
             json.append("\"yield_rate\":").append(rs.getDouble("yield_rate")).append(",");
-            json.append("\"yield_standard\":\"").append(escapeJson(rs.getString("yield_standard"))).append("\"");
+            json.append("\"yield_standard\":\"").append(escapeJson(rs.getString("yield_standard"))).append("\",");
+            json.append("\"manager_name\":\"").append(escapeJson(rs.getString("manager_name"))).append("\"");
         }
         json.append("},");
         rs.close();

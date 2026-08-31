@@ -422,6 +422,22 @@
                 row-gap: 25px;
                 column-gap: 10px;
                 flex-wrap: wrap;
+                dl {
+                    dd {
+                        &.only_text {
+                            line-height: 40px;
+                        }
+                    }
+                }
+                #subsidiaryRowContainer {
+                    width: 100%;
+                    .row {
+                        margin-top: 25px;
+                        &:first-child {
+                            margin-top: 0;
+                        }
+                    }
+                }
                 .in_tit {
                     font-size: 18px;
                     width: 100%;

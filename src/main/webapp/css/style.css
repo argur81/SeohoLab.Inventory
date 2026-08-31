@@ -5172,6 +5172,18 @@ footer a {
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
 }
+.content.workOrderProgressDetail .radius.subsidiary_reg dl dd.only_text {
+  line-height: 40px;
+}
+.content.workOrderProgressDetail .radius.subsidiary_reg #subsidiaryRowContainer {
+  width: 100%;
+}
+.content.workOrderProgressDetail .radius.subsidiary_reg #subsidiaryRowContainer .row {
+  margin-top: 25px;
+}
+.content.workOrderProgressDetail .radius.subsidiary_reg #subsidiaryRowContainer .row:first-child {
+  margin-top: 0;
+}
 .content.workOrderProgressDetail .radius.subsidiary_reg .in_tit {
   font-size: 18px;
   width: 100%;
