@@ -1130,11 +1130,6 @@ h6.page_sub_tit {
   color: #292929 !important;
 }
 
-@media all and (max-width: 1320px) {
-  .dataTables_wrapper table.dataTable thead tr th {
-    width: auto !important;
-  }
-}
 @media screen and (max-width: 940px) {
   .dataTables_wrapper .top_group {
     margin-bottom: 2rem;
@@ -1176,6 +1171,9 @@ h6.page_sub_tit {
     padding: 0 3rem;
     font-size: 2.4rem;
   }
+  .dataTables_wrapper table.dataTable {
+    table-layout: auto;
+  }
   .dataTables_wrapper table.dataTable thead tr th {
     height: 7rem;
     font-size: 2.4rem;
@@ -1202,6 +1200,9 @@ h6.page_sub_tit {
   }
   .dataTables_wrapper table.dataTable tbody tr td.last_td {
     border-right: none;
+  }
+  .dataTables_wrapper table.dataTable tbody tr td.dtr-control {
+    white-space: nowrap;
   }
   .dataTables_wrapper table.dataTable tbody tr.child {
     padding: 0;
@@ -4947,33 +4948,53 @@ footer a {
 }
 
 /*진행현황*/
+.content {
+  /*목록*/
+}
 .content.workOrderProgressList .progress-badge {
   display: inline-block;
-  padding: 4px 10px;
-  border-radius: 12px;
   font-size: 14px;
   font-weight: 700;
   white-space: nowrap;
 }
 .content.workOrderProgressList .progress-badge.req {
-  background: #eef2ff;
-  color: #4f46e5;
+  color: #6B7280;
 }
 .content.workOrderProgressList .progress-badge.making {
-  background: #fff7ed;
-  color: #ea580c;
+  color: #D97706;
 }
 .content.workOrderProgressList .progress-badge.completed {
-  background: #fff7ed;
-  color: #8e0fb4;
+  color: #475569;
 }
 .content.workOrderProgressList .progress-badge.filling {
-  background: #ecfeff;
-  color: #0891b2;
+  color: #7C3AED;
 }
 .content.workOrderProgressList .progress-badge.done {
   background: #f0fdf4;
-  color: #16a34a;
+  color: #16A34A;
+}
+.content.workOrderProgressList .item-link.regist {
+  color: #612d44;
+}
+.content.workOrderProgressList .item-link.making {
+  color: #D97706;
+}
+.content.workOrderProgressList .item-link.completed {
+  color: #475569;
+}
+.content.workOrderProgressList .item-link.filling {
+  color: #7C3AED;
+}
+.content.workOrderProgressList .item-link.done {
+  color: #16A34A;
+}
+.content.workOrderProgressList .item-link .lot-tag {
+  color: #888 !important;
+  font-weight: normal;
+  font-size: 14px;
+}
+.content {
+  /*상세,제조중,제조완료*/
 }
 .content.workOrderProgressDetail .radius {
   padding: 25px 25px 60px 25px;
@@ -5068,6 +5089,9 @@ footer a {
   min-width: auto;
   width: 55px;
 }
+.content.workOrderProgressDetail .radius .road_data table tbody tr.extra-row td {
+  background: #e3fcff;
+}
 .content.workOrderProgressDetail .radius .road_data table tfoot th {
   height: 40px;
 }
@@ -5084,6 +5108,100 @@ footer a {
 .content.workOrderProgressDetail .radius .road_data table td {
   border: 1px solid #8d8d8d;
   padding: 0 10px;
+}
+.content.workOrderProgressDetail .radius #addExtraRowBtn {
+  width: 100%;
+  height: 40px;
+  border: 1px solid #612d44;
+  color: #612d44;
+  background-color: #fff;
+  font-weight: 500;
+  border-radius: 10px;
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+}
+.content.workOrderProgressDetail .radius #addExtraRowBtn:hover {
+  background-color: #612d44;
+  color: #fff;
+}
+.content.workOrderProgressDetail .radius .add_text {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 5px;
+}
+.content.workOrderProgressDetail .radius .add_text button {
+  height: 40px;
+  padding: 0 10px;
+  background-color: #ea580c;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  white-space: nowrap;
+  font-size: 14px;
+}
+.content.workOrderProgressDetail .radius.subsidiary_reg {
+  padding: 25px 25px 60px 25px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+  row-gap: 25px;
+  -webkit-column-gap: 10px;
+     -moz-column-gap: 10px;
+          column-gap: 10px;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+.content.workOrderProgressDetail .radius.subsidiary_reg .in_tit {
+  font-size: 18px;
+  width: 100%;
+}
+.content.workOrderProgressDetail .radius.subsidiary_reg .row {
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+  -webkit-column-gap: 10px;
+     -moz-column-gap: 10px;
+          column-gap: 10px;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+.content.workOrderProgressDetail .radius.subsidiary_reg .add_btn {
+  width: 100%;
+}
+.content.workOrderProgressDetail .radius.subsidiary_reg .bottom_btns {
+  margin-top: 15px;
 }
 
 @media screen and (max-width: 1500px) {
@@ -5333,6 +5451,13 @@ footer a {
   }
   .content.workOrderList .bottom_btns {
     margin-top: 0;
+  }
+  /*진행현황*/
+  .content.workOrderProgressList .progress-badge {
+    font-size: 2.4rem;
+  }
+  .content.workOrderProgressList .item-link .lot-tag {
+    font-size: 2rem;
   }
   /*작업요청*/
   #container.workOrderRequest .content .top_btn {

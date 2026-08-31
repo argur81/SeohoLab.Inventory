@@ -295,4 +295,7 @@ $(document).ready(function(){
         $('.content.totalReg > form').hide();
         $('.' + targetClass).fadeIn();
     });
+    $(window).on('load', function() {
+        $('#stockTable').DataTable().columns.adjust().responsive.recalc();
+    });
 });

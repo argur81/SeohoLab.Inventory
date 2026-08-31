@@ -36,7 +36,7 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>원료코드</th>
+                            <th class="code">원료코드</th>
                             <th class="name">상품명 (Trade Name)</th>
                             <th>화학명(한글)</th>
                             <th>INCI Name</th>
@@ -103,8 +103,8 @@
                         %>
                         <tr>
                             <td><%= itemId %></td>
-                            <td><%= itemCode %></td>
-                            <td>
+                            <td class="code"><%= itemCode %></td>
+                            <td class="name">
                                 <a href="rawStatusModify.jsp?id=<%= itemId %>" class="item-link"><%= itemName %></a>
                             </td>
                             <td class="chemName"><div class="text" title="<%= chemName %>"><%= chemName %></div></td>
@@ -245,6 +245,7 @@
                                 { width: "150px", targets: 9, className: "dt-right" },  // 단가
                                 { width: "120px", targets: 19, className: "dt-center" },  // 작성자
                                 { width: "180px", targets: 20, className: "dt-right" },  // 업데이트
+                                { targets: [1], className: 'min-tablet'},
                             ],
                             responsive: true,
                             language: {

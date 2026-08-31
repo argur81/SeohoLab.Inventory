@@ -109,7 +109,7 @@
                         %>
                         <tr class="<%= isLowStock ? " low-stock" : "" %>">
                             <td><%= count++ %></td>
-                            <td>
+                            <td class="name">
                                 <a href="rawMaterialModify.jsp?id=<%= itemId %>" class="item-link"><%= itemName %></a>
                             </td>
                             <td><%= workOrderStr %></td>
@@ -180,7 +180,7 @@
                                     String statusStr = isLowStock ? "부족" : "정상";
                         %>
                         <tr>
-                            <td><%= itemName %></td>
+                            <td class="name"><%= itemName %></td>
                             <td><%= stockDisplay %></td>
                             <td><%= minDisplay %></td>
                             <td><%= statusStr %></td>
@@ -203,7 +203,7 @@
                         var table = $('#stockTable').DataTable({
                             autoWidth: false,
                             columnDefs: [
-                                { targets: [2, 3], visible: false }, // 작업지시서(2번)와 화학명(3번) 화면 숨김 처리 및 검색 가능 유지
+                                { targets: [2, 3], visible: false },
                                 { width: "70px", targets: 0, className: "dt-center" },
                                 { width: "130px", targets: 4, className: "dt-right" },
                                 { width: "130px", targets: 5, className: "dt-right" },

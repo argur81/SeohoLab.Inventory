@@ -200,21 +200,6 @@
         }
     }
 }
-@media all and (max-width:1320px) {
-    .dataTables_wrapper {
-        table {
-            &.dataTable {
-                thead {
-                    tr {
-                        th {
-                            width: auto !important;
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
 @include mediaQuery(mobile) {
     .dataTables_wrapper {
         .top_group {
@@ -256,6 +241,7 @@
         }
         table {
             &.dataTable {
+                table-layout: auto;
                 thead {
                     tr {
                         th {
@@ -295,6 +281,9 @@
                             font-size: 2.4rem;
                             &.last_td {
                                 border-right: none;
+                            }
+                            &.dtr-control {
+                                white-space: nowrap;
                             }
                         }
                         &.child {

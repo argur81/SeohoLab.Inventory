@@ -7,7 +7,6 @@
     String category = request.getParameter("category");
     String keyword = request.getParameter("keyword");
 
-    // DTO 형태의 Map 데이터를 담을 리스트
     List<Map<String, String>> list = new ArrayList<Map<String, String>>();
 
     if (keyword == null || keyword.trim().isEmpty()) {
@@ -32,7 +31,6 @@
         String sql = "";
 
         if ("RAW".equals(category)) {
-            // 원료(items) - work_order_1, work_order_2 2개 체제로 수정 반영
             sql = "SELECT DISTINCT item_name FROM items "
                 + "WHERE (item_name LIKE ? "
                 + "   OR COALESCE(work_order_1, '') LIKE ? "
@@ -45,13 +43,12 @@
             pstmt.setString(3, searchPattern);
 
         } else if ("PRODUCT".equals(category)) {
-            // 완제품(products) - product_type 추가 조회
             sql = "SELECT DISTINCT item_name, product_type FROM products WHERE item_name LIKE ? ORDER BY item_name ASC LIMIT 20";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, searchPattern);
 
         } else if ("SUBSIDIARY".equals(category)) {
-            // 부자재(subsidiary) - subsidiary_type, material_type 추가 조회
+            // 부자재 조회 시 종류와 자재명 모두 조회
             sql = "SELECT DISTINCT item_name, subsidiary_type, material_type FROM subsidiary WHERE item_name LIKE ? ORDER BY item_name ASC LIMIT 20";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, searchPattern);
@@ -86,14 +83,22 @@
         if (conn != null) try { conn.close(); } catch(Exception e){}
     }
 
-    // JSON 객체 배열 형태 직접 생성
     StringBuilder json = new StringBuilder("[");
     for (int i = 0; i < list.size(); i++) {
         Map<String, String> map = list.get(i);
         String name = map.get("itemName").replace("\\", "\\\\").replace("\"", "\\\"");
 
+        // 부자재일 경우 label에 [종류]제품명 형태로 설정, value는 실제 제품명만 들어가도록 처리
+        String label = name;
+        if ("SUBSIDIARY".equals(category)) {
+            String sType = map.get("subsidiaryType");
+            if (sType != null && !sType.trim().isEmpty()) {
+                label = "[" + sType.trim() + "]" + name;
+            }
+        }
+
         json.append("{");
-        json.append("\"label\":\"").append(name).append("\",");
+        json.append("\"label\":\"").append(label.replace("\\", "\\\\").replace("\"", "\\\"")).append("\",");
         json.append("\"value\":\"").append(name).append("\"");
 
         if ("PRODUCT".equals(category)) {

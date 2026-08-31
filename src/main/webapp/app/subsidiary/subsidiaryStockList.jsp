@@ -99,7 +99,7 @@
                             <td>
                                 <%= subsidiaryType %>
                             </td>
-                            <td>
+                            <td class="name">
                                 <a href="subsidiaryModify.jsp?id=<%= subsidiaryId %>" class="item-link"><%= itemName %></a>
                             </td>
                             <td><%= stockDisplay %></td>

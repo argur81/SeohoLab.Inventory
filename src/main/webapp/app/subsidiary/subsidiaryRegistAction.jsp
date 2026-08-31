@@ -55,10 +55,11 @@
         Class.forName("org.mariadb.jdbc.Driver");
         conn = DriverManager.getConnection(url, dbUser, dbPass);
 
-        // ★ [부자재 등록 중복 체크] 동일한 자재명이 DB에 존재하는지 사전 검사
-        String checkSql = "SELECT COUNT(*) FROM subsidiary WHERE item_name = ?";
+        // ★ [부자재 등록 중복 체크] 동일한 종류 내에서 동일한 자재명이 존재하는지 검사
+        String checkSql = "SELECT COUNT(*) FROM subsidiary WHERE item_name = ? AND subsidiary_type = ?";
         pstmt = conn.prepareStatement(checkSql);
         pstmt.setString(1, itemName.trim());
+        pstmt.setString(2, subsidiaryType != null ? subsidiaryType : "");
         rs = pstmt.executeQuery();
 
         int duplicateCount = 0;
@@ -69,7 +70,7 @@
         pstmt.close();
 
         if (duplicateCount > 0) {
-            out.println("<script>alert('이미 등록된 자재명입니다.'); history.back();</script>");
+            out.println("<script>alert('해당 종류에 이미 등록된 자재명입니다.'); history.back();</script>");
             return;
         }
 

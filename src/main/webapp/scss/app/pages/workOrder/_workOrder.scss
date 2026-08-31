@@ -247,36 +247,54 @@
 }
 /*진행현황*/
 .content{
+    /*목록*/
     &.workOrderProgressList{
         .progress-badge {
             display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
             font-size: 14px;
             font-weight: 700;
             white-space: nowrap;
         }
         .progress-badge.req {
-            background: #eef2ff;
-            color: #4f46e5;
+            color: #6B7280;
         }
         .progress-badge.making {
-            background: #fff7ed;
-            color: #ea580c;
+            color: #D97706;
         }
         .progress-badge.completed {
-            background: #fff7ed;
-            color: #8e0fb4;
+            color: #475569;
         }
         .progress-badge.filling {
-            background: #ecfeff;
-            color: #0891b2;
+            color: #7C3AED;
         }
         .progress-badge.done {
             background: #f0fdf4;
-            color: #16a34a;
+            color: #16A34A;
         }
+        .item-link {
+            &.regist {
+                color: #612d44;
+            }
+            &.making {
+                color: #D97706;
+            }
+            &.completed {
+                color: #475569;
+            }
+            &.filling {
+                color: #7C3AED;
+            }
+            &.done {
+                color: #16A34A;
+            }
+            .lot-tag {
+                color: #888 !important;
+                font-weight: normal;
+                font-size: 14px;
+            }
+        } 
     }
+    /*상세,제조중,제조완료*/
     &.workOrderProgressDetail{
         .radius {
             padding: 25px 25px 60px 25px;
@@ -334,6 +352,13 @@
                                 }
                             }
                         }
+                        tr {
+                            &.extra-row {
+                                td {
+                                    background: #e3fcff;
+                                }
+                            }
+                        }
                     }
             
                     tfoot {
@@ -360,6 +385,58 @@
                         border: 1px solid #8d8d8d;
                         padding: 0 10px;
                     }
+                }
+            }
+            #addExtraRowBtn {
+                width: 100%;
+                height: 40px;
+                border: 1px solid #612d44;
+                color: #612d44;
+                background-color: #fff;
+                font-weight: 500;
+                border-radius: 10px;
+                transition: all .4s;
+            
+                &:hover {
+                    background-color: #612d44;
+                    color: #fff;
+                }
+            }
+            .add_text {
+                @include flexLayout(row, flex-start, center);
+                gap: 5px;
+                button {
+                    height: 40px;
+                    padding: 0 10px;
+                    background-color: #ea580c;
+                    color: #fff;
+                    border: none;
+                    border-radius: 10px;
+                    white-space: nowrap;
+                    font-size: 14px;
+                }
+            }
+            &.subsidiary_reg {
+                padding: 25px 25px 60px 25px;
+                @include flexLayout(row, flex-start, stretch);
+                row-gap: 25px;
+                column-gap: 10px;
+                flex-wrap: wrap;
+                .in_tit {
+                    font-size: 18px;
+                    width: 100%;
+                }
+                .row {
+                    width: 100%;
+                    @include flexLayout(row, flex-start, stretch);
+                    column-gap: 10px;
+                    flex-wrap: wrap;
+                }
+                .add_btn {
+                    width: 100%;
+                }
+                .bottom_btns {
+                    margin-top: 15px;
                 }
             }
         }
@@ -591,6 +668,19 @@
             .bottom_btns {
                 margin-top: 0;
             }
+        }
+    }
+    /*진행현황*/
+    .content{
+        &.workOrderProgressList {
+            .progress-badge {
+                font-size: 2.4rem;
+            }
+            .item-link {
+                .lot-tag {
+                    font-size: 2rem;
+                }
+        } 
         }
     }
     /*작업요청*/

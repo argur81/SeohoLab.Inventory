@@ -61,10 +61,25 @@
                 <!--부자재-->
                 <form class="subsidiary" action="usedRegistAction.jsp" method="post">
                     <input type="hidden" name="category" value="SUBSIDIARY">
+                    <input type="hidden" name="subsidiary_type" id="sub_subsidiary_type_hidden">
                     <section class="radius">
-                        <dl class="w75">
+                        <dl class="w50">
                             <dt>자재명</dt>
                             <dd><input type="text" id="sub_item_name" name="item_name" class="inputText" placeholder="자재명 입력 (자동완성)"></dd>
+                        </dl>
+                        <dl class="w25">
+                            <dt>종류</dt>
+                            <dd>
+                                <select class="og_select" id="sub_subsidiary_type" disabled>
+                                    <option value="">선택</option>
+                                    <option value="Label">Label</option>
+                                    <option value="Bottle">Bottle</option>
+                                    <option value="Pump">Pump</option>
+                                    <option value="Cap">Cap</option>
+                                    <option value="Box">Box</option>
+                                    <option value="기타">기타</option>
+                                </select>
+                            </dd>
                         </dl>
                         <dl class="volume stock w25">
                             <dt>사용개수</dt>
@@ -89,7 +104,7 @@
                 // 품목명 Autocomplete (searchItems.jsp 호출)
                 function setupAutocomplete(elementId, categoryName) {
                     $(elementId).autocomplete({
-                        source: function(request, response) {
+                        source: function (request, response) {
                             $.ajax({
                                 url: "searchItems.jsp",
                                 type: "GET",
@@ -98,13 +113,26 @@
                                     keyword: request.term
                                 },
                                 dataType: "json",
-                                success: function(data) {
+                                success: function (data) {
                                     response(data);
                                 }
                             });
                         },
                         minLength: 1,
-                        appendTo: "body"
+                        appendTo: "body",
+                        select: function (event, ui) {
+                            // 사용자가 목록에서 선택했을 때 input창에는 value(제품명)가 들어가도록 지정
+                            $(elementId).val(ui.item.value);
+
+                            // 부자재일 경우 종류 select 박스 및 히든 필드 값 설정
+                            if (categoryName === "SUBSIDIARY") {
+                                let sType = ui.item.type || "";
+                                $("#sub_subsidiary_type").val(sType);
+                                $("#sub_subsidiary_type_hidden").val(sType);
+                            }
+
+                            return false; // 기본 동작 방지
+                        }
                     });
                 }
 

@@ -86,7 +86,7 @@
                         %>
                         <tr>
                             <td><%= count++ %></td>
-                            <td>
+                            <td class="name">
                                 <a href="workOrderModify.jsp?order_id=<%= orderId %>" class="item-link"><%= displayProductName %></a>
                             </td>
                             <td><%= targetQtyStr %></td>

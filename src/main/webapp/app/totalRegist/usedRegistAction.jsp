@@ -2,7 +2,7 @@
 <%@ page import="java.sql.*" %>
 <%
     request.setCharacterEncoding("UTF-8");
-    // ★ 응답 인코딩 설정 추가
+    // 응답 인코딩 설정 추가
     response.setContentType("text/html; charset=UTF-8");
     response.setCharacterEncoding("UTF-8");
 
@@ -20,7 +20,7 @@
         return;
     }
 
-    // ★ DB URL에 한글 캐릭터셋 옵션 추가
+    // DB URL에 한글 캐릭터셋 옵션 추가
     String url = "jdbc:mariadb://svc.sel3.cloudtype.app:32170/seoholabdb?useUnicode=true&characterEncoding=utf8";
     String dbUser = "root";
     String dbPass = System.getenv("DB_PASSWORD");
@@ -140,12 +140,15 @@
         } else if ("SUBSIDIARY".equals(category)) {
             String outQtyStr = request.getParameter("out_qty");
             int outQty = (outQtyStr != null && !outQtyStr.trim().isEmpty()) ? Integer.parseInt(outQtyStr.replace(",", "")) : 0;
+            String subsidiaryType = request.getParameter("subsidiary_type");
 
-            String sql = "UPDATE subsidiary SET stock_qty = stock_qty - ?, last_stock_user_id = ?, updated_at = CURRENT_TIMESTAMP WHERE TRIM(item_name) = ?";
+            String sql = "UPDATE subsidiary SET stock_qty = stock_qty - ?, last_stock_user_id = ?, updated_at = CURRENT_TIMESTAMP WHERE TRIM(item_name) = ? AND TRIM(subsidiary_type) = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, outQty);
             pstmt.setString(2, loginUserId);
             pstmt.setString(3, itemName.trim());
+            pstmt.setString(4, subsidiaryType != null ? subsidiaryType.trim() : "");
+            
             if (pstmt.executeUpdate() > 0) isSuccess = true;
             pstmt.close();
         }

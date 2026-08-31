@@ -164,7 +164,7 @@
                         %>
                         <tr>
                             <td><%= productType %></td>
-                            <td><%= itemName %></td>
+                            <td class="name"><%= itemName %></td>
                             <td><%= stockDisplay %></td>
                             <td><%= minDisplay %></td>
                             <td><%= statusStr %></td>

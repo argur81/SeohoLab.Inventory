@@ -77,7 +77,7 @@
                             <td class="dt-center"><%= count++ %></td>
                             <td class="dt-center"><%= category %></td>
                             <td class="dt-center"><%= lotNumber %></td>
-                            <td>
+                            <td class="name">
                                 <a href="<%= modifyPage %>" class="item-link"><%= itemName %></a>
                             </td>
                             <td class="dt-right"><%= stockQty %></td>

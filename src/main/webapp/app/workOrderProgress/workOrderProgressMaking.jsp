@@ -16,8 +16,6 @@
         .road_data select.og_select {border: none !important;background: transparent !important;box-shadow: none !important;padding: 0 !important;margin: 0 !important;-webkit-appearance: none;appearance: none;color: #000 !important;font-size: inherit !important;}
     }
     @page {size: A4;margin: 10mm;}
-    tr.extra-row td { background: #fffceb; }
-    .delExtraRowBtn { padding: 4px 8px; font-size: 12px; }
 </style>
 <div id="loadingOverlay">
     <div class="spinner"></div>
@@ -38,8 +36,8 @@
                     <table>
                         <colgroup>
                             <col width="100"><col width="45"><col width="220"><col width="130">
-                            <col width="110"><col width="120"><col width="120"><col width="170">
-                            <col width="140"><col width="170">
+                            <col width="110"><col width="120"><col width="120"><col width="160">
+                            <col width="160"><col width="160">
                         </colgroup>
                         <thead>
                             <tr>
@@ -325,7 +323,7 @@
             });
         });
 
-        // ===================== 원료 행 추가 (pH 조정 등) =====================
+        // ===================== 원료 추가  =====================
         $(document).on("click", "#addExtraRowBtn", function () {
             addExtraRow(null);
         });
@@ -594,10 +592,10 @@
             tbodyHtml += rowHtml;
         });
 
-        // 마지막 행: [원료 행 추가] 버튼 (인쇄 시에는 숨김)
+        // 마지막 행: [원료 추가] 버튼 (인쇄 시에는 숨김)
         tbodyHtml += '<tr id="addRowTr" class="no-print">'
             + '<td colspan="10" class="al-center">'
-            + '<button type="button" id="addExtraRowBtn" class="Button">원료 행 추가 (pH 조정 등)</button>'
+            + '<button type="button" id="addExtraRowBtn" class="Button">원료 추가</button>'
             + '</td></tr>';
 
         $("#load-items-tbody").html(tbodyHtml);
@@ -609,7 +607,7 @@
         nextExtraRowId = totalOriginalRows;
     }
 
-    // 제조 중 원료 행 추가 (pH 조정 등). prefill이 있으면 저장된 값 복원용으로 사용.
+    // 제조 중 원료 추가 . prefill이 있으면 저장된 값 복원용으로 사용.
     function addExtraRow(prefill) {
         nextExtraRowId++;
         let rowId = nextExtraRowId;
@@ -633,11 +631,11 @@
             +     '<option value="kg">kg</option><option value="g">g</option>'
             +   '</select></div></td>'
             + '<td>-</td>'
-            + '<td><input type="text" class="inputText extra-note" data-row="' + rowId + '" placeholder="추가 사유 (예: pH 조정)" value="' + noteValue.replace(/"/g, '&quot;') + '">'
-            +   ' <button type="button" class="delExtraRowBtn" data-row="' + rowId + '">삭제</button></td>'
+            + '<td><div class="add_text"><input type="text" class="inputText extra-note" data-row="' + rowId + '" placeholder="추가 사유" value="' + noteValue.replace(/"/g, '&quot;') + '">'
+            +   ' <button type="button" class="delExtraRowBtn" data-row="' + rowId + '">삭제</button></div></td>'
             + '</tr>';
 
-        // [원료 행 추가] 버튼이 있는 tr(#addRowTr) 바로 위에 새 행을 삽입
+        // [원료 추가] 버튼이 있는 tr(#addRowTr) 바로 위에 새 행을 삽입
         if ($('#addRowTr').length > 0) {
             $('#addRowTr').before(rowHtml);
         } else {
