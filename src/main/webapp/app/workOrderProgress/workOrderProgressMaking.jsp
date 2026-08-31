@@ -6,24 +6,16 @@
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 <style>
-    /* 인쇄 시 표(road_data) 영역만 출력 */
     @media print {
         body * { visibility: hidden; }
         .road_data, .road_data * { visibility: visible; }
         .road_data { position: absolute; left: 0; top: 0; width: 100%; }
-        #loadingOverlay, .top_btn, .top_btns, .bottom_btns, header, .delExtraRowBtn { display: none !important; }
+        #loadingOverlay, .top_btn, .bottom_btns, header, .delExtraRowBtn, .no-print { display: none !important; }
+        .road_data input.inputText,
+        .road_data input[type="date"],
+        .road_data select.og_select {border: none !important;background: transparent !important;box-shadow: none !important;padding: 0 !important;margin: 0 !important;-webkit-appearance: none;appearance: none;color: #000 !important;font-size: inherit !important;}
     }
-    #loadingOverlay {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(255,255,255,1); z-index: 9999;
-        display: flex; flex-direction: column; justify-content: center; align-items: center;
-    }
-    .spinner {
-        width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #3498db;
-        border-radius: 50%; animation: spin 1s linear infinite;
-    }
-    .loading_text { margin-top: 15px; font-weight: bold; color: #333; font-size: 14px; }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @page {size: A4;margin: 10mm;}
     tr.extra-row td { background: #fffceb; }
     .delExtraRowBtn { padding: 4px 8px; font-size: 12px; }
 </style>
@@ -41,9 +33,6 @@
                 </h5>
             </div>
             <section class="radius">
-                <div class="top_btns">
-                    <button type="button" id="addExtraRowBtn" class="Button">원료 행 추가 (pH 조정 등)</button>
-                </div>
                 <form id="makingForm">
                 <div class="road_data">
                     <table>
@@ -97,8 +86,8 @@
                                 <th>제조지시량(kg)</th>
                                 <th>제조지시량(g)</th>
                                 <th>투입량</th>
-                                <th>비고 / 관리</th>
                                 <th>제조방법</th>
+                                <th>비고 / 관리</th>
                             </tr>
                         </thead>
                         <tbody id="load-items-tbody">
@@ -155,7 +144,7 @@
 
                 <!-- 원료 Lot 선택 팝업 (usedRegist.jsp / releaseRegist.jsp 와 동일한 UX) -->
                 <div class="layer_popup" id="itemLotPopup" style="display: none;">
-                    <div class="pop_data people_pop" data-width="860">
+                    <div class="pop_data" data-width="860">
                         <div class="head">
                             <h6 id="lotPopupTitle">원료 Lot 리스트</h6>
                             <button type="button" class="close btn_close_pop" title="닫기"><img src="/images/svg/popup_close.svg"></button>
@@ -164,6 +153,7 @@
                             <ul id="lot_list_ul"></ul>
                         </div>
                         <div class="bottom_btns">
+                            <button type="button" id="btn_item_reset_lots" class="Button bgGray" data-width="180">초기화</button>
                             <button type="button" id="btn_item_apply_lots" class="Button bgBlue" data-width="180">적용</button>
                         </div>
                     </div>
@@ -230,6 +220,40 @@
         return 'M' + yy + monthLetter + dd;
     }
 
+    // 인쇄 시 표(.road_data) 실제 높이를 측정해 A4 한 장(여백 10mm 기준)에 들어가도록 자동 축소
+    // ※ transform:scale은 화면에만 축소되어 보이고 인쇄 페이지분할 계산에는 반영되지 않으므로
+    //    실제 레이아웃 크기 자체를 줄이는 zoom 속성을 사용한다 (Chrome/Edge 기준 확실히 동작)
+    function printFitToA4() {
+        let $road = $(".road_data");
+
+        // 측정 전 기존 축소를 초기화
+        $road.css("zoom", "1");
+
+        let contentHeightPx = $road[0].scrollHeight;
+        let contentWidthPx = $road[0].scrollWidth;
+
+        // A4(210mm x 297mm), 여백 10mm 가정, 96dpi 환산(1mm ≈ 3.78px)
+        const A4_HEIGHT_PX = Math.round((297 - 20) * 3.78); // ≈ 1047px
+        const A4_WIDTH_PX = Math.round((210 - 20) * 3.78);  // ≈ 718px
+
+        let scaleH = A4_HEIGHT_PX / contentHeightPx;
+        let scaleW = A4_WIDTH_PX / contentWidthPx;
+        let scale = Math.min(scaleH, scaleW, 1); // 원본보다 확대는 하지 않음
+
+        if (scale < 1) {
+            $road.css("zoom", scale);
+        }
+
+        window.print();
+
+        // 인쇄(또는 취소) 후 화면상 배율 원상복구
+        let restore = function () {
+            $road.css("zoom", "1");
+        };
+        window.onafterprint = restore;
+        setTimeout(restore, 1000); // onafterprint 미지원 브라우저 대비 fallback
+    }
+
     $(document).ready(function () {
         if (!currentRequestId) {
             alert("유효하지 않은 접근입니다. (요청 ID 누락)");
@@ -245,7 +269,7 @@
         });
 
         $("#printBtn").on("click", function () {
-            window.print();
+            printFitToA4();
         });
 
         $("#deleteBtn").on("click", function () {
@@ -302,7 +326,7 @@
         });
 
         // ===================== 원료 행 추가 (pH 조정 등) =====================
-        $("#addExtraRowBtn").on("click", function () {
+        $(document).on("click", "#addExtraRowBtn", function () {
             addExtraRow(null);
         });
 
@@ -358,6 +382,12 @@
             $(this).val(formatWithComma(value));
         });
 
+        // 초기화 버튼: 팝업에 표시된 모든 Lot의 입력값을 비움 (처음부터 다시 선택 가능)
+        $(document).on("click", "#btn_item_reset_lots", function () {
+            $("#itemLotPopup #lot_list_ul input").val("");
+            wasFullUseClicked = false;
+        });
+
         // 적용 버튼
         $(document).on("click", "#btn_item_apply_lots", function () {
             if (activePopupRowId === null) { $("#itemLotPopup").hide(); return; }
@@ -380,7 +410,14 @@
             });
 
             if (selectedLots.length === 0) {
-                alert("사용할 Lot과 수량을 입력해 주세요.");
+                // 아무 값도 없이 적용 -> 해당 행의 Lot/투입량을 완전히 비움 (초기화 후 재적용 케이스)
+                delete rowLotData[activePopupRowId];
+                let $rowClear = $('tr[data-row-id="' + activePopupRowId + '"]');
+                $rowClear.find(".lot-input").val("");
+                $rowClear.find(".input-qty").val("");
+                recalcActualQty();
+                $("#itemLotPopup").hide();
+                activePopupRowId = null;
                 return;
             }
 
@@ -525,17 +562,17 @@
                 let formattedMethod = (pInfo.methodDesc || '').replace(/\(/g, '<br>(');
                 rowHtml += '<td class="al-center" rowspan="' + pInfo.rowspan + '">' + (pInfo.phaseName || '') + '</td>';
                 rowHtml += '<td class="al-center">' + rowNum + '</td>';
-                rowHtml += '<td>' + (item.raw_material_name || '') + '</td>';
+                rowHtml += '<td class="name"><span>' + (item.raw_material_name || '') + '</span></td>';
                 rowHtml += lotCell;
                 rowHtml += '<td class="al-right">' + formatWithComma(item.content_pct || 0) + ' %</td>';
                 rowHtml += '<td class="al-right">' + formatWithComma(item.order_qty_kg || 0) + ' kg</td>';
                 rowHtml += '<td class="al-right">' + formatWithComma(item.order_qty_g || 0) + ' g</td>';
                 rowHtml += qtyCell;
-                rowHtml += '<td class="al-center" rowspan="' + pInfo.rowspan + '">' + (pInfo.noteDesc || '') + '</td>';
                 rowHtml += '<td class="al-center" rowspan="' + pInfo.rowspan + '">' + formattedMethod + '</td>';
+                rowHtml += '<td class="al-center" rowspan="' + pInfo.rowspan + '">' + (pInfo.noteDesc || '') + '</td>';
             } else if (rowPhaseMap[rowNum] && rowPhaseMap[rowNum].skip) {
                 rowHtml += '<td class="al-center">' + rowNum + '</td>';
-                rowHtml += '<td>' + (item.raw_material_name || '') + '</td>';
+                rowHtml += '<td class="name"><span>' + (item.raw_material_name || '') + '</span></td>';
                 rowHtml += lotCell;
                 rowHtml += '<td class="al-right">' + formatWithComma(item.content_pct || 0) + ' %</td>';
                 rowHtml += '<td class="al-right">' + formatWithComma(item.order_qty_kg || 0) + ' kg</td>';
@@ -544,7 +581,7 @@
             } else {
                 rowHtml += '<td>-</td>';
                 rowHtml += '<td class="al-center">' + rowNum + '</td>';
-                rowHtml += '<td>' + (item.raw_material_name || '') + '</td>';
+                rowHtml += '<td class="name"><span>' + (item.raw_material_name || '') + '</span></td>';
                 rowHtml += lotCell;
                 rowHtml += '<td class="al-right">' + formatWithComma(item.content_pct || 0) + ' %</td>';
                 rowHtml += '<td class="al-right">' + formatWithComma(item.order_qty_kg || 0) + ' kg</td>';
@@ -556,6 +593,12 @@
             rowHtml += '</tr>';
             tbodyHtml += rowHtml;
         });
+
+        // 마지막 행: [원료 행 추가] 버튼 (인쇄 시에는 숨김)
+        tbodyHtml += '<tr id="addRowTr" class="no-print">'
+            + '<td colspan="10" class="al-center">'
+            + '<button type="button" id="addExtraRowBtn" class="Button">원료 행 추가 (pH 조정 등)</button>'
+            + '</td></tr>';
 
         $("#load-items-tbody").html(tbodyHtml);
         $("#load-total-pct").text(formatWithComma(Math.round(totalPct)) + " %");
@@ -589,12 +632,17 @@
             +   '<select class="og_select input-unit" data-row="' + rowId + '" disabled>'
             +     '<option value="kg">kg</option><option value="g">g</option>'
             +   '</select></div></td>'
+            + '<td>-</td>'
             + '<td><input type="text" class="inputText extra-note" data-row="' + rowId + '" placeholder="추가 사유 (예: pH 조정)" value="' + noteValue.replace(/"/g, '&quot;') + '">'
             +   ' <button type="button" class="delExtraRowBtn" data-row="' + rowId + '">삭제</button></td>'
-            + '<td>-</td>'
             + '</tr>';
 
-        $("#load-items-tbody").append(rowHtml);
+        // [원료 행 추가] 버튼이 있는 tr(#addRowTr) 바로 위에 새 행을 삽입
+        if ($('#addRowTr').length > 0) {
+            $('#addRowTr').before(rowHtml);
+        } else {
+            $("#load-items-tbody").append(rowHtml);
+        }
         initExtraAutocomplete($('tr[data-row-id="' + rowId + '"] .item-autocomplete-extra'));
 
         return rowId;
@@ -688,7 +736,7 @@
         $("#lotPopupTitle").text(itemName + " - Lot 선택");
 
         $.ajax({
-            url: "getItemLots.jsp",
+            url: "/app/totalRegist/getItemLots.jsp",
             type: "GET",
             data: { item_name: itemName, category: "RAW" },
             dataType: "json",
@@ -725,7 +773,7 @@
                         let html = '<li>'
                             + '<dl class="lot"><dt>Lot번호</dt><dd>' + item.lot_number + '</dd></dl>'
                             + '<dl class="stock"><dt>현재재고</dt><dd>'
-                            + '<i>' + t + '</i> t / <i>' + kg + '</i> kg / <i>' + g + '</i> g / <i>' + mg + '</i> mg'
+                            + '<span class="t"><i>' + t + '</i> t / </span><span class="kg"><i>' + kg + '</i> kg / </span><span class="g"><i>' + g + '</i> g</span><span class="mg"> / <i>' + mg + '</i> mg</span>'
                             + '</dd></dl>'
                             + '<dl class="volume">'
                             + '<dt>사용량 <button type="button" class="btn_all_use"'

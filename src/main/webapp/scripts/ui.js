@@ -135,31 +135,6 @@ $(document).ready(function () {
     $('.layer_popup .pop_data .head button').click(function(){
         $(this).parents('.layer_popup').hide();
     });
-    //이미지승인 요청 수신자선택(모바일)
-    $('.pop_data.people_pop fieldset.for_mobile .search_open').click(function(){
-        $('.pop_data.people_pop fieldset.for_mobile .search_field').fadeIn();
-        $('.pop_data.people_pop fieldset.for_mobile .search_field > div').addClass('open');
-    });
-    $('.pop_data.people_pop fieldset.for_mobile .search_field .close').click(function(){
-        $('.pop_data.people_pop fieldset.for_mobile .search_field').fadeOut();
-        $('.pop_data.people_pop fieldset.for_mobile .search_field > div').removeClass('open');
-    });
-    $('.pop_data.people_pop .grid .checkBox input[type="checkbox"]').on('change', function() {
-        if($(this).is(':checked') == true){
-            $(this).prop('checked', true);
-        }else{
-            $(this).prop('checked', false);
-        }
-        // 체크된 체크박스의 개수 파악
-        let checkedCount = $('.pop_data.people_pop .grid .checkBox input[type="checkbox"]:checked').length;
-        $('.pop_data.people_pop fieldset.for_mobile .mobile_chk_fix > p i').text(checkedCount)
-        console.log(checkedCount)
-        if (checkedCount >= 1) {
-            $('.pop_data.people_pop fieldset.for_mobile .mobile_chk_fix').css('display' , 'flex');
-        } else {
-            $('.pop_data.people_pop fieldset.for_mobile .mobile_chk_fix').hide();
-        }
-    });
     //그리드 체크박스 체크 유무
     $('.default_girid .grid .checkBox input[type="checkbox"]').on('change', function() {
         if($(this).is(':checked') == true){

@@ -39,7 +39,7 @@
                         </div>
                         <!--Lot 리스트 팝업-->
                         <div class="layer_popup" id="itemLotPopup" style="display: none;">
-                            <div class="pop_data people_pop" data-width="860">
+                            <div class="pop_data" data-width="860">
                                 <div class="head">
                                     <h6>원료 리스트</h6>
                                     <button type="button" class="close btn_close_pop" title="닫기"><img src="/images/svg/popup_close.svg"></button>
@@ -105,7 +105,7 @@
                         </div>
                         <!-- 제품 Lot 리스트 팝업 추가 -->
                         <div class="layer_popup" id="productLotPopup" style="display: none;">
-                            <div class="pop_data people_pop" data-width="860">
+                            <div class="pop_data" data-width="860">
                                 <div class="head">
                                     <h6>제품 Lot 리스트</h6>
                                     <button type="button" class="close btn_close_pop" title="닫기"><img src="/images/svg/popup_close.svg"></button>
@@ -242,10 +242,10 @@
                                             + '    <dl class="stock">'
                                             + '        <dt>현재재고</dt>'
                                             + '        <dd>'
-                                            + '            <i>' + t + '</i> t / '
-                                            + '            <i>' + kg + '</i> kg / '
-                                            + '            <i>' + g + '</i> g / '
-                                            + '            <i>' + mg + '</i> mg'
+                                            + '            <span class="t"><i>' + t + '</i> t / </span>'
+                                            + '            <span class="kg"><i>' + kg + '</i> kg / </span>'
+                                            + '            <span class="g"><i> / ' + g + '</i> g</span> / '
+                                            + '            <span class="mg"><i>' + mg + '</i> mg</span>'
                                             + '        </dd>'
                                             + '    </dl>'
                                             + '    <dl class="volume">'

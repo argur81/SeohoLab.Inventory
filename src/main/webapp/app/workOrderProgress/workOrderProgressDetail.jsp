@@ -246,7 +246,7 @@
 
                             tbodyHtml += `<td class="al-center" rowspan="\${pInfo.rowspan}">\${pInfo.phaseName}</td>`;
                             tbodyHtml += `<td class="al-center">\${rowNum}</td>`;
-                            tbodyHtml += `<td>\${item.raw_material_name || ''}</td>`;
+                            tbodyHtml += `<td class="name"><span>\${item.raw_material_name || ''}</span></td>`;
                             tbodyHtml += `<td class="al-center">\${item.test_number || ''}</td>`;
                             tbodyHtml += `<td class="al-right">\${formatWithComma(item.content_pct || 0)} %</td>`;
                             tbodyHtml += `<td class="al-right">\${formatWithComma(item.order_qty_kg || 0)} kg</td>`;
@@ -255,7 +255,7 @@
                             tbodyHtml += `<td class="al-center" colspan="2" rowspan="\${pInfo.rowspan}">\${pInfo.noteDesc || ''}</td>`;
                         } else {
                             tbodyHtml += `<td class="al-center">\${rowNum}</td>`;
-                            tbodyHtml += `<td>\${item.raw_material_name || ''}</td>`;
+                            tbodyHtml += `<td class="name"><span>\${item.raw_material_name || ''}</span></td>`;
                             tbodyHtml += `<td class="al-center">\${item.test_number || ''}</td>`;
                             tbodyHtml += `<td class="al-right">\${formatWithComma(item.content_pct || 0)} %</td>`;
                             tbodyHtml += `<td class="al-right">\${formatWithComma(item.order_qty_kg || 0)} kg</td>`;
@@ -264,7 +264,7 @@
                     } else {
                         tbodyHtml += `<td>-</td>`;
                         tbodyHtml += `<td class="al-center">\${rowNum}</td>`;
-                        tbodyHtml += `<td>\${item.raw_material_name || ''}</td>`;
+                        tbodyHtml += `<td class="name"><span>\${item.raw_material_name || ''}</span></td>`;
                         tbodyHtml += `<td class="al-center">\${item.test_number || ''}</td>`;
                         tbodyHtml += `<td class="al-right">\${formatWithComma(item.content_pct || 0)} %</td>`;
                         tbodyHtml += `<td class="al-right">\${formatWithComma(item.order_qty_kg || 0)} kg</td>`;
