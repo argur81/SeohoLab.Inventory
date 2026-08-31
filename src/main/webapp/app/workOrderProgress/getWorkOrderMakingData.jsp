@@ -61,8 +61,9 @@
         rs.close();
         pstmt.close();
 
-        // 2. 행별 Lot 요약 (item_row_id -> lot_numbers/input_qty/input_unit)
-        String itemsSql = "SELECT item_row_id, lot_numbers, input_qty, input_unit FROM work_order_making_items WHERE request_id = ?";
+        // 2. 행별 요약 (item_row_id -> raw_material_name/is_extra/lot_numbers/input_qty/input_unit/note)
+        String itemsSql = "SELECT item_row_id, raw_material_name, is_extra, lot_numbers, input_qty, input_unit, note "
+                         + "FROM work_order_making_items WHERE request_id = ? ORDER BY item_row_id ASC";
         pstmt = conn.prepareStatement(itemsSql);
         pstmt.setInt(1, requestId);
         rs = pstmt.executeQuery();
@@ -73,9 +74,12 @@
             StringBuilder itemJson = new StringBuilder();
             itemJson.append("{");
             itemJson.append("\"item_row_id\":").append(rowId).append(",");
+            itemJson.append("\"raw_material_name\":\"").append(esc(rs.getString("raw_material_name"))).append("\",");
+            itemJson.append("\"is_extra\":").append(rs.getInt("is_extra")).append(",");
             itemJson.append("\"lot_numbers\":\"").append(esc(rs.getString("lot_numbers"))).append("\",");
             itemJson.append("\"input_qty\":").append(rs.getDouble("input_qty")).append(",");
             itemJson.append("\"input_unit\":\"").append(esc(rs.getString("input_unit"))).append("\",");
+            itemJson.append("\"note\":\"").append(esc(rs.getString("note"))).append("\",");
             itemJson.append("\"lots\":[");
             itemMap.put(rowId, itemJson);
         }

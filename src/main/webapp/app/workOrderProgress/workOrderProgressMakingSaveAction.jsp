@@ -4,7 +4,7 @@
     // ============================================================
     // [제조중] 화면 자동저장 (5초마다 클라이언트에서 호출, 조용히 처리)
     // - work_order_making : 헤더 정보 upsert
-    // - work_order_making_items : 행별 Lot요약/투입량 delete 후 재삽입
+    // - work_order_making_items : 행별 요약(지시서원료 + 추가원료 공통) delete 후 재삽입
     // - work_order_making_lot_usage : 행×Lot 상세 delete 후 재삽입
     // ============================================================
     request.setCharacterEncoding("UTF-8");
@@ -71,30 +71,39 @@
         pstmt.executeUpdate();
         pstmt.close();
 
-        // 2. work_order_making_items 재구성 (기존 삭제 후 재삽입)
+        // 2. work_order_making_items 재구성 (기존 삭제 후 재삽입) - 지시서원료/추가원료 공통
         pstmt = conn.prepareStatement("DELETE FROM work_order_making_items WHERE request_id = ?");
         pstmt.setInt(1, requestId);
         pstmt.executeUpdate();
         pstmt.close();
 
         int idx = 0;
-        String insItemSql = "INSERT INTO work_order_making_items (request_id, item_row_id, lot_numbers, input_qty, input_unit) VALUES (?, ?, ?, ?, ?)";
+        String insItemSql = "INSERT INTO work_order_making_items "
+                + "(request_id, item_row_id, raw_material_name, is_extra, lot_numbers, input_qty, input_unit, note) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         pstmt = conn.prepareStatement(insItemSql);
         while (true) {
             String rowIdStr = request.getParameter("itemRows[" + idx + "].item_row_id");
             if (rowIdStr == null) break;
 
             int rowId = Integer.parseInt(rowIdStr);
+            String rawMaterialName = request.getParameter("itemRows[" + idx + "].raw_material_name");
+            String isExtraStr = request.getParameter("itemRows[" + idx + "].is_extra");
+            int isExtra = ("1".equals(isExtraStr)) ? 1 : 0;
             String lotNumbers = request.getParameter("itemRows[" + idx + "].lot_numbers");
             double inputQty = parseDouble(request.getParameter("itemRows[" + idx + "].input_qty"));
             String inputUnit = request.getParameter("itemRows[" + idx + "].input_unit");
             if (inputUnit == null || inputUnit.trim().isEmpty()) inputUnit = "g";
+            String note = request.getParameter("itemRows[" + idx + "].note");
 
             pstmt.setInt(1, requestId);
             pstmt.setInt(2, rowId);
-            pstmt.setString(3, lotNumbers);
-            pstmt.setDouble(4, inputQty);
-            pstmt.setString(5, inputUnit);
+            pstmt.setString(3, rawMaterialName);
+            pstmt.setInt(4, isExtra);
+            pstmt.setString(5, lotNumbers);
+            pstmt.setDouble(6, inputQty);
+            pstmt.setString(7, inputUnit);
+            pstmt.setString(8, note);
             pstmt.addBatch();
             idx++;
         }
@@ -108,13 +117,14 @@
         pstmt.close();
 
         int lIdx = 0;
-        String insLotSql = "INSERT INTO work_order_making_lot_usage (request_id, item_row_id, lot_number, qty_t, qty_kg, qty_g, qty_mg) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String insLotSql = "INSERT INTO work_order_making_lot_usage (request_id, item_row_id, raw_material_name, lot_number, qty_t, qty_kg, qty_g, qty_mg) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         pstmt = conn.prepareStatement(insLotSql);
         while (true) {
             String rowIdStr = request.getParameter("lotDetails[" + lIdx + "].item_row_id");
             if (rowIdStr == null) break;
 
             int rowId = Integer.parseInt(rowIdStr);
+            String rawMaterialName = request.getParameter("lotDetails[" + lIdx + "].raw_material_name");
             String lotNumber = request.getParameter("lotDetails[" + lIdx + "].lot_number");
             double qtyT = parseDouble(request.getParameter("lotDetails[" + lIdx + "].t"));
             double qtyKg = parseDouble(request.getParameter("lotDetails[" + lIdx + "].kg"));
@@ -123,11 +133,12 @@
 
             pstmt.setInt(1, requestId);
             pstmt.setInt(2, rowId);
-            pstmt.setString(3, lotNumber);
-            pstmt.setDouble(4, qtyT);
-            pstmt.setDouble(5, qtyKg);
-            pstmt.setDouble(6, qtyG);
-            pstmt.setDouble(7, qtyMg);
+            pstmt.setString(3, rawMaterialName);
+            pstmt.setString(4, lotNumber);
+            pstmt.setDouble(5, qtyT);
+            pstmt.setDouble(6, qtyKg);
+            pstmt.setDouble(7, qtyG);
+            pstmt.setDouble(8, qtyMg);
             pstmt.addBatch();
             lIdx++;
         }
