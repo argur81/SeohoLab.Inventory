@@ -137,6 +137,7 @@
                     <button type="button" id="backListBtn" class="Button bgGray" data-width="180">목록</button>
                     <button type="button" id="reviseBtn" class="Button brdrYellow" data-width="180">보완</button>
                     <button type="button" id="approveBtn" class="Button bgBlue" data-width="180">승인</button>
+                    <button type="button" id="discardBtn" class="Button brdrGray" data-width="180">폐기</button>
                     <button type="button" id="deleteBtn" class="Button brdrGray" data-width="180">삭제</button>
                 </div>
             </section>
@@ -202,6 +203,33 @@
                 success: function (res) {
                     if (res && res.success) {
                         alert(res.message || "승인 처리되었습니다.");
+                        location.href = "/app/workOrderProgress/workOrderProgressList.jsp";
+                    } else {
+                        alert(res && res.message ? res.message : "처리에 실패했습니다.");
+                        $btn.prop("disabled", false);
+                    }
+                },
+                error: function () {
+                    alert("서버 통신 중 오류가 발생했습니다.");
+                    $btn.prop("disabled", false);
+                }
+            });
+        });
+
+        $("#discardBtn").on("click", function () {
+            if (!confirm("이 제조 기록을 폐기 처리하시겠습니까?\n(이미 투입된 원료 재고가 차감되며, 완제품은 생산되지 않습니다)")) return;
+
+            let $btn = $(this);
+            $btn.prop("disabled", true);
+
+            $.ajax({
+                url: "workOrderProgressDiscardAction.jsp",
+                type: "POST",
+                data: { request_id: currentRequestId },
+                dataType: "json",
+                success: function (res) {
+                    if (res && res.success) {
+                        alert(res.message || "폐기 처리되었습니다.");
                         location.href = "/app/workOrderProgress/workOrderProgressList.jsp";
                     } else {
                         alert(res && res.message ? res.message : "처리에 실패했습니다.");

@@ -37,19 +37,19 @@
         json.append("\"master\":{");
         if (rs.next()) {
             json.append("\"order_id\":").append(rs.getInt("order_id")).append(",");
-            json.append("\"product_name\":\"").append(rs.getString("product_name") != null ? rs.getString("product_name").replace("\"", "\\\"") : "").append("\",");
+            json.append("\"product_name\":\"").append(esc(rs.getString("product_name"))).append("\",");
             json.append("\"target_qty\":").append(rs.getDouble("target_qty")).append(",");
-            json.append("\"target_unit\":\"").append(rs.getString("target_unit")).append("\",");
-            json.append("\"manager_name\":\"").append(rs.getString("manager_name") != null ? rs.getString("manager_name") : "").append("\",");
-            json.append("\"machine\":\"").append(rs.getString("machine") != null ? rs.getString("machine").replace("\"", "\\\"") : "").append("\",");
-            json.append("\"appearance\":\"").append(rs.getString("appearance") != null ? rs.getString("appearance").replace("\"", "\\\"") : "").append("\",");
-            json.append("\"scent\":\"").append(rs.getString("scent") != null ? rs.getString("scent").replace("\"", "\\\"") : "").append("\",");
-            json.append("\"specific_gravity\":\"").append(rs.getString("specific_gravity") != null ? rs.getString("specific_gravity") : "").append("\",");
-            json.append("\"ph\":\"").append(rs.getString("ph") != null ? rs.getString("ph") : "").append("\",");
+            json.append("\"target_unit\":\"").append(esc(rs.getString("target_unit"))).append("\",");
+            json.append("\"manager_name\":\"").append(esc(rs.getString("manager_name"))).append("\",");
+            json.append("\"machine\":\"").append(esc(rs.getString("machine"))).append("\",");
+            json.append("\"appearance\":\"").append(esc(rs.getString("appearance"))).append("\",");
+            json.append("\"scent\":\"").append(esc(rs.getString("scent"))).append("\",");
+            json.append("\"specific_gravity\":\"").append(esc(rs.getString("specific_gravity"))).append("\",");
+            json.append("\"ph\":\"").append(esc(rs.getString("ph"))).append("\",");
             json.append("\"theor_qty\":").append(rs.getDouble("theor_qty")).append(",");
-            json.append("\"theor_unit\":\"").append(rs.getString("theor_unit")).append("\",");
+            json.append("\"theor_unit\":\"").append(esc(rs.getString("theor_unit"))).append("\",");
             json.append("\"yield_rate\":").append(rs.getDouble("yield_rate")).append(",");
-            json.append("\"yield_standard\":\"").append(rs.getString("yield_standard") != null ? rs.getString("yield_standard").replace("\"", "\\\"") : "").append("\"");
+            json.append("\"yield_standard\":\"").append(esc(rs.getString("yield_standard"))).append("\"");
         }
         json.append("},");
         rs.close();
@@ -67,8 +67,8 @@
             if (!firstItem) json.append(",");
             json.append("{")
                  .append("\"item_row_id\":").append(rs.getInt("item_row_id")).append(",")
-                 .append("\"raw_material_name\":\"").append(rs.getString("raw_material_name") != null ? rs.getString("raw_material_name").replace("\"", "\\\"") : "").append("\",")
-                 .append("\"test_number\":\"").append(rs.getString("test_number") != null ? rs.getString("test_number") : "").append("\",")
+                 .append("\"raw_material_name\":\"").append(esc(rs.getString("raw_material_name"))).append("\",")
+                 .append("\"test_number\":\"").append(esc(rs.getString("test_number"))).append("\",")
                  .append("\"content_pct\":").append(rs.getDouble("content_pct")).append(",")
                  .append("\"order_qty_kg\":").append(rs.getDouble("order_qty_kg")).append(",")
                  .append("\"order_qty_g\":").append(rs.getDouble("order_qty_g")).append(",")
@@ -92,11 +92,11 @@
             if (!firstPhase) json.append(",");
             json.append("{")
                  .append("\"phase_row_id\":").append(rs.getInt("phase_row_id")).append(",")
-                 .append("\"phase_name\":\"").append(rs.getString("phase_name") != null ? rs.getString("phase_name") : "").append("\",")
-                 .append("\"phase_select_start\":\"").append(rs.getString("phase_select_start") != null ? rs.getString("phase_select_start") : "1").append("\",")
-                 .append("\"phase_select_end\":\"").append(rs.getString("phase_select_end") != null ? rs.getString("phase_select_end") : "1").append("\",")
-                 .append("\"method_desc\":\"").append(rs.getString("method_desc") != null ? rs.getString("method_desc").replace("\"", "\\\"").replace("\n", "\\n") : "").append("\",")
-                 .append("\"note_desc\":\"").append(rs.getString("note_desc") != null ? rs.getString("note_desc").replace("\"", "\\\"").replace("\n", "\\n") : "").append("\"")
+                 .append("\"phase_name\":\"").append(esc(rs.getString("phase_name"))).append("\",")
+                 .append("\"phase_select_start\":\"").append(esc(rs.getString("phase_select_start") != null ? rs.getString("phase_select_start") : "1")).append("\",")
+                 .append("\"phase_select_end\":\"").append(esc(rs.getString("phase_select_end") != null ? rs.getString("phase_select_end") : "1")).append("\",")
+                 .append("\"method_desc\":\"").append(esc(rs.getString("method_desc"))).append("\",")
+                 .append("\"note_desc\":\"").append(esc(rs.getString("note_desc"))).append("\"")
                  .append("}");
             firstPhase = false;
         }
@@ -107,10 +107,21 @@
 
     } catch (Exception e) {
         e.printStackTrace();
-        out.print("{\"error\": \"" + e.getMessage() + "\"}");
+        out.print("{\"error\": \"" + esc(e.getMessage()) + "\"}");
     } finally {
         if (rs != null) try { rs.close(); } catch(Exception e){}
         if (pstmt != null) try { pstmt.close(); } catch(Exception e){}
         if (conn != null) try { conn.close(); } catch(Exception e){}
+    }
+%>
+<%!
+    // JSON 문자열 값에 들어갈 수 있는 특수문자를 전부 안전하게 이스케이프
+    private String esc(String val) {
+        if (val == null) return "";
+        return val.replace("\\", "\\\\")
+                  .replace("\"", "\\\"")
+                  .replace("\r", "")
+                  .replace("\n", "\\n")
+                  .replace("\t", "\\t");
     }
 %>
