@@ -500,6 +500,8 @@
                 });
             }
 
+            // [수정됨] 상(Phase)별 시작~종료 select 목록 생성
+            // 이전 상들이 이미 사용한 번호(1~previousEnd)는 이 함수에서 옵션 자체를 만들지 않음(목록에서 제외)
             function updateAllPhaseSelects() {
                 let totalRows = $(".order_table tbody tr").length;
                 let previousEnd = 0;
@@ -511,19 +513,26 @@
                     let currentStartVal = parseInt($startSel.val()) || (previousEnd + 1);
                     let currentEndVal = parseInt($endSel.val()) || totalRows;
 
+                    // 이 행에서 선택 가능한 최소 번호 = 이전 상들이 이미 사용한 마지막 번호 + 1
+                    let minSelectable = previousEnd + 1;
+
+                    if (index > 0) {
+                        currentStartVal = minSelectable;
+                    }
+                    if (currentStartVal < minSelectable) currentStartVal = minSelectable;
                     if (currentStartVal > totalRows) currentStartVal = totalRows;
                     if (currentEndVal > totalRows) currentEndVal = totalRows;
                     if (currentEndVal < currentStartVal) currentEndVal = currentStartVal;
 
-                    if (index > 0) {
-                        currentStartVal = previousEnd + 1;
-                        if (currentStartVal > totalRows) currentStartVal = totalRows;
-                        if (currentEndVal < currentStartVal) currentEndVal = currentStartVal;
-                    }
-
+                    // 옵션 목록: 이전 상이 사용한 번호(1~previousEnd)는 아예 만들지 않음 -> 목록에 안 보임
                     let optionsHtml = "";
-                    for (let i = 1; i <= totalRows; i++) {
+                    for (let i = minSelectable; i <= totalRows; i++) {
                         optionsHtml += `<option value="` + i + `">` + i + `</option>`;
+                    }
+                    if (optionsHtml === "") {
+                        optionsHtml = `<option value="` + totalRows + `">` + totalRows + `</option>`;
+                        currentStartVal = totalRows;
+                        currentEndVal = totalRows;
                     }
 
                     $startSel.html(optionsHtml);
@@ -621,6 +630,9 @@
                 let $newRow = $(".phase_table tbody tr:last-child");
                 $newRow.find(".phase-start-sel").val(nextStart);
                 $newRow.find(".phase-end-sel").val(nextEnd);
+
+                // 방금 추가한 행 기준으로 전체 select 옵션을 다시 계산해 이전 상 사용 번호를 제외시킴
+                updateAllPhaseSelects();
             });
 
             $(document).on("click", ".delPhaseBtn", function () {

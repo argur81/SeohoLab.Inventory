@@ -6,16 +6,45 @@
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 <style>
+    /* 인쇄 시 표(road_data) 영역만 출력 */
     @media print {
         body * { visibility: hidden; }
         .road_data, .road_data * { visibility: visible; }
         .road_data { position: absolute; left: 0; top: 0; width: 100%; }
         #loadingOverlay, .top_btn, .bottom_btns, header, .delExtraRowBtn, .no-print { display: none !important; }
+
+        /* input/select를 테두리 없는 순수 텍스트처럼 인쇄 (값만 보이게) */
         .road_data input.inputText,
         .road_data input[type="date"],
-        .road_data select.og_select {border: none !important;background: transparent !important;box-shadow: none !important;padding: 0 !important;margin: 0 !important;-webkit-appearance: none;appearance: none;color: #000 !important;font-size: inherit !important;}
+        .road_data select.og_select {
+            border: none !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            -webkit-appearance: none;
+            appearance: none;
+            color: #000 !important;
+            font-size: inherit !important;
+        }
     }
-    @page {size: A4;margin: 10mm;}
+    @page {
+        size: A4;
+        margin: 10mm;
+    }
+    #loadingOverlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(255,255,255,1); z-index: 9999;
+        display: flex; flex-direction: column; justify-content: center; align-items: center;
+    }
+    .spinner {
+        width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #3498db;
+        border-radius: 50%; animation: spin 1s linear infinite;
+    }
+    .loading_text { margin-top: 15px; font-weight: bold; color: #333; font-size: 14px; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    tr.extra-row td { background: #fffceb; }
+    .delExtraRowBtn { padding: 4px 8px; font-size: 12px; }
 </style>
 <div id="loadingOverlay">
     <div class="spinner"></div>
@@ -36,8 +65,8 @@
                     <table>
                         <colgroup>
                             <col width="100"><col width="45"><col width="220"><col width="130">
-                            <col width="110"><col width="120"><col width="120"><col width="160">
-                            <col width="160"><col width="160">
+                            <col width="110"><col width="120"><col width="120"><col width="170">
+                            <col width="140"><col width="170">
                         </colgroup>
                         <thead>
                             <tr>
@@ -142,7 +171,7 @@
 
                 <!-- 원료 Lot 선택 팝업 (usedRegist.jsp / releaseRegist.jsp 와 동일한 UX) -->
                 <div class="layer_popup" id="itemLotPopup" style="display: none;">
-                    <div class="pop_data" data-width="860">
+                    <div class="pop_data people_pop" data-width="860">
                         <div class="head">
                             <h6 id="lotPopupTitle">원료 Lot 리스트</h6>
                             <button type="button" class="close btn_close_pop" title="닫기"><img src="/images/svg/popup_close.svg"></button>
@@ -294,22 +323,21 @@
             let confirmedBatchNo = generateBatchNo(new Date());
             $("#batch_no").val(confirmedBatchNo);
 
-            if (!confirm("제조를 완료 처리하시겠습니까?\n(사용된 원료 재고가 차감됩니다)\n\n확정 제조번호: " + confirmedBatchNo)) return;
+            if (!confirm("제조를 완료하고 승인요청 하시겠습니까?\n\n확정 제조번호: " + confirmedBatchNo)) return;
 
             let $btn = $(this);
             $btn.prop("disabled", true);
 
-            // 마지막 상태를 먼저 저장한 뒤 완료 처리
+            // 마지막 상태를 먼저 저장한 뒤 승인요청 상태로 전환 (재고 차감은 승인 단계에서 처리)
             saveMakingData(function () {
                 $.ajax({
-                    url: "workOrderProgressMakingCompleteAction.jsp",
+                    url: "workOrderProgressSubmitApprovalAction.jsp",
                     type: "POST",
                     data: { request_id: currentRequestId },
                     dataType: "json",
                     success: function (res) {
                         if (res && res.success) {
-                            alert(res.message || "제조완료 처리되었습니다.");
-                            location.href = "/app/workOrderProgress/workOrderProgressList.jsp";
+                            location.href = "/app/workOrderProgress/workOrderProgressApproval.jsp?request_id=" + currentRequestId;
                         } else {
                             alert(res && res.message ? res.message : "처리에 실패했습니다.");
                             $btn.prop("disabled", false);
@@ -323,7 +351,7 @@
             });
         });
 
-        // ===================== 원료 추가  =====================
+        // ===================== 원료 행 추가 (pH 조정 등) =====================
         $(document).on("click", "#addExtraRowBtn", function () {
             addExtraRow(null);
         });
@@ -484,7 +512,7 @@
                 $("#load-target-qty").text(req.target_qty || 0);
                 $("#load-target-unit").text(req.target_unit || "kg");
                 $("#load-machine").text(m.machine || "");
-                $("#load-manager-name").text(req.manager_name || m.manager_name || "");
+                $("#load-manager-name").text(m.manager_name || "");
                 if (req.request_date) {
                     $("#load-request-date").text(req.request_date.substring(0, 10));
                 }
@@ -560,7 +588,7 @@
                 let formattedMethod = (pInfo.methodDesc || '').replace(/\(/g, '<br>(');
                 rowHtml += '<td class="al-center" rowspan="' + pInfo.rowspan + '">' + (pInfo.phaseName || '') + '</td>';
                 rowHtml += '<td class="al-center">' + rowNum + '</td>';
-                rowHtml += '<td class="name"><span>' + (item.raw_material_name || '') + '</span></td>';
+                rowHtml += '<td>' + (item.raw_material_name || '') + '</td>';
                 rowHtml += lotCell;
                 rowHtml += '<td class="al-right">' + formatWithComma(item.content_pct || 0) + ' %</td>';
                 rowHtml += '<td class="al-right">' + formatWithComma(item.order_qty_kg || 0) + ' kg</td>';
@@ -570,7 +598,7 @@
                 rowHtml += '<td class="al-center" rowspan="' + pInfo.rowspan + '">' + (pInfo.noteDesc || '') + '</td>';
             } else if (rowPhaseMap[rowNum] && rowPhaseMap[rowNum].skip) {
                 rowHtml += '<td class="al-center">' + rowNum + '</td>';
-                rowHtml += '<td class="name"><span>' + (item.raw_material_name || '') + '</span></td>';
+                rowHtml += '<td>' + (item.raw_material_name || '') + '</td>';
                 rowHtml += lotCell;
                 rowHtml += '<td class="al-right">' + formatWithComma(item.content_pct || 0) + ' %</td>';
                 rowHtml += '<td class="al-right">' + formatWithComma(item.order_qty_kg || 0) + ' kg</td>';
@@ -579,7 +607,7 @@
             } else {
                 rowHtml += '<td>-</td>';
                 rowHtml += '<td class="al-center">' + rowNum + '</td>';
-                rowHtml += '<td class="name"><span>' + (item.raw_material_name || '') + '</span></td>';
+                rowHtml += '<td>' + (item.raw_material_name || '') + '</td>';
                 rowHtml += lotCell;
                 rowHtml += '<td class="al-right">' + formatWithComma(item.content_pct || 0) + ' %</td>';
                 rowHtml += '<td class="al-right">' + formatWithComma(item.order_qty_kg || 0) + ' kg</td>';
@@ -592,10 +620,10 @@
             tbodyHtml += rowHtml;
         });
 
-        // 마지막 행: [원료 추가] 버튼 (인쇄 시에는 숨김)
+        // 마지막 행: [원료 행 추가] 버튼 (인쇄 시에는 숨김)
         tbodyHtml += '<tr id="addRowTr" class="no-print">'
             + '<td colspan="10" class="al-center">'
-            + '<button type="button" id="addExtraRowBtn" class="Button">원료 추가</button>'
+            + '<button type="button" id="addExtraRowBtn" class="Button">원료 행 추가 (pH 조정 등)</button>'
             + '</td></tr>';
 
         $("#load-items-tbody").html(tbodyHtml);
@@ -607,7 +635,7 @@
         nextExtraRowId = totalOriginalRows;
     }
 
-    // 제조 중 원료 추가 . prefill이 있으면 저장된 값 복원용으로 사용.
+    // 제조 중 원료 행 추가 (pH 조정 등). prefill이 있으면 저장된 값 복원용으로 사용.
     function addExtraRow(prefill) {
         nextExtraRowId++;
         let rowId = nextExtraRowId;
@@ -631,11 +659,11 @@
             +     '<option value="kg">kg</option><option value="g">g</option>'
             +   '</select></div></td>'
             + '<td>-</td>'
-            + '<td><div class="add_text"><input type="text" class="inputText extra-note" data-row="' + rowId + '" placeholder="추가 사유" value="' + noteValue.replace(/"/g, '&quot;') + '">'
-            +   ' <button type="button" class="delExtraRowBtn" data-row="' + rowId + '">삭제</button></div></td>'
+            + '<td><input type="text" class="inputText extra-note" data-row="' + rowId + '" placeholder="추가 사유 (예: pH 조정)" value="' + noteValue.replace(/"/g, '&quot;') + '">'
+            +   ' <button type="button" class="delExtraRowBtn" data-row="' + rowId + '">삭제</button></td>'
             + '</tr>';
 
-        // [원료 추가] 버튼이 있는 tr(#addRowTr) 바로 위에 새 행을 삽입
+        // [원료 행 추가] 버튼이 있는 tr(#addRowTr) 바로 위에 새 행을 삽입
         if ($('#addRowTr').length > 0) {
             $('#addRowTr').before(rowHtml);
         } else {
@@ -771,7 +799,7 @@
                         let html = '<li>'
                             + '<dl class="lot"><dt>Lot번호</dt><dd>' + item.lot_number + '</dd></dl>'
                             + '<dl class="stock"><dt>현재재고</dt><dd>'
-                            + '<span class="t"><i>' + t + '</i> t / </span><span class="kg"><i>' + kg + '</i> kg / </span><span class="g"><i>' + g + '</i> g</span><span class="mg"> / <i>' + mg + '</i> mg</span>'
+                            + '<i>' + t + '</i> t / <i>' + kg + '</i> kg / <i>' + g + '</i> g / <i>' + mg + '</i> mg'
                             + '</dd></dl>'
                             + '<dl class="volume">'
                             + '<dt>사용량 <button type="button" class="btn_all_use"'

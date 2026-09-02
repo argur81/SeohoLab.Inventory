@@ -27,7 +27,6 @@
         Class.forName("org.mariadb.jdbc.Driver");
         conn = DriverManager.getConnection(url, dbUser, dbPass);
 
-        // 1. 제조지시서 요청 정보 및 제조번호(Lot) 조회
         String sql = "SELECT r.product_name, r.target_qty, r.target_unit, m.batch_no "
                 + "FROM work_order_requests r "
                 + "LEFT JOIN work_order_making m ON r.request_id = m.request_id "
@@ -46,7 +45,6 @@
         rs.close();
         pstmt.close();
 
-        // 2. work_order_subsidiary 테이블에서 등록된 사용 부자재 목록 조회
         String subSql = "SELECT item_name, subsidiary_type, out_qty FROM work_order_subsidiary WHERE request_id = ?";
         pstmt = conn.prepareStatement(subSql);
         pstmt.setInt(1, requestId);
@@ -100,6 +98,25 @@
                         <dt>제조지시량</dt>
                         <dd class="only_text"><%= targetQty %> <%= targetUnit %></dd>
                     </dl>
+
+                    <dl class="w25">
+                        <dt>생산수량 <span class="required">*</span></dt>
+                        <dd>
+                            <div class="unit_ea">
+                                <input type="text" name="production_qty" id="production_qty" class="inputText" inputmode="decimal" placeholder="완제품 생산개수 입력" required>
+                                <i>개</i>
+                            </div>
+                        </dd>
+                    </dl>
+                    <dl class="w25">
+                        <dt>제조일자</dt>
+                        <dd><input type="date" name="manufacture_date" class="inputText"></dd>
+                    </dl>
+                    <dl class="w25">
+                        <dt>EXP (만료일)</dt>
+                        <dd><input type="date" name="expiration_date" class="inputText"></dd>
+                    </dl>
+
                     <h5 class="in_tit">사용한 부자재 목록</h5>
                     
                     <div id="subsidiaryRowContainer">
@@ -162,4 +179,31 @@
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+        function formatWithComma(str) {
+            if (!str) return '';
+            return str.replace(/,/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        $(document).on('input', 'input[inputmode="decimal"]:not([disabled])', function () {
+            let value = $(this).val().replace(/[^0-9]/g, '');
+            $(this).val(formatWithComma(value));
+        });
+
+        $('#completeForm').on('submit', function (e) {
+            let rawQty = $('#production_qty').val().replace(/,/g, '');
+            if (!rawQty || parseInt(rawQty) <= 0) {
+                e.preventDefault();
+                alert('생산수량을 입력해 주세요.');
+                return false;
+            }
+
+            $(this).find('input[inputmode="decimal"]:not([disabled])').each(function () {
+                let rawVal = $(this).val().replace(/,/g, '');
+                $(this).val(rawVal);
+            });
+        });
+    });
+</script>
 <jsp:include page="/app/include/FooterDocType.jsp" />

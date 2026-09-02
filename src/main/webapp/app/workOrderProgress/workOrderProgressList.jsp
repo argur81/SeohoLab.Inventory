@@ -13,6 +13,68 @@
     PreparedStatement pstmt = null;
     ResultSet rs = null;
 %>
+<style>
+    /* [Style] 로딩 오버레이 디자인 */
+    #loadingOverlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 1);
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* [Style] 로딩 스피너 애니메이션 */
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #3498db;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    .loading_text {
+        margin-top: 15px;
+        font-weight: bold;
+        color: #333;
+        font-size: 14px;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* 진행현황 뱃지 */
+    .progress-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: bold;
+        white-space: nowrap;
+    }
+    .progress-badge.req { background: #eef2ff; color: #4f46e5; }
+    .progress-badge.making { background: #fff7ed; color: #ea580c; }
+    .progress-badge.approval { background: #fdf4ff; color: #a21caf; }
+    .progress-badge.revising { background: #fef9c3; color: #a16207; }
+    .progress-badge.completed { background: #f0f9ff; color: #0369a1; }
+    .progress-badge.filling { background: #ecfeff; color: #0891b2; }
+    .progress-badge.done { background: #f0fdf4; color: #16a34a; }
+
+    /* 제품명 뒤 제조번호 표시 */
+    .item-link .lot-tag {
+        color: #888;
+        font-weight: normal;
+        font-size: 12px;
+    }
+</style>
 <jsp:include page="/app/include/HeaderDocType.jsp" />
     <!-- 로딩 오버레이 -->
     <div id="loadingOverlay">
@@ -75,8 +137,10 @@
 
                                     // 상세/작업 페이지 URL 분기
                                     String detailUrl = "workOrderProgressDetail.jsp?request_id=" + requestId;
-                                    if ("제조중".equals(progressStatus)) {
+                                    if ("제조중".equals(progressStatus) || "수정중".equals(progressStatus)) {
                                         detailUrl = "workOrderProgressMaking.jsp?request_id=" + requestId;
+                                    } else if ("승인요청".equals(progressStatus)) {
+                                        detailUrl = "workOrderProgressApproval.jsp?request_id=" + requestId;
                                     } else if ("제조완료".equals(progressStatus)) {
                                         detailUrl = "workOrderProgressCompleted.jsp?request_id=" + requestId;
                                     } else if ("충진중".equals(progressStatus)) {
@@ -85,34 +149,26 @@
                                         detailUrl = "workOrderProgressDone.jsp?request_id=" + requestId;
                                     }
 
-                                    String detailClassname = "regist";
-                                    if ("제조중".equals(progressStatus)) {
-                                        detailClassname = "making";
-                                    } else if ("제조완료".equals(progressStatus)) {
-                                        detailClassname = "completed";
-                                    } else if ("충진중".equals(progressStatus)) {
-                                        detailClassname = "filling";
-                                    } else if ("생산완료".equals(progressStatus)) {
-                                        detailClassname = "done";
-                                    }
-
                                     String badgeClass = "req";
                                     if ("제조중".equals(progressStatus)) badgeClass = "making";
+                                    else if ("수정중".equals(progressStatus)) badgeClass = "revising";
+                                    else if ("승인요청".equals(progressStatus)) badgeClass = "approval";
                                     else if ("제조완료".equals(progressStatus)) badgeClass = "completed";
                                     else if ("충진중".equals(progressStatus)) badgeClass = "filling";
                                     else if ("생산완료".equals(progressStatus)) badgeClass = "done";
 
-                                    // [제조완료/충진중/생산완료] 상태일 때만 제품명 뒤에 제조번호(Lot) 표시
-                                    boolean showLot = ("제조완료".equals(progressStatus) || "충진중".equals(progressStatus) || "생산완료".equals(progressStatus))
-                                                    && batchNo != null && !batchNo.trim().isEmpty();
+                                    // 제조번호(Lot)가 이미 확정된 이후 단계일 때만 제품명 뒤에 표시
+                                    boolean showLot = ("승인요청".equals(progressStatus) || "수정중".equals(progressStatus)
+                                                       || "제조완료".equals(progressStatus) || "충진중".equals(progressStatus) || "생산완료".equals(progressStatus))
+                                                       && batchNo != null && !batchNo.trim().isEmpty();
 
                                     Timestamp requestDate = rs.getTimestamp("request_date");
                                     String requestDateDisplay = (requestDate != null) ? sdf.format(requestDate) : "-";
                         %>
                         <tr>
                             <td><%= count++ %></td>
-                            <td class="name">
-                                <a href="<%= detailUrl %>" class="item-link <%= detailClassname %>">
+                            <td>
+                                <a href="<%= detailUrl %>" class="item-link">
                                     <%= productName %><% if (showLot) { %> <span class="lot-tag">(<%= batchNo.trim() %>)</span><% } %>
                                 </a>
                             </td>
@@ -167,7 +223,8 @@
                                     if (progressStatus == null || progressStatus.trim().isEmpty()) progressStatus = "요청";
 
                                     String batchNo = rs.getString("batch_no");
-                                    boolean showLot = ("제조완료".equals(progressStatus) || "충진중".equals(progressStatus) || "생산완료".equals(progressStatus))
+                                    boolean showLot = ("승인요청".equals(progressStatus) || "수정중".equals(progressStatus)
+                                                       || "제조완료".equals(progressStatus) || "충진중".equals(progressStatus) || "생산완료".equals(progressStatus))
                                                        && batchNo != null && !batchNo.trim().isEmpty();
                                     String displayProductName = showLot ? (productName + " (" + batchNo.trim() + ")") : productName;
 

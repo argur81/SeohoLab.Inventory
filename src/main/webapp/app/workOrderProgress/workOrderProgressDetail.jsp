@@ -3,6 +3,22 @@
     String requestIdStr = request.getParameter("request_id");
 %>
 <jsp:include page="/app/include/HeaderDocType.jsp" />
+<style>
+    .recipe-diff-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    .recipe-diff-table th, .recipe-diff-table td {
+        border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 13px;
+    }
+    .recipe-diff-table th { background: #f5f5f5; }
+    .recipe-diff-table tr.diff-added td { background: #eefbea; }
+    .recipe-diff-table tr.diff-removed td { background: #fdeaea; }
+    .recipe-diff-table tr.diff-changed td { background: #fff8e6; }
+    .diff-status { font-weight: bold; }
+    .diff-status.added { color: #16a34a; }
+    .diff-status.removed { color: #dc2626; }
+    .diff-status.changed { color: #ea580c; }
+    #recipeDiffPopup .body { max-height: 420px; overflow-y: auto; }
+    #recipeDiffPopup .diff-info { margin-bottom: 10px; color: #555; font-size: 13px; }
+</style>
 <div id="wrap">
     <jsp:include page="/app/include/Header.jsp" />
     <div id="container">
@@ -102,8 +118,41 @@
     </div>
 </div>
 
+<!-- 최근 제조완료 레시피와 차이가 있을 때 보여주는 비교 팝업 -->
+<div class="layer_popup" id="recipeDiffPopup" style="display: none;">
+    <div class="pop_data" data-width="700">
+        <div class="head">
+            <h6>이전 제조 기록과 원료 구성이 다릅니다</h6>
+            <button type="button" class="close btn_close_pop" title="닫기"><img src="/images/svg/popup_close.svg"></button>
+        </div>
+        <div class="body">
+            <p class="diff-info" id="diffInfoText"></p>
+            <table class="recipe-diff-table">
+                <thead>
+                    <tr>
+                        <th>원료명</th>
+                        <th>이전 함량(%)</th>
+                        <th>현재 함량(%)</th>
+                        <th>상태</th>
+                    </tr>
+                </thead>
+                <tbody id="diffTableBody"></tbody>
+            </table>
+        </div>
+        <div class="bottom_btns">
+            <button type="button" id="btnDiffCancel" class="Button bgGray" data-width="180">취소</button>
+            <button type="button" id="btnDiffProceed" class="Button bgBlue" data-width="180">그래도 진행</button>
+        </div>
+    </div>
+</div>
+<!-- //비교 팝업 -->
+
 <script>
     let currentRequestId = "<%= requestIdStr != null ? requestIdStr : "" %>";
+
+    // 최근에 로드한 현재 지시서의 원료 구성/제품명 (레시피 비교용)
+    let currentItemsData = [];
+    let currentProductName = "";
 
     function formatWithComma(value) {
         if (!value && value !== 0) return "";
@@ -119,27 +168,10 @@
             alert("유효하지 않은 접근입니다. (요청 ID 누락)");
             history.back();
         }
-        // 제조시작 버튼
-        $("#startProgressBtn").on("click", function () {
-            if (!confirm("제조를 시작하시겠습니까?")) return;
 
-            $.ajax({
-                url: "workOrderProgressMakingAction.jsp",
-                type: "POST",
-                data: { request_id: currentRequestId },
-                dataType: "json",
-                success: function (res) {
-                    if (res && res.success) {
-                        // 성공 시 workOrderProgressMaking.jsp로 이동 (request_id 전달)
-                        location.href = "workOrderProgressMaking.jsp?request_id=" + currentRequestId;
-                    } else {
-                        alert(res && res.message ? res.message : "제조 시작 처리에 실패했습니다.");
-                    }
-                },
-                error: function () {
-                    alert("서버 통신 중 오류가 발생했습니다.");
-                }
-            });
+        // 제조시작 버튼: 먼저 최근 제조완료 레시피와 비교 후 진행 여부 결정
+        $("#startProgressBtn").on("click", function () {
+            checkRecipeAndStart();
         });
 
         // 목록 버튼
@@ -169,6 +201,17 @@
                 }
             });
         });
+
+        // 비교 팝업 닫기/취소
+        $(document).on("click", "#recipeDiffPopup .btn_close_pop, #btnDiffCancel", function () {
+            $("#recipeDiffPopup").hide();
+        });
+
+        // 비교 팝업에서 [그래도 진행] 선택 시 실제 제조시작 진행
+        $(document).on("click", "#btnDiffProceed", function () {
+            $("#recipeDiffPopup").hide();
+            proceedStartManufacturing();
+        });
     });
 
     function loadProgressDetailData(requestId) {
@@ -187,6 +230,10 @@
                 let m = res.master || {};
                 let items = res.items || [];
                 let phases = res.phases || [];
+
+                // 레시피 비교에 사용할 현재 지시서 정보 저장
+                currentItemsData = items;
+                currentProductName = req.product_name || "";
 
                 // 마스터 및 요청 정보 맵핑
                 $("#load-product-name").text(req.product_name || "");
@@ -284,6 +331,118 @@
             },
             error: function() {
                 alert("상세 데이터를 가져오는 중 오류가 발생했습니다.");
+            }
+        });
+    }
+
+    // [제조시작] 클릭 시 최근 제조완료 레시피와 비교
+    function checkRecipeAndStart() {
+        if (!currentProductName) {
+            proceedStartManufacturing();
+            return;
+        }
+
+        $.ajax({
+            url: "getLatestCompletedRecipe.jsp",
+            type: "GET",
+            data: { product_name: currentProductName, exclude_request_id: currentRequestId },
+            dataType: "json",
+            success: function (res) {
+                if (!res || !res.found) {
+                    // 비교할 과거 완료 기록이 없으면 바로 진행
+                    proceedStartManufacturing();
+                    return;
+                }
+
+                let diffs = compareRecipes(currentItemsData, res.items || []);
+                if (diffs.length === 0) {
+                    // 차이가 없으면 바로 진행
+                    proceedStartManufacturing();
+                } else {
+                    showRecipeDiffPopup(res, diffs);
+                }
+            },
+            error: function () {
+                // 비교 실패 시에도 제조시작 자체는 막지 않고 바로 진행
+                proceedStartManufacturing();
+            }
+        });
+    }
+
+    // 현재 원료 구성과 이전 원료 구성을 비교해 차이 목록 생성
+    function compareRecipes(currentItems, previousItems) {
+        let curMap = {};
+        (currentItems || []).forEach(function (it) {
+            curMap[it.raw_material_name] = parseFloat(it.content_pct) || 0;
+        });
+        let prevMap = {};
+        (previousItems || []).forEach(function (it) {
+            prevMap[it.raw_material_name] = parseFloat(it.content_pct) || 0;
+        });
+
+        let allNames = new Set(Object.keys(curMap).concat(Object.keys(prevMap)));
+        let diffs = [];
+
+        allNames.forEach(function (name) {
+            let hasCur = curMap.hasOwnProperty(name);
+            let hasPrev = prevMap.hasOwnProperty(name);
+            let curPct = hasCur ? curMap[name] : null;
+            let prevPct = hasPrev ? prevMap[name] : null;
+
+            if (!hasCur && hasPrev) {
+                diffs.push({ name: name, status: 'removed', current: null, previous: prevPct });
+            } else if (hasCur && !hasPrev) {
+                diffs.push({ name: name, status: 'added', current: curPct, previous: null });
+            } else if (Math.abs(curPct - prevPct) > 0.0001) {
+                diffs.push({ name: name, status: 'changed', current: curPct, previous: prevPct });
+            }
+        });
+
+        return diffs;
+    }
+
+    function showRecipeDiffPopup(res, diffs) {
+        let dateStr = res.previous_date ? res.previous_date.substring(0, 16) : "";
+        let batchStr = res.previous_batch_no ? res.previous_batch_no : "-";
+        $("#diffInfoText").text("가장 최근 완료 기록 (제조번호: " + batchStr + ", " + dateStr + ") 과 비교했을 때 아래 원료 구성이 다릅니다.");
+
+        let statusLabel = { added: '추가됨', removed: '삭제됨', changed: '변경됨' };
+        let rowClass = { added: 'diff-added', removed: 'diff-removed', changed: 'diff-changed' };
+
+        let bodyHtml = "";
+        diffs.forEach(function (d) {
+            let prevText = (d.previous !== null) ? (formatWithComma(d.previous) + " %") : "-";
+            let curText = (d.current !== null) ? (formatWithComma(d.current) + " %") : "-";
+            bodyHtml += '<tr class="' + rowClass[d.status] + '">'
+                + '<td>' + d.name + '</td>'
+                + '<td>' + prevText + '</td>'
+                + '<td>' + curText + '</td>'
+                + '<td class="diff-status ' + d.status + '">' + statusLabel[d.status] + '</td>'
+                + '</tr>';
+        });
+        $("#diffTableBody").html(bodyHtml);
+
+        $("#recipeDiffPopup").show();
+    }
+
+    // 실제 제조시작 처리 (기존 로직)
+    function proceedStartManufacturing() {
+        if (!confirm("제조를 시작하시겠습니까?")) return;
+
+        $.ajax({
+            url: "workOrderProgressMakingAction.jsp",
+            type: "POST",
+            data: { request_id: currentRequestId },
+            dataType: "json",
+            success: function (res) {
+                if (res && res.success) {
+                    location.href = "workOrderProgressMaking.jsp?request_id=" + currentRequestId;
+                } else {
+                    alert(res && res.message ? res.message : "제조 시작 처리에 실패했습니다.");
+                }
+            },
+            error: function () {
+                alert("서버 통신 중 오류가 발생했습니다.");
             }
         });
     }
