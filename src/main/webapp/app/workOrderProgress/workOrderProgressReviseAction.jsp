@@ -2,7 +2,7 @@
 <%@ page import="java.sql.*" %>
 <%
     // ============================================================
-    // [보완] 버튼 처리 (workOrderProgressApproval.jsp)
+    // [보정] 버튼 처리 (workOrderProgressApproval.jsp)
     // 진행현황을 '수정중'으로 변경 -> workOrderProgressMaking.jsp로 돌아가 재편집
     // ============================================================
     request.setCharacterEncoding("UTF-8");
@@ -40,7 +40,7 @@
         int affected = pstmt.executeUpdate();
 
         if (affected > 0) {
-            out.print("{\"success\":true,\"message\":\"보완 처리되었습니다.\"}");
+            out.print("{\"success\":true,\"message\":\"보정 처리되었습니다.\"}");
         } else {
             out.print("{\"success\":false,\"message\":\"해당 요청 내역을 찾을 수 없습니다.\"}");
         }

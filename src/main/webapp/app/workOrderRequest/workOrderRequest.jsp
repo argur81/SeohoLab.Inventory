@@ -26,7 +26,7 @@
                 <!--Step2-->
                 <div class="step2" id="step2Area" style="display: none;">
                     <div class="road_data">
-                        <table>
+                        <table class="requestTable">
                             <colgroup>
                                 <col width="100">
                                 <col width="60">

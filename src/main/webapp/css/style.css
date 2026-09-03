@@ -5258,6 +5258,12 @@ footer a {
   #container.workOrderRequest .content .road_data > table {
     min-width: 1100px;
   }
+  #container.workOrderRequest table.requestTable colgroup {
+    display: none;
+  }
+  #container.workOrderRequest table.requestTable tbody tr td.name {
+    width: 200px;
+  }
   /*진행현황*/
   .content.workOrderProgressDetail .road_data {
     width: 100%;
@@ -5279,17 +5285,6 @@ footer a {
   }
   .content.workOrderProgressDetail .road_data {
     overflow-x: auto;
-  }
-  .content.workOrderProgressDetail .road_data > table {
-    min-width: 1100px;
-  }
-  .content.workOrderProgressDetail .road_data > table tbody tr td.name {
-    position: sticky;
-    left: 0;
-    z-index: 2;
-  }
-  .content.workOrderProgressDetail .road_data > table tbody tr td.name span {
-    background-color: #fff;
   }
 }
 @media screen and (max-width: 940px) {
@@ -5509,5 +5504,11 @@ footer a {
     height: 8rem;
     font-size: 2.6rem;
     padding-left: 1rem;
+  }
+  #container.workOrderRequest table.requestTable colgroup {
+    display: none;
+  }
+  #container.workOrderRequest table.requestTable tbody tr td.name {
+    width: auto;
   }
 }

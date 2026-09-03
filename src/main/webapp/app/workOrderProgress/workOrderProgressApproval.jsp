@@ -3,19 +3,6 @@
     String requestIdStr = request.getParameter("request_id");
 %>
 <jsp:include page="/app/include/HeaderDocType.jsp" />
-<style>
-    #loadingOverlay {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(255,255,255,1); z-index: 9999;
-        display: flex; flex-direction: column; justify-content: center; align-items: center;
-    }
-    .spinner {
-        width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #3498db;
-        border-radius: 50%; animation: spin 1s linear infinite;
-    }
-    .loading_text { margin-top: 15px; font-weight: bold; color: #333; font-size: 14px; }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-</style>
 <div id="loadingOverlay">
     <div class="spinner"></div>
     <p class="loading_text">데이터를 불러오는 중입니다...</p>
@@ -135,7 +122,7 @@
 
                 <div class="bottom_btns">
                     <button type="button" id="backListBtn" class="Button bgGray" data-width="180">목록</button>
-                    <button type="button" id="reviseBtn" class="Button brdrYellow" data-width="180">보완</button>
+                    <button type="button" id="reviseBtn" class="Button brdrYellow" data-width="180">보정</button>
                     <button type="button" id="approveBtn" class="Button bgBlue" data-width="180">승인</button>
                     <button type="button" id="discardBtn" class="Button brdrGray" data-width="180">폐기</button>
                     <button type="button" id="deleteBtn" class="Button brdrGray" data-width="180">삭제</button>
@@ -168,9 +155,9 @@
             location.href = "/app/workOrderProgress/workOrderProgressList.jsp";
         });
 
-        // 보완: 진행현황을 '수정중'으로 바꾸고 workOrderProgressMaking.jsp로 돌아가 재편집
+        // 보정: 진행현황을 '수정중'으로 바꾸고 workOrderProgressMaking.jsp로 돌아가 재편집
         $("#reviseBtn").on("click", function () {
-            if (!confirm("이 제조 기록을 보완(재편집)하시겠습니까?")) return;
+            if (!confirm("이 제조 기록을 보정 하시겠습니까?")) return;
 
             $.ajax({
                 url: "workOrderProgressReviseAction.jsp",

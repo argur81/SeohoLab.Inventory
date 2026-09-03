@@ -236,7 +236,20 @@
     // 엑셀 저장 (표 전체가 순수 텍스트라서 그대로 내보내면 됨)
     function exportToExcel() {
         let tableHtml = $(".road_data table").prop("outerHTML");
-        let html = '<html><head><meta charset="utf-8"/></head><body>' + tableHtml + '</body></html>';
+
+        // 엑셀은 외부 CSS(style.css)를 못 읽으므로, 인쇄화면과 같은 테두리/정렬을 <style>로 직접 넣어줌
+        let styleBlock = '<style>'
+            + 'table { border-collapse: collapse; width: 100%; font-family: "맑은 고딕", sans-serif; font-size: 12px; }'
+            + 'th, td { border: 1px solid #000; padding: 4px 6px; text-align: center; vertical-align: middle; }'
+            + 'th { background-color: #f2f2f2; font-weight: bold; }'
+            + '.al-left { text-align: left; }'
+            + '.al-right { text-align: right; }'
+            + '.al-center { text-align: center; }'
+            + '.name { text-align: left; }'
+            + '.doc_name { font-size: 16px; }'
+            + '</style>';
+
+        let html = '<html><head><meta charset="utf-8"/>' + styleBlock + '</head><body>' + tableHtml + '</body></html>';
 
         let blob = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
         let link = document.createElement('a');

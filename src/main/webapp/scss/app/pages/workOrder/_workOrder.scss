@@ -511,6 +511,22 @@
                     }
                 }
             }
+            table {
+                &.requestTable{
+                    colgroup {
+                        display: none;
+                    }
+                    tbody {
+                        tr {
+                            td {
+                                &.name {
+                                    width: 200px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
     /*진행현황*/
@@ -520,23 +536,6 @@
                 width: 100%;
                 @include scrollbar();
                 overflow-x: auto;
-                > table {
-                    min-width: 1100px;
-                    tbody {
-                        tr {
-                            td {
-                                &.name {
-                                    position: sticky;
-                                    left: 0;
-                                    z-index: 2;
-                                    span {
-                                        background-color: #fff;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
             }
         }
     }
@@ -727,6 +726,23 @@
                                 height: 8rem;
                                 font-size: 2.6rem;
                                 padding-left: 1rem;
+                            }
+                        }
+                    }
+                }
+            }
+            table {
+                &.requestTable{
+                    colgroup {
+                        display: none;
+                    }
+                    
+                    tbody {
+                        tr {
+                            td {
+                                &.name {
+                                    width: auto;
+                                }
                             }
                         }
                     }
