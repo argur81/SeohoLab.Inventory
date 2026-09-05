@@ -25,7 +25,7 @@
             height: 30px;
             mask-size: 30px 30px;
             background-color: #fff;
-            mask-image: url(/images/svg/plus-solid-full.svg);
+            mask-image: url(/images/svg/pen-solid-full.svg);
             mask-repeat: no-repeat;
             position: absolute;
             left: 50%;
@@ -36,7 +36,7 @@
         }
         &:hover {
             &::before {
-                transform: rotate(90deg)
+                transform: rotate(-45deg)
             }
         }
     }

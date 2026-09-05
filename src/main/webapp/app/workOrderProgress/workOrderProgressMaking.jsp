@@ -32,16 +32,6 @@
         size: A4;
         margin: 10mm;
     }
-    #loadingOverlay {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(255,255,255,1); z-index: 9999;
-        display: flex; flex-direction: column; justify-content: center; align-items: center;
-    }
-    .spinner {
-        width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #3498db;
-        border-radius: 50%; animation: spin 1s linear infinite;
-    }
-    .loading_text { margin-top: 15px; font-weight: bold; color: #333; font-size: 14px; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     tr.extra-row td { background: #fffceb; }
     .delExtraRowBtn { padding: 4px 8px; font-size: 12px; }
@@ -53,7 +43,7 @@
 <div id="wrap">
     <jsp:include page="/app/include/Header.jsp" />
     <div id="container">
-        <div class="content workOrderProgressDetail">
+        <div class="content workOrderProgressMaking">
             <div class="title_set">
                 <h5 class="page_tit">
                     <p>제조 지시서</p><i><img src="/images/svg/location_arrow.svg"></i><b>진행현황</b><i><img src="/images/svg/location_arrow.svg"></i>제조중</b>

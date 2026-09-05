@@ -299,3 +299,24 @@ $(document).ready(function(){
         $('#stockTable').DataTable().columns.adjust().responsive.recalc();
     });
 });
+//제조지시서 테이블 Mobile
+$(document).ready(function(){
+    function workOrderResponsiveTable(){
+        $('.workOrderResponsiveTable tr.has_rowspan').each(function(){
+            if($(window).width() <= 940){
+                var thisPhaseHT = $(this).find('.phase').outerHeight();
+                var thisMethodHT = $(this).find('.method').outerHeight();
+                var thisNoteHT = $(this).find('.note').outerHeight();
+                $(this).css('padding-top', thisPhaseHT + thisNoteHT + thisMethodHT);
+                $(this).find('.method').css('top' , thisPhaseHT);
+                $(this).find('.note').css('top' , thisPhaseHT + thisMethodHT);
+            }else{
+                $(this).css('padding' , 0);
+            }
+        });
+    }
+    workOrderResponsiveTable();
+    $(window).resize(function(){
+        workOrderResponsiveTable();
+    });
+});

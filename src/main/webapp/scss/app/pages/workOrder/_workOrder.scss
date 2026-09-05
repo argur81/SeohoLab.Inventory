@@ -155,11 +155,13 @@
                         position: absolute;
                         left: 0;
                         top: 0;
-                        -webkit-backdrop-filter: blur(50px) brightness(115%);
-                        backdrop-filter: blur(50px) brightness(115%);
-                        transition: opacity 0.3s;
-                        -webkit-transition: opacity 0.3s;
+                        -webkit-backdrop-filter: blur(6px) brightness(100%);
+                        backdrop-filter: blur(6px) brightness(100%);
+                        transition: opacity 0.5s;
+                        -webkit-transition: opacity 0.5s;
                         opacity: 1;
+                        z-index: -1;
+                        pointer-events: none;
                     }
                 }
             }
@@ -216,6 +218,7 @@
                         tbody {
                             td {
                                 padding: 10px;
+                                line-height: 1.4;
                             }
                         }
                         tfoot {
@@ -295,15 +298,14 @@
         } 
     }
     /*상세,제조중,제조완료*/
-    &.workOrderProgressDetail{
+    &.workOrderProgressDetail,
+    &.workOrderProgressMaking {
         .radius {
             padding: 25px 25px 60px 25px;
             .road_data {
                 width: 100%;
                 margin-bottom: 20px;
                 padding-bottom: 20px;
-                @include scrollbar();
-                overflow: auto;
                 table {
                     table-layout: fixed;
                     border: 1px solid #8d8d8d;
@@ -502,25 +504,40 @@
     #container {
         &.workOrderRequest {
             .content {
-                .road_data {
-                    width: 100%;
-                    @include scrollbar();
-                    overflow-x: auto;
-                    > table {
-                        min-width: 1100px;
-                    }
-                }
-            }
-            table {
-                &.requestTable{
-                    colgroup {
-                        display: none;
-                    }
-                    tbody {
-                        tr {
-                            td {
-                                &.name {
-                                    width: 200px;
+                .step2 {
+                    .road_data {
+                        width: 100%;
+                        table {
+                            &.requestTable{
+                                colgroup {
+                                    col {
+                                        &:first-child {
+                                            width: 80px;
+                                        }
+                                        &:nth-child(3) {
+                                            width: 230px;
+                                        }
+                                        &:nth-child(4),
+                                        &:nth-child(5){
+                                            width: 80px;
+                                        }
+                                        &:nth-child(6),
+                                        &:nth-child(7),
+                                        &:nth-child(8),
+                                        &:nth-child(9){
+                                            width: 100px;
+                                        }
+                                        &:nth-child(10){
+                                            width: auto;
+                                        }
+                                    }
+                                }
+                                tbody {
+                                    tr {
+                                        td {
+                                            padding: 10px 5px;
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -531,11 +548,131 @@
     }
     /*진행현황*/
     .content {
+        /*상세*/
         &.workOrderProgressDetail {
             .road_data {
                 width: 100%;
-                @include scrollbar();
-                overflow-x: auto;
+                table {
+                    &.requestTable {
+                        colgroup {
+                            col {
+                                &:first-child {
+                                    width: 80px;
+                                }
+                                &:nth-child(3) {
+                                    width: 230px;
+                                }
+                                &:nth-child(4),
+                                &:nth-child(5) {
+                                    width: 80px;
+                                }
+                                &:nth-child(6),
+                                &:nth-child(7),
+                                &:nth-child(8),
+                                &:nth-child(9) {
+                                    width: 100px;
+                                }
+                                &:nth-child(10) {
+                                    width: auto;
+                                }
+                            }
+                        }
+                        tbody {
+                            tr {
+                                td {
+                                    padding: 10px 5px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+@media all and (max-width:1120px) {
+    /*작업요청*/
+    #container {
+        &.workOrderRequest {
+            .content {
+                .step2 {
+                    .road_data {
+                        table {
+                            &.requestTable{
+                                colgroup {
+                                    col {
+                                        &:first-child {
+                                            width: 70px;
+                                        }
+                                        &:nth-child(2) {
+                                            width: 40px;
+                                        }
+                                        &:nth-child(3) {
+                                            width: 200px;
+                                        }
+                                        &:nth-child(6),
+                                        &:nth-child(7),
+                                        &:nth-child(8),
+                                        &:nth-child(9){
+                                            width: 70px;
+                                        }
+                                        &:nth-child(10){
+                                            width: auto;
+                                        }
+                                    }
+                                }
+                                tbody {
+                                    tr {
+                                        td {
+                                            padding: 10px 5px;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    /*진행현황*/
+    .content {
+        /*상세*/
+        &.workOrderProgressDetail {
+            .road_data {
+                table {
+                    &.requestTable{
+                        colgroup {
+                            col {
+                                &:first-child {
+                                    width: 70px;
+                                }
+                                &:nth-child(2) {
+                                    width: 40px;
+                                }
+                                &:nth-child(3) {
+                                    width: 200px;
+                                }
+                                &:nth-child(6),
+                                &:nth-child(7),
+                                &:nth-child(8),
+                                &:nth-child(9){
+                                    width: 70px;
+                                }
+                                &:nth-child(10){
+                                    width: auto;
+                                }
+                            }
+                        }
+                        tbody {
+                            tr {
+                                td {
+                                    padding: 10px 5px;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -685,19 +822,6 @@
             }
         }
     }
-    /*진행현황*/
-    .content{
-        &.workOrderProgressList {
-            .progress-badge {
-                font-size: 2.4rem;
-            }
-            .item-link {
-                .lot-tag {
-                    font-size: 2rem;
-                }
-        } 
-        }
-    }
     /*작업요청*/
     #container {
         &.workOrderRequest {
@@ -730,18 +854,459 @@
                         }
                     }
                 }
+                .step2 {
+                    .road_data {
+                        padding: 2rem;
+                        .requestTable {
+                            @include flexLayout(column, flex-start, stretch);
+                            border: none;
+                            colgroup {
+                                display: none;
+                            }
+                            th,
+                            td {
+                                font-size: 2.4rem !important;
+                                padding: 0;
+                            }
+                            thead {
+                                @include flexLayout(column, flex-start, stretch);
+                                tr {
+                                    @include flexLayout(row, flex-start, center);
+                                    flex-wrap: wrap;
+                                    th,
+                                    td {
+                                        height: 8rem;
+                                        @include flexLayout(row, flex-start, center);
+                                    }
+                                    td {
+                                        padding: 0 2rem;
+                                    }
+                                    th {
+                                        width: 15rem;
+                                        @include flexLayout(row, center, center);
+                                    }
+                                    &:first-child {
+                                        th {
+                                            border-bottom: none;
+                                            border-right: none;
+                                        }
+                                        td {
+                                            width: calc(100% - 15rem);
+                                            border-bottom: none;
+                                            
+                                        }
+                                    }
+                                    &:nth-child(2) {
+                                        th {
+                                            &:first-child {
+                                                border-right: none;
+                                            }
+                                            &:nth-child(3) {
+                                                border-top: none;
+                                                border-right: none;
+                                            }
+                                            &:nth-child(5) {
+                                                border-top: none;
+                                                border-right: none;
+                                            }
+                                        }
+                                        td {
+                                            &:nth-child(2) {
+                                                width: calc(100% - 15rem);
+                                            }
+                                            &:nth-child(4) {
+                                                width: calc(100% - 15rem);
+                                                border-top: none;
+                                            }
+                                            &:last-child {
+                                                width: calc(100% - 15rem);
+                                                border-top: none;
+                                            }
+                                        }
+                                    }
+                                    &:last-child {
+                                        display: none;
+                                    }
+                                }
+                            }
+                            tbody {
+                                @include flexLayout(column, flex-start, stretch);
+                                tr {
+                                    @include flexLayout(row, flex-start, center);
+                                    flex-wrap: wrap;
+                                    position: relative;
+                                    td {
+                                        height: 8rem;
+                                        @include flexLayout(row, flex-start, center);
+                                        padding: 0rem 0.5rem !important;
+                                        &.method,
+                                        &.note {
+                                            height: auto;
+                                            padding: 2.2rem 2rem !important;
+                                        }
+                                        &.no {
+                                            width: 7rem;
+                                            justify-content: center;
+                                            border-right: none;
+                                            border-bottom: none;
+                                        }
+                                        &.name {
+                                            width: calc(100% - 7rem);
+                                            border-bottom: none;
+                                        }
+                                        &.test_num {
+                                            display: none;
+                                        }
+                                        &.content_pct,
+                                        &.kg {
+                                            border-right: none;
+                                        }
+                                        &.content_pct,
+                                        &.kg,
+                                        &.g {
+                                            width: calc(33.33%);
+                                            flex-direction: column;
+                                            gap: 0.5rem;
+                                            height: auto;
+                                            padding: 1rem 0.5rem !important;
+                                            border-bottom: none;
+                                            &::before {
+                                                content: attr(data-roll);
+                                            }
+                                        }
+                                    }
+                                    &.has_rowspan {
+                                        &:first-child {
+                                            .phase {
+                                                border-top: 1px solid #8d8d8d;
+                                            }
+                                        }
+                                        .phase {
+                                            width: 100%;
+                                            position: absolute;
+                                            left: 0;
+                                            top: 0;
+                                            justify-content: center;
+                                            background-color: #e1e1e1;
+                                            height: auto;
+                                            padding: 1rem 0.5rem !important;
+                                            border-top: 3px solid #000;
+                                        }
+                                        .method {
+                                            width: 100%;
+                                            position: absolute;
+                                            left: 0;
+                                            top: 0;
+                                            text-align: center;
+                                            display: inline-block;
+                                            border-top: none;
+                                            border-bottom: none;
+                                            br {
+                                                display: none;
+                                            }
+                                        }
+                                        .note {
+                                            width: 100%;
+                                            position: absolute;
+                                            left: 0;
+                                            justify-content: center;
+                                            display: inline-block;
+                                            border-bottom: none;
+                                        }
+                                    }
+                                }
+                            }
+                            tfoot {
+                                @include flexLayout(column, flex-start, stretch);
+                                tr {
+                                    @include flexLayout(row, flex-start, center);
+                                    flex-wrap: wrap;
+                                    th,
+                                    td {
+                                        height: 8rem;
+                                        @include flexLayout(row, flex-start, center);
+                                        padding: 0rem 0.5rem !important;
+                                        border-top: none;
+                                    }
+                                    th {
+                                        width: 16rem;
+                                        justify-content: center;
+                                        border-right: none;
+                                    }
+                                    td {
+                                        width: calc(100% - 16rem);
+                                    }
+                                    &:first-child {
+                                        th {
+                                            width: 100%;
+                                            border-top: 1px solid #8d8d8d;
+                                            border-right: 1px solid #8d8d8d;
+                                            justify-content: center;
+                                            background-color: #e1e1e1;
+                                            height: auto;
+                                            padding: 1rem 0.5rem !important;
+                                        }
+                                        td {
+                                            width: 33.33%;
+                                            border-right: none;
+                                            justify-content: center;
+                                            flex: 1;
+                                            &:nth-child(4){
+                                                border-right: 1px solid #8d8d8d;
+                                            }
+                                            &:last-child {
+                                                display: none;
+                                            }
+                                        }
+                                    }
+                                    &:last-child {
+                                        td {
+                                            &:last-child {
+                                                width: 100%;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                .bottom_btns {
+                    padding: 0 2rem 4rem 2rem;
+                    margin-top: 4rem;
+                }
             }
-            table {
-                &.requestTable{
+        }
+    }
+    /*진행현황*/
+    .content {
+        /*목록*/
+        &.workOrderProgressList {
+            .progress-badge {
+                font-size: 2.4rem;
+            }
+            .item-link {
+                .lot-tag {
+                    font-size: 2rem;
+                }
+            }
+        }
+        /*상세*/
+        &.workOrderProgressDetail {
+            .road_data {
+                .requestTable {
+                    @include flexLayout(column, flex-start, stretch);
+                    border: none !important;
                     colgroup {
                         display: none;
                     }
-                    
-                    tbody {
+                    th,
+                    td {
+                        font-size: 2.4rem !important;
+                        padding: 0;
+                    }
+                    thead {
+                        @include flexLayout(column, flex-start, stretch);
                         tr {
+                            @include flexLayout(row, flex-start, center);
+                            flex-wrap: wrap;
+                            th,
                             td {
+                                height: 8rem;
+                                @include flexLayout(row, flex-start, center);
+                            }
+                            td {
+                                padding: 0 2rem;
+                            }
+                            th {
+                                width: 15rem;
+                                @include flexLayout(row, center, center);
+                            }
+                            &:first-child {
+                                th {
+                                    border-bottom: none;
+                                    border-right: none;
+                                }
+                                td {
+                                    width: calc(100% - 15rem);
+                                    border-bottom: none;
+                                }
+                            }
+                            &:nth-child(2) {
+                                th {
+                                    &:first-child {
+                                        border-right: none;
+                                    }
+                                    &:nth-child(3) {
+                                        border-top: none;
+                                        border-right: none;
+                                    }
+                                    &:nth-child(5) {
+                                        border-top: none;
+                                        border-right: none;
+                                    }
+                                }
+                                td {
+                                    &:nth-child(2) {
+                                        width: calc(100% - 15rem);
+                                    }
+                                    &:nth-child(4) {
+                                        width: calc(100% - 15rem);
+                                        border-top: none;
+                                    }
+                                    &:last-child {
+                                        width: calc(100% - 15rem);
+                                        border-top: none;
+                                    }
+                                }
+                            }
+                            &:last-child {
+                                display: none;
+                            }
+                        }
+                    }
+                    tbody {
+                        @include flexLayout(column, flex-start, stretch);
+                        tr {
+                            @include flexLayout(row, flex-start, center);
+                            flex-wrap: wrap;
+                            position: relative;
+                            td {
+                                height: 8rem;
+                                @include flexLayout(row, flex-start, center);
+                                padding: 0rem 0.5rem !important;
+                                &.method,
+                                &.note {
+                                    height: auto;
+                                    padding: 2.2rem 2rem !important;
+                                }
+                                &.no {
+                                    width: 7rem;
+                                    justify-content: center;
+                                    border-right: none;
+                                    border-bottom: none;
+                                }
                                 &.name {
-                                    width: auto;
+                                    width: calc(100% - 7rem);
+                                    border-bottom: none;
+                                }
+                                &.test_num {
+                                    display: none;
+                                }
+                                &.content_pct,
+                                &.kg {
+                                    border-right: none;
+                                }
+                                &.content_pct,
+                                &.kg,
+                                &.g {
+                                    width: calc(33.33%);
+                                    flex-direction: column;
+                                    gap: 0.5rem;
+                                    height: auto;
+                                    padding: 1rem 0.5rem !important;
+                                    border-bottom: none;
+                                    flex: 1;
+                                    &::before {
+                                        content: attr(data-roll);
+                                    }
+                                }
+                            }
+                            &.has_rowspan {
+                                &:first-child {
+                                    .phase {
+                                        border-top: 1px solid #8d8d8d;
+                                    }
+                                }
+                                .phase {
+                                    width: 100%;
+                                    position: absolute;
+                                    left: 0;
+                                    top: 0;
+                                    justify-content: center;
+                                    background-color: #e1e1e1;
+                                    height: auto;
+                                    padding: 1rem 0.5rem !important;
+                                    border-top: 3px solid #000;
+                                }
+                                .method {
+                                    width: 100%;
+                                    position: absolute;
+                                    left: 0;
+                                    top: 0;
+                                    text-align: center;
+                                    display: inline-block;
+                                    border-top: none;
+                                    border-bottom: none;
+                                    br {
+                                        display: none;
+                                    }
+                                }
+                                .note {
+                                    width: 100%;
+                                    position: absolute;
+                                    left: 0;
+                                    justify-content: center;
+                                    display: inline-block;
+                                    border-bottom: none;
+                                }
+                            }
+                        }
+                    }
+                    tfoot {
+                        @include flexLayout(column, flex-start, stretch);
+                        tr {
+                            @include flexLayout(row, flex-start, center);
+                            flex-wrap: wrap;
+                            th,
+                            td {
+                                height: 8rem;
+                                @include flexLayout(row, flex-start, center);
+                                padding: 0rem 0.5rem !important;
+                                border-top: none;
+                            }
+                            th {
+                                width: 15rem;
+                                justify-content: center;
+                                border-right: none;
+                                height: auto;
+                                padding: 2rem 0.5rem !important;
+                            }
+                            td {
+                                width: calc(100% - 15rem);
+                                height: auto;
+                                padding: 2rem 0.5rem !important;
+                            }
+                            &:first-child {
+                                th {
+                                    width: 100%;
+                                    height: 8rem;
+                                    border-top: 1px solid #8d8d8d;
+                                    border-right: 1px solid #8d8d8d;
+                                    justify-content: center;
+                                    background-color: #e1e1e1;
+                                    height: auto;
+                                    padding: 1rem 0.5rem !important;
+                                }
+                                td {
+                                    width: 33.33%;
+                                    height: 8rem;
+                                    border-right: none;
+                                    justify-content: center;
+                                    flex: 1;
+                                    &:nth-child(4) {
+                                        border-right: 1px solid #8d8d8d;
+                                    }
+                                    &:last-child {
+                                        display: none;
+                                    }
+                                }
+                            }
+                            &:last-child {
+                                td {
+                                    &:last-child {
+                                        width: 100%;
+                                    }
                                 }
                             }
                         }
