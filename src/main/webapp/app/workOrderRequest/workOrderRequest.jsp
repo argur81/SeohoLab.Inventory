@@ -336,7 +336,7 @@
                     //제조지시서 테이블 Mobile
                     function workOrderResponsiveTable() {
                         $('.workOrderResponsiveTable tr.has_rowspan').each(function () {
-                            if ($(window).width() <= 940) {
+                            if ($(window).width() <= 960) {
                                 var thisPhaseHT = $(this).find('.phase').outerHeight();
                                 var thisMethodHT = $(this).find('.method').outerHeight();
                                 var thisNoteHT = $(this).find('.note').outerHeight();

@@ -324,21 +324,21 @@
 
                 $("#load-items-tbody").html(tbodyHtml);
 
-                $('.workOrderResponsiveTable tbody tr').each(function () {
-                    var $lastTd = $(this).children('td').last();
-                    if ($lastTd.attr('colspan') == '2') {
-                        $(this).addClass('has_rowspan');
-                    }
-                });
-
                 $("#load-total-pct").text(formatWithComma(Math.round(totalPct)) + " %");
                 $("#load-total-kg").text(formatWithComma(Math.round(totalKg)) + " kg");
                 $("#load-total-g").text(formatWithComma(Math.round(totalG)) + " g");
 
                 //제조지시서 테이블 Mobile
+                $('.workOrderResponsiveTable tbody tr').each(function () {
+                    var $lastTd = $(this).children('td').last();
+                    if ($lastTd.hasClass('note') == true) {
+                        $(this).addClass('has_rowspan');
+                    }
+                });
+
                 function workOrderResponsiveTable() {
                     $('.workOrderResponsiveTable tr.has_rowspan').each(function () {
-                        if ($(window).width() <= 940) {
+                        if ($(window).width() <= 960) {
                             var thisPhaseHT = $(this).find('.phase').outerHeight();
                             var thisMethodHT = $(this).find('.method').outerHeight();
                             var thisNoteHT = $(this).find('.note').outerHeight();

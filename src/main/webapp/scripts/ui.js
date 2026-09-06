@@ -154,7 +154,7 @@ $(document).ready(function () {
     });
     //모바일 타이틀
     function viewportMobieDevice(){
-        if($(window).width() <= 940){
+        if($(window).width() <= 960){
             $('#container .content').addClass('for_mobile');
         }else{
             $('#container .content').removeClass('for_mobile');
@@ -163,7 +163,7 @@ $(document).ready(function () {
     viewportMobieDevice();
     //모바일 GNB
     function mobieGNBmaxHeight(){
-        if($(window).width() <= 940){
+        if($(window).width() <= 960){
             var moMenuCtrl = $('header .menu .mobile_ctrl').outerHeight();
             var moMenuUser = $('header .menu .user_wrap').outerHeight();
             var outObjectSize = moMenuCtrl + moMenuUser
@@ -303,7 +303,7 @@ $(document).ready(function(){
 $(document).ready(function(){
     function workOrderResponsiveTable(){
         $('.workOrderResponsiveTable tr.has_rowspan').each(function(){
-            if($(window).width() <= 940){
+            if($(window).width() <= 960){
                 var thisPhaseHT = $(this).find('.phase').outerHeight();
                 var thisMethodHT = $(this).find('.method').outerHeight();
                 var thisNoteHT = $(this).find('.note').outerHeight();

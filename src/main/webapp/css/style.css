@@ -166,7 +166,7 @@ table {
           box-sizing: border-box;
 }
 
-@media (max-width: 940px) {
+@media (max-width: 960px) {
   html {
     font-size: 62.5%;
     -webkit-text-size-adjust: none;
@@ -405,7 +405,7 @@ h6.page_sub_tit {
     display: none !important;
   }
 }
-@media screen and (max-width: 940px) {
+@media screen and (max-width: 960px) {
   .title_set {
     margin-bottom: 5rem;
   }
@@ -618,7 +618,7 @@ h6.page_sub_tit {
   color: #595959;
 }
 
-@media screen and (max-width: 940px) {
+@media screen and (max-width: 960px) {
   .default_girid {
     padding: 0 4rem;
   }
@@ -870,7 +870,7 @@ h6.page_sub_tit {
   background-color: #fff;
 }
 
-@media screen and (max-width: 940px) {
+@media screen and (max-width: 960px) {
   .works_grid table {
     min-width: 120rem;
   }
@@ -1171,7 +1171,7 @@ h6.page_sub_tit {
   color: #292929 !important;
 }
 
-@media screen and (max-width: 940px) {
+@media screen and (max-width: 960px) {
   .dataTables_wrapper .top_group {
     margin-bottom: 2rem;
     -webkit-box-orient: vertical;
@@ -1382,7 +1382,7 @@ h6.page_sub_tit {
   bottom: -1px;
 }
 
-@media screen and (max-width: 940px) {
+@media screen and (max-width: 960px) {
   .comm_tab {
     gap: 0;
     width: calc(100% - 8rem);
@@ -1455,7 +1455,7 @@ button.Button.brdrGreen:hover {
   color: #fff;
 }
 
-@media screen and (max-width: 940px) {
+@media screen and (max-width: 960px) {
   button.Button {
     height: 8rem;
     border-radius: 2rem;
@@ -1576,7 +1576,7 @@ select.og_select:disabled {
   background-color: #f6f7f9;
 }
 
-@media screen and (max-width: 940px) {
+@media screen and (max-width: 960px) {
   .Select > .value {
     height: 8rem;
     border-radius: 2rem;
@@ -1652,7 +1652,7 @@ select.og_select:disabled {
   color: #595959;
 }
 
-@media screen and (max-width: 940px) {
+@media screen and (max-width: 960px) {
   .checkBox {
     gap: 1rem;
   }
@@ -1694,7 +1694,7 @@ input.inputText[readonly=readonly] {
   background-color: #f6f7f9;
 }
 
-@media screen and (max-width: 940px) {
+@media screen and (max-width: 960px) {
   input.inputText {
     height: 8rem;
     border-radius: 2rem;
@@ -1772,7 +1772,7 @@ textarea.textArea.input_size {
   color: #c3c3c5;
 }
 
-@media screen and (max-width: 940px) {
+@media screen and (max-width: 960px) {
   textarea.textArea {
     height: 20rem;
     border-radius: 2rem;
@@ -1852,7 +1852,7 @@ textarea.textArea.input_size {
   color: #595959;
 }
 
-@media screen and (max-width: 940px) {
+@media screen and (max-width: 960px) {
   .radioGroup {
     gap: 8rem;
   }
@@ -2105,7 +2105,7 @@ ul.ui-autocomplete ul.ui-autocomplete::-webkit-scrollbar-thumb {
   color: #fff;
 }
 
-@media screen and (max-width: 940px) {
+@media screen and (max-width: 960px) {
   /* 자동완성 전체 박스 스타일 */
   ul.ui-autocomplete {
     position: absolute !important;
@@ -2552,7 +2552,7 @@ header .gnb li.has_depth .depth a.on, header .gnb li.has_depth .depth a:hover {
     width: 100%;
   }
 }
-@media screen and (max-width: 940px) {
+@media screen and (max-width: 960px) {
   header {
     width: 100%;
     height: 12rem;
@@ -2687,7 +2687,7 @@ footer a {
   color: #c3c3c5;
 }
 
-@media screen and (max-width: 940px) {
+@media screen and (max-width: 960px) {
   footer {
     height: auto;
     padding: 4rem;
@@ -3164,7 +3164,7 @@ footer a {
     padding: 20px 20px 40px 20px;
   }
 }
-@media screen and (max-width: 940px) {
+@media screen and (max-width: 960px) {
   #container {
     padding: 12rem 0 0 0;
   }
@@ -3601,7 +3601,7 @@ footer a {
   color: #292929;
 }
 
-@media screen and (max-width: 940px) {
+@media screen and (max-width: 960px) {
   .paging {
     margin-top: 8rem;
   }
@@ -3807,7 +3807,7 @@ footer a {
   text-align: right;
 }
 
-@media screen and (max-width: 940px) {
+@media screen and (max-width: 960px) {
   .layer_popup .pop_data {
     width: calc(100% - 8rem) !important;
     padding: 6rem 4rem;
@@ -3916,7 +3916,7 @@ footer a {
   height: 50px;
 }
 
-@media screen and (max-width: 940px) {
+@media screen and (max-width: 960px) {
   .bottom_btns {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -3963,7 +3963,7 @@ footer a {
   opacity: 0.4;
 }
 
-@media screen and (max-width: 940px) {
+@media screen and (max-width: 960px) {
   .no_data {
     gap: 4rem;
     font-size: 2.8rem;
@@ -4226,7 +4226,7 @@ footer a {
   border: 1px solid #612d44;
 }
 
-@media screen and (max-width: 940px) {
+@media screen and (max-width: 960px) {
   #container.login {
     height: 100vh;
   }
@@ -4532,7 +4532,7 @@ footer a {
   display: none;
 }
 
-@media screen and (max-width: 940px) {
+@media screen and (max-width: 960px) {
   .content.registPage section.radius {
     padding: 5rem 4rem 12rem 4rem;
     margin-top: 0;
@@ -4682,7 +4682,7 @@ footer a {
   display: none;
 }
 
-@media screen and (max-width: 940px) {
+@media screen and (max-width: 960px) {
   .content.totalReg .top_control {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -5005,7 +5005,7 @@ footer a {
   white-space: nowrap;
 }
 .content.workOrderProgressList .progress-badge.req {
-  color: #6B7280;
+  color: #527cd1;
 }
 .content.workOrderProgressList .progress-badge.making {
   color: #D97706;
@@ -5019,6 +5019,13 @@ footer a {
 .content.workOrderProgressList .progress-badge.done {
   background: #f0fdf4;
   color: #16A34A;
+}
+.content.workOrderProgressList .progress-badge.approval {
+  background: #fdf4ff;
+  color: #df3753;
+}
+.content.workOrderProgressList .item-link.req {
+  color: #527cd1;
 }
 .content.workOrderProgressList .item-link.regist {
   color: #612d44;
@@ -5035,9 +5042,12 @@ footer a {
 .content.workOrderProgressList .item-link.done {
   color: #16A34A;
 }
+.content.workOrderProgressList .item-link.approval {
+  color: #df3753;
+}
 .content.workOrderProgressList .item-link .lot-tag {
-  color: #888 !important;
-  font-weight: normal;
+  color: #636363 !important;
+  font-weight: 500;
   font-size: 14px;
 }
 .content {
@@ -5118,14 +5128,58 @@ footer a {
   min-width: auto;
   width: 55px;
 }
+.content.workOrderProgressDetail .radius .road_data table tbody td .memo, .content.workOrderProgressMaking .radius .road_data table tbody td .memo {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 5px;
+}
+.content.workOrderProgressDetail .radius .road_data table tbody td .memo button, .content.workOrderProgressMaking .radius .road_data table tbody td .memo button {
+  width: 40px;
+  height: 40px;
+  text-indent: -99999px;
+  border: none;
+  background-color: transparent;
+  background: url("/images/svg/trash-can-regular-full.svg") no-repeat center center;
+  background-size: 25px;
+}
 .content.workOrderProgressDetail .radius .road_data table tbody tr.extra-row td, .content.workOrderProgressMaking .radius .road_data table tbody tr.extra-row td {
-  background: #e3fcff;
+  background: #efeeeb;
 }
 .content.workOrderProgressDetail .radius .road_data table tfoot th, .content.workOrderProgressMaking .radius .road_data table tfoot th {
   height: 40px;
 }
 .content.workOrderProgressDetail .radius .road_data table tfoot td, .content.workOrderProgressMaking .radius .road_data table tfoot td {
   padding: 10px;
+}
+.content.workOrderProgressDetail .radius .road_data table tfoot td .unit, .content.workOrderProgressMaking .radius .road_data table tfoot td .unit {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 5px;
+}
+.content.workOrderProgressDetail .radius .road_data table tfoot td .unit input, .content.workOrderProgressMaking .radius .road_data table tfoot td .unit input {
+  text-align: right;
 }
 .content.workOrderProgressDetail .radius .road_data table td.al-center, .content.workOrderProgressMaking .radius .road_data table td.al-center {
   text-align: center;
@@ -5311,6 +5365,70 @@ footer a {
     padding: 10px 5px;
   }
 }
+@media all and (max-width: 1440px) {
+  /*진행현황*/
+  .content {
+    /*제조*/
+  }
+  .content.workOrderProgressMaking .road_data table.requestTable colgroup col:first-child {
+    width: 80px;
+  }
+  .content.workOrderProgressMaking .road_data table.requestTable colgroup col:nth-child(3) {
+    width: 230px;
+  }
+  .content.workOrderProgressMaking .road_data table.requestTable colgroup col:nth-child(5), .content.workOrderProgressMaking .road_data table.requestTable colgroup col:nth-child(6), .content.workOrderProgressMaking .road_data table.requestTable colgroup col:nth-child(7) {
+    width: 100px;
+  }
+  .content.workOrderProgressMaking .road_data table.requestTable colgroup col:nth-child(10) {
+    width: auto;
+  }
+  .content.workOrderProgressMaking .bottom_btns #printBtn {
+    display: none;
+  }
+}
+@media all and (max-width: 1340px) {
+  /*진행현황*/
+  .content {
+    /*제조*/
+  }
+  .content.workOrderProgressMaking .road_data table.requestTable thead th,
+  .content.workOrderProgressMaking .road_data table.requestTable thead td {
+    padding: 5px;
+  }
+  .content.workOrderProgressMaking .road_data table.requestTable tbody td {
+    padding: 5px;
+  }
+  .content.workOrderProgressMaking .road_data table.requestTable colgroup col:first-child {
+    width: 60px;
+  }
+  .content.workOrderProgressMaking .road_data table.requestTable colgroup col:nth-child(3) {
+    width: 200px;
+  }
+  .content.workOrderProgressMaking .road_data table.requestTable colgroup col:nth-child(4) {
+    width: 90px;
+  }
+  .content.workOrderProgressMaking .road_data table.requestTable colgroup col:nth-child(5), .content.workOrderProgressMaking .road_data table.requestTable colgroup col:nth-child(6), .content.workOrderProgressMaking .road_data table.requestTable colgroup col:nth-child(7) {
+    width: 80px;
+  }
+  .content.workOrderProgressMaking .road_data table.requestTable colgroup col:nth-child(8) {
+    width: 150px;
+  }
+  .content.workOrderProgressMaking .road_data table.requestTable colgroup col:nth-child(9) {
+    width: auto;
+  }
+  .content.workOrderProgressMaking .road_data table.requestTable colgroup col:nth-child(10) {
+    width: 137px;
+  }
+}
+@media all and (max-width: 1140px) {
+  /*진행현황*/
+  .content {
+    /*제조*/
+  }
+  .content.workOrderProgressMaking .road_data table.requestTable colgroup col:nth-child(3) {
+    width: 160px;
+  }
+}
 @media all and (max-width: 1120px) {
   /*작업요청*/
   #container.workOrderRequest .content .step2 .road_data table.requestTable colgroup col:first-child {
@@ -5354,7 +5472,37 @@ footer a {
     padding: 10px 5px;
   }
 }
-@media screen and (max-width: 940px) {
+@media all and (max-width: 1070px) {
+  /*진행현황*/
+  .content {
+    /*제조*/
+  }
+  .content.workOrderProgressMaking .radius {
+    padding: 10px 10px 40px 10px;
+  }
+  .content.workOrderProgressMaking .road_data table.requestTable colgroup col:nth-child(10) {
+    width: 110px;
+  }
+}
+@media all and (max-width: 1010px) {
+  /*진행현황*/
+  .content {
+    /*제조*/
+  }
+  .content.workOrderProgressMaking .road_data table.requestTable colgroup col:nth-child(2) {
+    width: 30px;
+  }
+  .content.workOrderProgressMaking .road_data table.requestTable colgroup col:nth-child(3) {
+    width: 140px;
+  }
+  .content.workOrderProgressMaking .road_data table.requestTable colgroup col:nth-child(4) {
+    width: 80px;
+  }
+  .content.workOrderProgressMaking .road_data table.requestTable colgroup col:nth-child(8) {
+    width: 140px;
+  }
+}
+@media screen and (max-width: 960px) {
   /*작업지시서*/
   .content.workOrderList section.radius {
     padding: 4rem;
@@ -5773,7 +5921,7 @@ footer a {
             flex-direction: column;
     gap: 0.5rem;
     height: auto;
-    padding: 1rem 0.5rem !important;
+    padding: 1rem !important;
     border-bottom: none;
   }
   #container.workOrderRequest .content .step2 .road_data .requestTable tbody tr td.content_pct::before, #container.workOrderRequest .content .step2 .road_data .requestTable tbody tr td.kg::before, #container.workOrderRequest .content .step2 .road_data .requestTable tbody tr td.g::before {
@@ -5792,7 +5940,7 @@ footer a {
             justify-content: center;
     background-color: #e1e1e1;
     height: auto;
-    padding: 1rem 0.5rem !important;
+    padding: 1rem !important;
     border-top: 3px solid #000;
   }
   #container.workOrderRequest .content .step2 .road_data .requestTable tbody tr.has_rowspan .method {
@@ -5888,7 +6036,7 @@ footer a {
             justify-content: center;
     background-color: #e1e1e1;
     height: auto;
-    padding: 1rem 0.5rem !important;
+    padding: 1rem !important;
   }
   #container.workOrderRequest .content .step2 .road_data .requestTable tfoot tr:first-child td {
     width: 33.33%;
@@ -6131,7 +6279,7 @@ footer a {
             flex-direction: column;
     gap: 0.5rem;
     height: auto;
-    padding: 1rem 0.5rem !important;
+    padding: 1rem !important;
     border-bottom: none;
     -webkit-box-flex: 1;
         -ms-flex: 1;
@@ -6153,7 +6301,7 @@ footer a {
             justify-content: center;
     background-color: #e1e1e1;
     height: auto;
-    padding: 1rem 0.5rem !important;
+    padding: 2rem 0.5rem !important;
     border-top: 3px solid #000;
   }
   .content.workOrderProgressDetail .road_data .requestTable tbody tr.has_rowspan .method {
@@ -6254,7 +6402,7 @@ footer a {
             justify-content: center;
     background-color: #e1e1e1;
     height: auto;
-    padding: 1rem 0.5rem !important;
+    padding: 1rem !important;
   }
   .content.workOrderProgressDetail .road_data .requestTable tfoot tr:first-child td {
     width: 33.33%;
@@ -6275,5 +6423,489 @@ footer a {
   }
   .content.workOrderProgressDetail .road_data .requestTable tfoot tr:last-child td:last-child {
     width: 100%;
+  }
+  .content {
+    /*제조*/
+  }
+  .content.workOrderProgressMaking .radius {
+    padding: 2rem 2rem 12rem 2rem;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -webkit-box-align: stretch;
+        -ms-flex-align: stretch;
+            align-items: stretch;
+    border: none !important;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable colgroup {
+    display: none;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable th,
+  .content.workOrderProgressMaking .road_data .requestTable td {
+    font-size: 2.4rem !important;
+    padding: 0;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable th .yy-mm-dd,
+  .content.workOrderProgressMaking .road_data .requestTable td .yy-mm-dd {
+    width: 100%;
+    gap: 1rem;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable th .yy-mm-dd span,
+  .content.workOrderProgressMaking .road_data .requestTable td .yy-mm-dd span {
+    font-size: 2.4rem;
+    white-space: nowrap;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable th .memo,
+  .content.workOrderProgressMaking .road_data .requestTable td .memo {
+    width: 100%;
+    gap: 0 !important;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable th .memo button,
+  .content.workOrderProgressMaking .road_data .requestTable td .memo button {
+    width: 8rem !important;
+    height: 8rem !important;
+    background-size: 5rem !important;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable thead {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -webkit-box-align: stretch;
+        -ms-flex-align: stretch;
+            align-items: stretch;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable thead tr {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable thead tr th,
+  .content.workOrderProgressMaking .road_data .requestTable thead tr td {
+    height: 10rem;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable thead tr th {
+    width: 15rem;
+    border-right: none;
+    border-bottom: none;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable thead tr td {
+    width: calc(100% - 15rem);
+    padding: 1rem;
+    border-bottom: none;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable thead tr:first-child th:first-child {
+    width: 100%;
+    padding: 0;
+    border: none;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    font-size: 3.2rem !important;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable thead tr:first-child th:nth-child(2), .content.workOrderProgressMaking .road_data .requestTable thead tr:first-child th:nth-child(3), .content.workOrderProgressMaking .road_data .requestTable thead tr:first-child th:nth-child(4) {
+    display: none;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable thead tr:nth-child(2) {
+    display: none;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable thead tr:nth-child(3) {
+    display: none;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable thead tr:nth-child(5) td:nth-child(3) {
+    width: 100%;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable thead tr:last-child {
+    display: none;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tbody {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -webkit-box-align: stretch;
+        -ms-flex-align: stretch;
+            align-items: stretch;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tbody tr {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    position: relative;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tbody tr td {
+    height: 10rem;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    padding: 1rem !important;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tbody tr td.method, .content.workOrderProgressMaking .road_data .requestTable tbody tr td.note {
+    height: auto;
+    padding: 2.2rem 2rem !important;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tbody tr td.no {
+    width: 7rem;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    border-right: none;
+    border-bottom: none;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tbody tr td.name {
+    width: calc(100% - 7rem);
+    border-bottom: none;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tbody tr td.lot {
+    width: 100%;
+    border-bottom: none;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tbody tr td.lot.lot-cell {
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    text-align: left;
+    gap: 2rem;
+    padding: 1rem 3rem !important;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tbody tr td.lot.lot-cell::before {
+    content: attr(data-roll);
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tbody tr td.content_pct, .content.workOrderProgressMaking .road_data .requestTable tbody tr td.kg {
+    border-right: none;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tbody tr td.content_pct, .content.workOrderProgressMaking .road_data .requestTable tbody tr td.kg, .content.workOrderProgressMaking .road_data .requestTable tbody tr td.g {
+    width: 33.33%;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    gap: 0.5rem;
+    height: auto;
+    padding: 1rem !important;
+    border-bottom: none;
+    -webkit-box-flex: 1;
+        -ms-flex: 1;
+            flex: 1;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tbody tr td.content_pct::before, .content.workOrderProgressMaking .road_data .requestTable tbody tr td.kg::before, .content.workOrderProgressMaking .road_data .requestTable tbody tr td.g::before {
+    content: attr(data-roll);
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tbody tr td.enter {
+    width: 100%;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    gap: 0.5rem;
+    min-height: 6rem;
+    padding: 1rem !important;
+    border-bottom: none;
+    position: relative;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tbody tr td.enter.qty-cell {
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    text-align: left;
+    gap: 2rem;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    padding: 1rem 3rem !important;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tbody tr td.enter.qty-cell::before {
+    content: attr(data-roll);
+    position: static;
+    -webkit-transform: none;
+            transform: none;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tbody tr td.enter::before {
+    content: attr(data-roll);
+    position: absolute;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+            transform: translateY(-50%);
+    left: 3rem;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tbody tr td.enter .input_enter {
+    width: 100%;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tbody tr td.enter .input_enter select {
+    width: auto;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tbody tr.has_rowspan:first-child .phase {
+    border-top: 1px solid #8d8d8d;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tbody tr.has_rowspan .phase {
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    background-color: #e1e1e1;
+    height: auto;
+    padding: 2rem 0.5rem !important;
+    border-top: 3px solid #000;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tbody tr.has_rowspan .method {
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    text-align: center;
+    display: inline-block;
+    border-top: none;
+    border-bottom: none;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tbody tr.has_rowspan .method br {
+    display: none;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tbody tr.has_rowspan .note {
+    width: 100%;
+    position: absolute;
+    left: 0;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    display: inline-block;
+    border-bottom: none;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tbody tr.extra-row td:first-child, .content.workOrderProgressMaking .road_data .requestTable tbody tr.extra-row td.content_pct, .content.workOrderProgressMaking .road_data .requestTable tbody tr.extra-row td.kg, .content.workOrderProgressMaking .road_data .requestTable tbody tr.extra-row td.g, .content.workOrderProgressMaking .road_data .requestTable tbody tr.extra-row td:nth-child(9) {
+    display: none;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tbody tr.extra-row td:last-child {
+    width: 100%;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tbody tr#addRowTr td {
+    width: 100%;
+    height: auto;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tbody tr#addRowTr td .Button {
+    height: 8rem;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tfoot {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -webkit-box-align: stretch;
+        -ms-flex-align: stretch;
+            align-items: stretch;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tfoot tr {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tfoot tr th,
+  .content.workOrderProgressMaking .road_data .requestTable tfoot tr td {
+    height: 10rem;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    padding: 1rem !important;
+    border-top: none;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tfoot tr th {
+    width: 15rem;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    border-right: none;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tfoot tr td {
+    width: calc(100% - 15rem);
+    padding: 1rem !important;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tfoot tr td .unit {
+    width: 100%;
+    gap: 1rem;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tfoot tr td.result {
+    width: 100%;
+    padding: 1rem 1rem !important;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    gap: 1rem;
+    height: auto;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    position: relative;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tfoot tr td.result::before {
+    width: 15rem;
+    text-align: center;
+    content: attr(data-roll);
+    position: absolute;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+            transform: translateY(-50%);
+    left: 0;
+    font-weight: 700;
+    color: #292929;
+    border-right: 1px solid #8d8d8d;
+    padding: 1rem 0;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tfoot tr td.result .inputText {
+    padding-left: 15rem;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tfoot tr td#load-appearance-result, .content.workOrderProgressMaking .road_data .requestTable tfoot tr td#load-scent-result, .content.workOrderProgressMaking .road_data .requestTable tfoot tr td#load-specific-gravity-result, .content.workOrderProgressMaking .road_data .requestTable tfoot tr td#load-ph-result {
+    width: 100%;
+    height: 10rem;
+    padding-left: 16rem !important;
+    -webkit-box-align: start;
+        -ms-flex-align: start;
+            align-items: flex-start;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tfoot tr:first-child th {
+    width: 100%;
+    height: 8rem;
+    border-top: 1px solid #8d8d8d;
+    border-right: 1px solid #8d8d8d;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    background-color: #e1e1e1;
+    height: auto;
+    padding: 1rem !important;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tfoot tr:first-child td {
+    width: 33.33%;
+    height: 8rem;
+    border-right: none;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -webkit-box-flex: 1;
+        -ms-flex: 1;
+            flex: 1;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tfoot tr:first-child td:nth-child(4) {
+    border-right: 1px solid #8d8d8d;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tfoot tr:first-child td:last-child {
+    display: none;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tfoot tr:nth-child(2) th:first-child, .content.workOrderProgressMaking .road_data .requestTable tfoot tr:nth-child(2) th:nth-child(2), .content.workOrderProgressMaking .road_data .requestTable tfoot tr:nth-child(2) th:nth-child(3) {
+    display: none;
+  }
+  .content.workOrderProgressMaking .road_data .requestTable tfoot tr:last-child td:last-child {
+    width: 100% !important;
+    height: 6rem;
   }
 }
