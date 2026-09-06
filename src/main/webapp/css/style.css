@@ -334,6 +334,7 @@ table {
 }
 
 h5.page_tit {
+  width: 100%;
   font-size: 24px;
   font-weight: 600;
   display: -webkit-box;
@@ -357,6 +358,41 @@ h5.page_tit b {
 h5.page_tit i img {
   width: 8px;
 }
+h5.page_tit {
+  position: relative;
+}
+h5.page_tit .toggle {
+  width: 60px;
+  height: 28px;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  margin-top: -14px;
+  border-radius: 28px;
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+  border: none;
+  background-color: #595959;
+  display: none;
+}
+h5.page_tit .toggle::before {
+  content: "";
+  width: 22px;
+  height: 22px;
+  border-radius: 100%;
+  background-color: #fff;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+}
+h5.page_tit .toggle.on {
+  background-color: #34C759;
+}
+h5.page_tit .toggle.on::before {
+  left: 35px;
+}
 
 h6.page_sub_tit {
   font-size: 16px;
@@ -364,6 +400,11 @@ h6.page_sub_tit {
   font-weight: 400;
 }
 
+@media screen and (max-width: 1500px) {
+  h5.page_tit .toggle {
+    display: none !important;
+  }
+}
 @media screen and (max-width: 940px) {
   .title_set {
     margin-bottom: 5rem;
@@ -2439,6 +2480,7 @@ header .gnb li.has_depth .depth a.on, header .gnb li.has_depth .depth a:hover {
     border-bottom: 1px solid #dde1e6;
     z-index: 15;
     padding: 0 20px;
+    left: 0 !important;
   }
   header .logo {
     width: 100%;
@@ -2705,6 +2747,8 @@ footer a {
   width: 100%;
   min-height: 100vh;
   padding: 40px 0 0 280px;
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
 }
 #container .content {
   width: 100%;

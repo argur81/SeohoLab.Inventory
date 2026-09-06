@@ -320,3 +320,16 @@ $(document).ready(function(){
         workOrderResponsiveTable();
     });
 });
+//메뉴 토글
+$(document).ready(function(){
+    $('h5.page_tit .toggle').click(function(){
+        $(this).toggleClass('on');
+        if($(this).hasClass('on') == true){
+            $('#container').stop().animate({'padding-left' : 280});
+            $('header').stop().delay(500).animate({'left' : 0});
+        }else{
+            $('header').stop().animate({'left' : -280});
+            $('#container').stop().animate({'padding-left' : 0});
+        }
+    });
+});

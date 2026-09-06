@@ -5,9 +5,7 @@
 <jsp:include page="/app/include/HeaderDocType.jsp" />
 <style>
     .recipe-diff-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    .recipe-diff-table th, .recipe-diff-table td {
-        border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 13px;
-    }
+    .recipe-diff-table th, .recipe-diff-table td {border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 13px;}
     .recipe-diff-table th { background: #f5f5f5; }
     .recipe-diff-table tr.diff-added td { background: #eefbea; }
     .recipe-diff-table tr.diff-removed td { background: #fdeaea; }
@@ -26,6 +24,7 @@
             <div class="title_set">
                 <h5 class="page_tit">
                     <p>제조 지시서</p><i><img src="/images/svg/location_arrow.svg"></i><b>진행현황</b><i><img src="/images/svg/location_arrow.svg"></i>상세</b>
+                    <button type="button" class="toggle"></button>
                 </h5>
             </div>
             <section class="radius">
@@ -473,5 +472,10 @@
             }
         });
     }
+    $(document).ready(function(){
+        $('#container').stop().delay(10).animate({'padding-left' : 0});
+        $('header').stop().animate({'left' : -280});
+        $('h5.page_tit .toggle').fadeIn();
+    });
 </script>
 <jsp:include page="/app/include/FooterDocType.jsp" />

@@ -1,10 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*" %>
+<%@ page import="javax.servlet.http.Cookie" %>
 <%
     // 1. 사용자가 입력한 아이디와 비밀번호 가져오기
     request.setCharacterEncoding("UTF-8");
     String inputId = request.getParameter("user_id");
     String inputPw = request.getParameter("user_pw");
+    String rememberMe = request.getParameter("remember_me"); // "ID save" 체크박스 값
 
     // 2. 데이터베이스 연결 정보 설정
     String url = "jdbc:mariadb://svc.sel3.cloudtype.app:32170/seoholabdb";
@@ -38,6 +40,21 @@
                 // 로그인 성공 시 세션에 아이디와 이름 저장
                 session.setAttribute("userId", inputId);
                 session.setAttribute("userName", userName);
+
+                // ★ [아이디 저장] 체크 여부에 따라 쿠키 저장/삭제 처리
+                if ("true".equals(rememberMe)) {
+                    // 체크함: 아이디를 쿠키에 30일간 저장
+                    Cookie idCookie = new Cookie("rememberedId", inputId);
+                    idCookie.setMaxAge(60 * 60 * 24 * 30); // 30일 (초 단위)
+                    idCookie.setPath("/");
+                    response.addCookie(idCookie);
+                } else {
+                    // 체크 안 함: 기존에 저장된 쿠키가 있다면 즉시 삭제
+                    Cookie idCookie = new Cookie("rememberedId", "");
+                    idCookie.setMaxAge(0);
+                    idCookie.setPath("/");
+                    response.addCookie(idCookie);
+                }
 %>
                 <script>
                     location.href = "/app/home/main.jsp"; // 로그인 후 이동할 페이지
