@@ -158,6 +158,8 @@
 <script>
     let currentRequestId = "<%= requestIdStr != null ? requestIdStr : "" %>";
     let currentBatchNo = "";
+    let currentProductName = "";
+    let currentRequestDate = "";
 
     function formatWithComma(value) {
         if (value === null || value === undefined || value === "") return "";
@@ -234,6 +236,11 @@
     }
 
     // 엑셀 저장 (표 전체가 순수 텍스트라서 그대로 내보내면 됨)
+    // 파일명에 쓸 수 없는 문자(\ / : * ? " < > |) 제거
+    function sanitizeFileName(str) {
+        return (str || "").replace(/[\\/:*?"<>|]/g, "").trim();
+    }
+
     function exportToExcel() {
         let tableHtml = $(".road_data table").prop("outerHTML");
 
@@ -254,8 +261,15 @@
         let blob = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
         let link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        let fileName = (currentBatchNo && currentBatchNo.trim() !== "") ? currentBatchNo.trim() : ("request_" + currentRequestId);
-        link.download = '제조공정기록서_' + fileName + '.xls';
+
+        // 파일명: 제조지시일 + 제품명(Lot번호)
+        let datePart = sanitizeFileName(currentRequestDate) || sanitizeFileName(new Date().toISOString().slice(0, 10));
+        let namePart = sanitizeFileName(currentProductName) || ("request_" + currentRequestId);
+        let lotPart = sanitizeFileName(currentBatchNo);
+
+        let fileName = datePart + " " + namePart + (lotPart ? "(" + lotPart + ")" : "");
+
+        link.download = fileName + '.xls';
         link.click();
     }
 
@@ -277,13 +291,16 @@
                 let items = res.items || [];
                 let phases = res.phases || [];
 
+                currentProductName = req.product_name || "";
+
                 $("#load-product-name").text(req.product_name || "");
                 $("#load-target-qty").text(req.target_qty || 0);
                 $("#load-target-unit").text(req.target_unit || "kg");
                 $("#load-machine").text(m.machine || "");
                 $("#load-manager-name").text(req.manager_name || m.manager_name || "");
                 if (req.request_date) {
-                    $("#load-request-date").text(req.request_date.substring(0, 10));
+                    currentRequestDate = req.request_date.substring(0, 10); // yyyy-mm-dd
+                    $("#load-request-date").text(currentRequestDate);
                 }
                 $("#load-appearance").text(m.appearance || "");
                 $("#load-scent").text(m.scent || "");
