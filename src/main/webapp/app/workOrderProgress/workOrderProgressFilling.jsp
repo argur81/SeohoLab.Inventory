@@ -121,8 +121,8 @@
                     
                     <div id="subsidiaryRowContainer">
                         <% if (subsidiaryList.isEmpty()) { %>
-                            <div class="row" style="margin-bottom: 10px;">
-                                <div style="padding: 10px; color: #777; text-align: center;">등록된 부자재가 없습니다.</div>
+                            <div class="row nodata">
+                                등록된 부자재가 없습니다.
                             </div>
                         <% } else { 
                             for (Map<String, Object> sub : subsidiaryList) {
@@ -130,7 +130,7 @@
                                 String subType = (String) sub.get("subsidiary_type");
                                 double outQty = (Double) sub.get("out_qty");
                         %>
-                            <div class="row" style="margin-bottom: 10px;">
+                            <div class="row">
                                 <dl class="w50">
                                     <dt>부자재명</dt>
                                     <dd>
