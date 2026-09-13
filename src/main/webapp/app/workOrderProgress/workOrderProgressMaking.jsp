@@ -3,12 +3,17 @@
     String requestIdStr = request.getParameter("request_id");
 %>
 <jsp:include page="/app/include/HeaderDocType.jsp" />
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 <style>
+    /* 인쇄 시 표(road_data) 영역만 출력 */
     @media print {
         body * { visibility: hidden; }
         .road_data, .road_data * { visibility: visible; }
         .road_data { position: absolute; left: 0; top: 0; width: 100%; }
         #loadingOverlay, .top_btn, .bottom_btns, header, .delExtraRowBtn, .no-print { display: none !important; }
+
+        /* input/select를 테두리 없는 순수 텍스트처럼 인쇄 (값만 보이게) */
         .road_data input.inputText,
         .road_data input[type="date"],
         .road_data select.og_select {
@@ -22,22 +27,24 @@
             color: #000 !important;
             font-size: inherit !important;
         }
-        .content.workOrderProgressMaking .radius .road_data table.requestTable colgroup col:nth-child(1){width: 100px !important;}
-        .content.workOrderProgressMaking .radius .road_data table.requestTable colgroup col:nth-child(2){width: 60px !important;}
-        .content.workOrderProgressMaking .radius .road_data table.requestTable colgroup col:nth-child(3){width: auto !important;}
-        .content.workOrderProgressMaking .radius .road_data table.requestTable colgroup col:nth-child(4),
-        .content.workOrderProgressMaking .radius .road_data table.requestTable colgroup col:nth-child(5),
-        .content.workOrderProgressMaking .radius .road_data table.requestTable colgroup col:nth-child(6),
-        .content.workOrderProgressMaking .radius .road_data table.requestTable colgroup col:nth-child(7){width: 120px !important;}
-        .content.workOrderProgressMaking .radius .road_data table.requestTable colgroup col:nth-child(8){width: 150px !important;}
-        .content.workOrderProgressMaking .radius .road_data table.requestTable colgroup col:nth-child(9){width: 150px !important;}
-        .content.workOrderProgressMaking .radius .road_data table.requestTable colgroup col:nth-child(10){width: 150px !important;}
     }
     @page {
         size: A4;
         margin: 10mm;
     }
+    #loadingOverlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(255,255,255,1); z-index: 9999;
+        display: flex; flex-direction: column; justify-content: center; align-items: center;
+    }
+    .spinner {
+        width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #3498db;
+        border-radius: 50%; animation: spin 1s linear infinite;
+    }
+    .loading_text { margin-top: 15px; font-weight: bold; color: #333; font-size: 14px; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    tr.extra-row td { background: #fffceb; }
+    .delExtraRowBtn { padding: 4px 8px; font-size: 12px; }
 </style>
 <div id="loadingOverlay">
     <div class="spinner"></div>
@@ -46,17 +53,16 @@
 <div id="wrap">
     <jsp:include page="/app/include/Header.jsp" />
     <div id="container">
-        <div class="content workOrderProgressMaking">
+        <div class="content workOrderProgressDetail">
             <div class="title_set">
                 <h5 class="page_tit">
                     <p>제조 지시서</p><i><img src="/images/svg/location_arrow.svg"></i><b>진행현황</b><i><img src="/images/svg/location_arrow.svg"></i>제조중</b>
-                    <button type="button" class="toggle"></button>
                 </h5>
             </div>
             <section class="radius">
                 <form id="makingForm">
                 <div class="road_data">
-                    <table class="requestTable workOrderMakingTable">
+                    <table>
                         <colgroup>
                             <col width="100"><col width="45"><col width="220"><col width="130">
                             <col width="110"><col width="120"><col width="120"><col width="170">
@@ -108,7 +114,7 @@
                                 <th>제조지시량(g)</th>
                                 <th>투입량</th>
                                 <th>제조방법</th>
-                                <th>비고</th>
+                                <th>비고 / 관리</th>
                             </tr>
                         </thead>
                         <tbody id="load-items-tbody">
@@ -132,7 +138,7 @@
                             <tr>
                                 <th>성상</th>
                                 <td colspan="2" id="load-appearance"></td>
-                                <td colspan="3" data-roll="성상결과" class="result"><input type="text" id="appearance_result" name="appearance_result" class="inputText"></td>
+                                <td colspan="3"><input type="text" id="appearance_result" name="appearance_result" class="inputText"></td>
                                 <th colspan="2">실제제조량</th>
                                 <td colspan="2">
                                     <div class="unit"><input type="text" id="actual_qty" name="actual_qty" class="inputText" readonly><i>kg</i></div>
@@ -141,21 +147,21 @@
                             <tr>
                                 <th>향취</th>
                                 <td colspan="2" id="load-scent"></td>
-                                <td colspan="3" data-roll="향취결과" class="result"><input type="text" id="scent_result" name="scent_result" class="inputText"></td>
+                                <td colspan="3"><input type="text" id="scent_result" name="scent_result" class="inputText"></td>
                                 <th colspan="2">제조수율</th>
                                 <td colspan="2"><input type="text" id="yield_rate_actual" name="yield_rate_actual" class="inputText" placeholder="숫자 입력"></td>
                             </tr>
                             <tr>
                                 <th>비중</th>
                                 <td colspan="2" id="load-specific-gravity"></td>
-                                <td colspan="3" data-roll="비중결과" class="result"><input type="text" id="specific_gravity_result" name="specific_gravity_result" class="inputText"></td>
+                                <td colspan="3"><input type="text" id="specific_gravity_result" name="specific_gravity_result" class="inputText"></td>
                                 <th colspan="2">제조수율기준</th>
                                 <td colspan="2" id="load-yield-standard"></td>
                             </tr>
                             <tr>
                                 <th>ph</th>
                                 <td colspan="2" id="load-ph"></td>
-                                <td colspan="3" data-roll="ph결과" class="result"><input type="text" id="ph_result" name="ph_result" class="inputText"></td>
+                                <td colspan="3"><input type="text" id="ph_result" name="ph_result" class="inputText"></td>
                                 <td colspan="4" class="al-center">제조수율 = (실제제조량/이론제조량) * 100</td>
                             </tr>
                         </tfoot>
@@ -241,6 +247,14 @@
         return 'M' + yy + monthLetter + dd;
     }
 
+    // Date 객체 -> <input type="date">가 요구하는 "yyyy-mm-dd" 문자열로 변환
+    function formatDateForInput(dateObj) {
+        let yyyy = dateObj.getFullYear();
+        let mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+        let dd = String(dateObj.getDate()).padStart(2, '0');
+        return yyyy + '-' + mm + '-' + dd;
+    }
+
     // 인쇄 시 표(.road_data) 실제 높이를 측정해 A4 한 장(여백 10mm 기준)에 들어가도록 자동 축소
     // ※ transform:scale은 화면에만 축소되어 보이고 인쇄 페이지분할 계산에는 반영되지 않으므로
     //    실제 레이아웃 크기 자체를 줄이는 zoom 속성을 사용한다 (Chrome/Edge 기준 확실히 동작)
@@ -317,6 +331,9 @@
             let confirmedBatchNo = generateBatchNo(new Date());
             $("#batch_no").val(confirmedBatchNo);
 
+            // 제조일자도 [제조완료]를 클릭한 날짜로 확정 (승인요청 화면에 그대로 표시됨)
+            $("#mfg_date").val(formatDateForInput(new Date()));
+
             if (!confirm("제조를 완료하고 승인요청 하시겠습니까?\n\n확정 제조번호: " + confirmedBatchNo)) return;
 
             let $btn = $(this);
@@ -345,7 +362,7 @@
             });
         });
 
-        // ===================== 원료 행 추가  =====================
+        // ===================== 원료 행 추가 (pH 조정 등) =====================
         $(document).on("click", "#addExtraRowBtn", function () {
             addExtraRow(null);
         });
@@ -568,8 +585,8 @@
 
             let safeName = (item.raw_material_name || '').replace(/"/g, '&quot;');
 
-            let lotCell = '<td data-roll="Lot" class="lot"><input type="text" class="inputText lot-input" data-row="' + rowNum + '" placeholder="Lot 선택" readonly></td>';
-            let qtyCell = '<td data-roll="투입량" class="enter"><div class="input_enter">'
+            let lotCell = '<td><input type="text" class="inputText lot-input" data-row="' + rowNum + '" placeholder="클릭하여 Lot 선택" readonly></td>';
+            let qtyCell = '<td><div class="input_enter">'
                 + '<input type="text" class="inputText input-qty" data-row="' + rowNum + '" readonly>'
                 + '<select class="og_select input-unit" data-row="' + rowNum + '" disabled>'
                 + '<option value="kg">kg</option><option value="g">g</option>'
@@ -580,32 +597,32 @@
             if (rowPhaseMap[rowNum] && !rowPhaseMap[rowNum].skip) {
                 let pInfo = rowPhaseMap[rowNum];
                 let formattedMethod = (pInfo.methodDesc || '').replace(/\(/g, '<br>(');
-                rowHtml += '<td class="al-center phase" rowspan="' + pInfo.rowspan + '">' + (pInfo.phaseName || '') + '</td>';
-                rowHtml += '<td class="al-center no">' + rowNum + '</td>';
-                rowHtml += '<td class="name">' + (item.raw_material_name || '') + '</td>';
+                rowHtml += '<td class="al-center" rowspan="' + pInfo.rowspan + '">' + (pInfo.phaseName || '') + '</td>';
+                rowHtml += '<td class="al-center">' + rowNum + '</td>';
+                rowHtml += '<td>' + (item.raw_material_name || '') + '</td>';
                 rowHtml += lotCell;
-                rowHtml += '<td data-roll="함량(%)" class="al-right content_pct">' + formatWithComma(item.content_pct || 0) + ' %</td>';
-                rowHtml += '<td data-roll="제조지시량(kg)" class="al-right kg">' + formatWithComma(item.order_qty_kg || 0) + ' kg</td>';
-                rowHtml += '<td data-roll="제조지시량(g)" class="al-right g">' + formatWithComma(item.order_qty_g || 0) + ' g</td>';
+                rowHtml += '<td class="al-right">' + formatWithComma(item.content_pct || 0) + ' %</td>';
+                rowHtml += '<td class="al-right">' + formatWithComma(item.order_qty_kg || 0) + ' kg</td>';
+                rowHtml += '<td class="al-right">' + formatWithComma(item.order_qty_g || 0) + ' g</td>';
                 rowHtml += qtyCell;
-                rowHtml += '<td data-roll="제조방법" class="al-center method" rowspan="' + pInfo.rowspan + '">' + formattedMethod + '</td>';
-                rowHtml += '<td data-roll="비고" class="al-center note" rowspan="' + pInfo.rowspan + '">' + (pInfo.noteDesc || '') + '</td>';
+                rowHtml += '<td class="al-center" rowspan="' + pInfo.rowspan + '">' + formattedMethod + '</td>';
+                rowHtml += '<td class="al-center" rowspan="' + pInfo.rowspan + '">' + (pInfo.noteDesc || '') + '</td>';
             } else if (rowPhaseMap[rowNum] && rowPhaseMap[rowNum].skip) {
-                rowHtml += '<td class="al-center no">' + rowNum + '</td>';
-                rowHtml += '<td class="name">' + (item.raw_material_name || '') + '</td>';
+                rowHtml += '<td class="al-center">' + rowNum + '</td>';
+                rowHtml += '<td>' + (item.raw_material_name || '') + '</td>';
                 rowHtml += lotCell;
-                rowHtml += '<td data-roll="함량(%)" class="al-right content_pct">' + formatWithComma(item.content_pct || 0) + ' %</td>';
-                rowHtml += '<td data-roll="제조지시량(kg)" class="al-right kg">' + formatWithComma(item.order_qty_kg || 0) + ' kg</td>';
-                rowHtml += '<td data-roll="제조지시량(g)" class="al-right g">' + formatWithComma(item.order_qty_g || 0) + ' g</td>';
+                rowHtml += '<td class="al-right">' + formatWithComma(item.content_pct || 0) + ' %</td>';
+                rowHtml += '<td class="al-right">' + formatWithComma(item.order_qty_kg || 0) + ' kg</td>';
+                rowHtml += '<td class="al-right">' + formatWithComma(item.order_qty_g || 0) + ' g</td>';
                 rowHtml += qtyCell;
             } else {
                 rowHtml += '<td>-</td>';
-                rowHtml += '<td class="al-center no">' + rowNum + '</td>';
-                rowHtml += '<td class="name">' + (item.raw_material_name || '') + '</td>';
+                rowHtml += '<td class="al-center">' + rowNum + '</td>';
+                rowHtml += '<td>' + (item.raw_material_name || '') + '</td>';
                 rowHtml += lotCell;
-                rowHtml += '<td data-roll="함량(%)" class="al-right content_pct">' + formatWithComma(item.content_pct || 0) + ' %</td>';
-                rowHtml += '<td data-roll="제조지시량(kg)" class="al-right kg">' + formatWithComma(item.order_qty_kg || 0) + ' kg</td>';
-                rowHtml += '<td data-roll="제조지시량(g)" class="al-right g">' + formatWithComma(item.order_qty_g || 0) + ' g</td>';
+                rowHtml += '<td class="al-right">' + formatWithComma(item.content_pct || 0) + ' %</td>';
+                rowHtml += '<td class="al-right">' + formatWithComma(item.order_qty_kg || 0) + ' kg</td>';
+                rowHtml += '<td class="al-right">' + formatWithComma(item.order_qty_g || 0) + ' g</td>';
                 rowHtml += qtyCell;
                 rowHtml += '<td></td><td></td>';
             }
@@ -617,47 +634,19 @@
         // 마지막 행: [원료 행 추가] 버튼 (인쇄 시에는 숨김)
         tbodyHtml += '<tr id="addRowTr" class="no-print">'
             + '<td colspan="10" class="al-center">'
-            + '<button type="button" id="addExtraRowBtn" class="Button">원료추가</button>'
+            + '<button type="button" id="addExtraRowBtn" class="Button">원료 행 추가 (pH 조정 등)</button>'
             + '</td></tr>';
 
         $("#load-items-tbody").html(tbodyHtml);
         $("#load-total-pct").text(formatWithComma(Math.round(totalPct)) + " %");
         $("#load-total-kg").text(formatWithComma(Math.round(totalKg)) + " kg");
         $("#load-total-g").text(formatWithComma(Math.round(totalG)) + " g");
-        
-
-        //제조지시서 테이블 Mobile
-        $('.workOrderMakingTable tbody tr').each(function () {
-            var $lastTd = $(this).children('td').last();
-            if ($lastTd.hasClass('note') == true) {
-                $(this).addClass('has_rowspan');
-            }
-        });
-
-        function workOrderResponsiveTable() {
-            $('.workOrderMakingTable tr.has_rowspan').each(function () {
-                if ($(window).width() <= 960) {
-                    var thisPhaseHT = $(this).find('.phase').outerHeight();
-                    var thisMethodHT = $(this).find('.method').outerHeight();
-                    var thisNoteHT = $(this).find('.note').outerHeight();
-                    $(this).css('padding-top', thisPhaseHT + thisNoteHT + thisMethodHT);
-                    $(this).find('.method').css('top', thisPhaseHT);
-                    $(this).find('.note').css('top', thisPhaseHT + thisMethodHT);
-                } else {
-                    $(this).css('padding', 0);
-                }
-            });
-        }
-        workOrderResponsiveTable();
-        $(window).resize(function () {
-            workOrderResponsiveTable();
-        });
 
         totalOriginalRows = items.length;
         nextExtraRowId = totalOriginalRows;
     }
 
-    // 제조 중 원료 행 추가. prefill이 있으면 저장된 값 복원용으로 사용.
+    // 제조 중 원료 행 추가 (pH 조정 등). prefill이 있으면 저장된 값 복원용으로 사용.
     function addExtraRow(prefill) {
         nextExtraRowId++;
         let rowId = nextExtraRowId;
@@ -668,21 +657,21 @@
         let noteValue = prefill ? (prefill.note || '') : '';
 
         let rowHtml = '<tr data-row-id="' + rowId + '" class="extra-row">'
-            + '<td class="al-center">&nbsp;</td>'
-            + '<td class="al-center no">' + rowId + '</td>'
-            + '<td class="name"><input type="text" class="inputText item-autocomplete-extra" data-row="' + rowId + '" placeholder="원료명 입력 (자동완성)" value="' + nameValue.replace(/"/g, '&quot;') + '"></td>'
-            + '<td data-roll="Lot" class="lot"><input type="text" class="inputText lot-input" data-row="' + rowId + '" placeholder="Lot 선택" readonly></td>'
-            + '<td data-roll="함량(%)" class="al-center content_pct">&nbsp;</td>'
-            + '<td data-roll="제조지시량(kg)" class="al-center kg">&nbsp;</td>'
-            + '<td data-roll="제조지시량(g)" class="al-center g">&nbsp;</td>'
-            + '<td data-roll="투입량" class="enter"><div class="input_enter">'
+            + '<td class="al-center">-</td>'
+            + '<td class="al-center">' + rowId + '</td>'
+            + '<td><input type="text" class="inputText item-autocomplete-extra" data-row="' + rowId + '" placeholder="원료명 입력 (자동완성)" value="' + nameValue.replace(/"/g, '&quot;') + '"></td>'
+            + '<td><input type="text" class="inputText lot-input" data-row="' + rowId + '" placeholder="원료명 먼저 입력" readonly></td>'
+            + '<td class="al-center">-</td>'
+            + '<td class="al-center">-</td>'
+            + '<td class="al-center">-</td>'
+            + '<td><div class="input_enter">'
             +   '<input type="text" class="inputText input-qty" data-row="' + rowId + '" readonly>'
             +   '<select class="og_select input-unit" data-row="' + rowId + '" disabled>'
             +     '<option value="kg">kg</option><option value="g">g</option>'
             +   '</select></div></td>'
-            + '<td>&nbsp;</td>'
-            + '<td><div class="memo"><input type="text" class="inputText extra-note" data-row="' + rowId + '" placeholder="메모" value="' + noteValue.replace(/"/g, '&quot;') + '">'
-            +   ' <button type="button" class="delExtraRowBtn" data-row="' + rowId + '">삭제</button></div></td>'
+            + '<td>-</td>'
+            + '<td><input type="text" class="inputText extra-note" data-row="' + rowId + '" placeholder="추가 사유 (예: pH 조정)" value="' + noteValue.replace(/"/g, '&quot;') + '">'
+            +   ' <button type="button" class="delExtraRowBtn" data-row="' + rowId + '">삭제</button></td>'
             + '</tr>';
 
         // [원료 행 추가] 버튼이 있는 tr(#addRowTr) 바로 위에 새 행을 삽입
@@ -793,7 +782,7 @@
                 $ul.empty();
 
                 if (!lotList || lotList.length === 0) {
-                    $ul.html('<li class="nolot">등록된 Lot이 없습니다.</li>');
+                    $ul.html('<li style="text-align:center; padding: 15px;">등록된 Lot이 없습니다.</li>');
                 } else {
                     let saved = rowLotData[rowId];
                     let savedMap = {};
@@ -914,10 +903,5 @@
             }
         });
     }
-    $(document).ready(function(){
-        $('#container').stop().delay(10).animate({'padding-left' : 0});
-        $('header').stop().animate({'left' : -280});
-        $('h5.page_tit .toggle').fadeIn();
-    });
 </script>
 <jsp:include page="/app/include/FooterDocType.jsp" />
