@@ -51,6 +51,10 @@
                         padding-bottom: 20px;
                         border-bottom: 1px solid #d3d3d3;
                         gap: 20px;
+                        &.nolot {
+                            padding: 20px;
+                            text-align: center;
+                        }
                         dl {
                             &.lot,
                             &.stock {
@@ -97,6 +101,63 @@
             }
         }
     }
+    &#recipeDiffPopup {
+        .pop_data {
+            max-width: none;
+            .body {
+                .diff-info {
+                    margin-bottom: 10px;
+                    font-size: 14px;
+                    span {
+                        font-weight: 700;
+                        color: #292727;
+                    }
+                    br {
+                        display: none;
+                    }
+                }
+                .recipe-diff-table {
+                    th,
+                    td {
+                        height: 45px;
+                        text-align: center;
+                        border: 1px solid #8d8d8d;
+                    }
+                    tr {
+                        &.diff-added {
+                            td {
+                                background: #eefbea;
+                            }
+                        }
+                        &.diff-removed {
+                            td {
+                                background: #ffd1d1;
+                            }
+                        }
+                        &.diff-changed {
+                            td {
+                                background: #ffefe7;
+                            }
+                        }
+                        td {
+                            &.diff-status {
+                                font-weight: 700;
+                                &.added {
+                                    color: #16a34a;
+                                }
+                                &.removed {
+                                    color: #dc2626;
+                                }
+                                &.changed {
+                                    color: #ea580c;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 @include mediaQuery(mobile) {
     .layer_popup {
@@ -129,6 +190,10 @@
                         li {
                             padding-bottom: 4rem;
                             gap: 2rem;
+                            &.nolot {
+                                padding: 4rem;
+                                font-size: 2.4rem;
+                            }
                             dl {
                                 dt {
                                     white-space: nowrap;
@@ -166,6 +231,55 @@
                                         .unit_mg {
                                             display: none;
                                         }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        &#recipeDiffPopup {
+            .pop_data {
+                max-width: none;
+                .head {
+                    margin-bottom: 0;
+                }
+                .body {
+                    .diff-info {
+                        margin-bottom: 1rem;
+                        font-size: 2.4rem;
+                        line-height: 1.2;
+                        br {
+                            display: block;
+                        }
+                    }
+                    .recipe-diff-table {
+                        width: 100%;
+                        display: block;
+                        max-height: 40rem;
+                        overflow-x: hidden;
+                        @include scrollbar();
+                        thead {
+                            display: none;
+                        }
+                        tbody {
+                            width: 100%;
+                            @include flexLayout(column, flex-start, stretch);
+                            gap: 2rem;
+                            tr {
+                                border: 1px solid #8d8d8d;
+                                border-radius: 3rem;
+                                @include flexLayout(column, flex-start, stretch);
+                                overflow: hidden;
+                                td {
+                                    height: auto;
+                                    font-size: 2.4rem;
+                                    border: none;
+                                    padding: 2rem;
+                                    @include flexLayout(row, space-between, center);
+                                    &::before {
+                                        content: attr(data-roll);
                                     }
                                 }
                             }

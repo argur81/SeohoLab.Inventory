@@ -219,7 +219,7 @@
                                 $ul.empty();
 
                                 if (!lotList || lotList.length === 0) {
-                                    $ul.html('<li style="text-align:center; padding: 15px;">등록된 Lot이 없습니다.</li>');
+                                    $ul.html('<li class="nolot">등록된 Lot이 없습니다.</li>');
                                 } else {
                                     $.each(lotList, function (idx, item) {
                                         let rawT = item.stock_qty_t || 0;
@@ -346,7 +346,7 @@
                                 $ul.empty();
 
                                 if (!lotList || lotList.length === 0) {
-                                    $ul.html('<li style="text-align:center; padding: 15px;">등록된 Lot이 없습니다.</li>');
+                                    $ul.html('<li class="nolot">등록된 Lot이 없습니다.</li>');
                                 } else {
                                     $.each(lotList, function (idx, item) {
                                         let currentQty = item.stock_qty || 0;

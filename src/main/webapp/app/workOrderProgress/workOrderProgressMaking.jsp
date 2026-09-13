@@ -793,7 +793,7 @@
                 $ul.empty();
 
                 if (!lotList || lotList.length === 0) {
-                    $ul.html('<li style="text-align:center; padding: 15px;">등록된 Lot이 없습니다.</li>');
+                    $ul.html('<li class="nolot">등록된 Lot이 없습니다.</li>');
                 } else {
                     let saved = rowLotData[rowId];
                     let savedMap = {};

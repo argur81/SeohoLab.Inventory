@@ -15,17 +15,6 @@
         size: A4;
         margin: 10mm;
     }
-    #loadingOverlay {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(255,255,255,1); z-index: 9999;
-        display: flex; flex-direction: column; justify-content: center; align-items: center;
-    }
-    .spinner {
-        width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #3498db;
-        border-radius: 50%; animation: spin 1s linear infinite;
-    }
-    .loading_text { margin-top: 15px; font-weight: bold; color: #333; font-size: 14px; }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 </style>
 <div id="loadingOverlay">
     <div class="spinner"></div>
@@ -34,15 +23,16 @@
 <div id="wrap">
     <jsp:include page="/app/include/Header.jsp" />
     <div id="container">
-        <div class="content workOrderProgressDetail">
+        <div class="content workOrderProgressMaking">
             <div class="title_set">
                 <h5 class="page_tit">
                     <p>제조 지시서</p><i><img src="/images/svg/location_arrow.svg"></i><b>진행현황</b><i><img src="/images/svg/location_arrow.svg"></i>생산완료</b>
+                    <button type="button" class="toggle"></button>
                 </h5>
             </div>
             <section class="radius">
                 <div class="road_data">
-                    <table>
+                    <table class="requestTable workOrderMakingTable">
                         <colgroup>
                             <col width="100"><col width="45"><col width="220"><col width="130">
                             <col width="110"><col width="120"><col width="120"><col width="170">
@@ -116,28 +106,28 @@
                             <tr>
                                 <th>성상</th>
                                 <td colspan="2" id="load-appearance"></td>
-                                <td colspan="3" id="load-appearance-result"></td>
+                                <td colspan="3" data-roll="성상결과" id="load-appearance-result" class="result"></td>
                                 <th colspan="2">실제제조량</th>
                                 <td colspan="2"><span id="load-actual-qty"></span> kg</td>
                             </tr>
                             <tr>
                                 <th>향취</th>
                                 <td colspan="2" id="load-scent"></td>
-                                <td colspan="3" id="load-scent-result"></td>
+                                <td colspan="3" data-roll="향취결과" id="load-scent-result" class="result"></td>
                                 <th colspan="2">제조수율</th>
                                 <td colspan="2"><span id="load-yield-rate-actual"></span>%</td>
                             </tr>
                             <tr>
                                 <th>비중</th>
                                 <td colspan="2" id="load-specific-gravity"></td>
-                                <td colspan="3" id="load-specific-gravity-result"></td>
+                                <td colspan="3" data-roll="비중결과" id="load-specific-gravity-result" class="result"></td>
                                 <th colspan="2">제조수율기준</th>
                                 <td colspan="2" id="load-yield-standard"></td>
                             </tr>
                             <tr>
                                 <th>ph</th>
                                 <td colspan="2" id="load-ph"></td>
-                                <td colspan="3" id="load-ph-result"></td>
+                                <td colspan="3" data-roll="ph결과" id="load-ph-result" class="result"></td>
                                 <td colspan="4" class="al-center">제조수율 = (실제제조량/이론제조량) * 100</td>
                             </tr>
                         </tfoot>
@@ -146,8 +136,8 @@
 
                 <div class="bottom_btns">
                     <button type="button" id="backListBtn" class="Button bgGray" data-width="180">목록</button>
-                    <button type="button" id="printBtn" class="Button brdrGreen" data-width="180">인쇄</button>
-                    <button type="button" id="excelBtn" class="Button brdrYellow" data-width="180">엑셀저장</button>
+                    <button type="button" id="printBtn" class="Button brdrYellow" data-width="180">인쇄</button>
+                    <button type="button" id="excelBtn" class="Button brdrGreen" data-width="180">엑셀저장</button>
                     <button type="button" id="deleteBtn" class="Button brdrGray" data-width="180">삭제</button>
                 </div>
             </section>
@@ -359,40 +349,40 @@
             totalKg += parseFloat(item.order_qty_kg) || 0;
             totalG += parseFloat(item.order_qty_g) || 0;
 
-            let lotCell = '<td class="al-center lot-cell" data-row="' + rowNum + '"></td>';
-            let qtyCell = '<td class="al-right qty-cell" data-row="' + rowNum + '"></td>';
+            let lotCell = '<td data-roll="Lot" class="al-center lot-cell lot" data-row="' + rowNum + '"></td>';
+            let qtyCell = '<td data-roll="투입량" class="al-right qty-cell enter" data-row="' + rowNum + '"></td>';
 
             let rowHtml = '<tr data-row-id="' + rowNum + '">';
 
             if (rowPhaseMap[rowNum] && !rowPhaseMap[rowNum].skip) {
                 let pInfo = rowPhaseMap[rowNum];
                 let formattedMethod = (pInfo.methodDesc || '').replace(/\(/g, '<br>(');
-                rowHtml += '<td class="al-center" rowspan="' + pInfo.rowspan + '">' + (pInfo.phaseName || '') + '</td>';
-                rowHtml += '<td class="al-center">' + rowNum + '</td>';
-                rowHtml += '<td>' + (item.raw_material_name || '') + '</td>';
+                rowHtml += '<td class="al-center phase" rowspan="' + pInfo.rowspan + '">' + (pInfo.phaseName || '') + '</td>';
+                rowHtml += '<td class="al-center no">' + rowNum + '</td>';
+                rowHtml += '<td class="name">' + (item.raw_material_name || '') + '</td>';
                 rowHtml += lotCell;
-                rowHtml += '<td class="al-right">' + formatWithComma(item.content_pct || 0) + ' %</td>';
-                rowHtml += '<td class="al-right">' + formatWithComma(item.order_qty_kg || 0) + ' kg</td>';
-                rowHtml += '<td class="al-right">' + formatWithComma(item.order_qty_g || 0) + ' g</td>';
+                rowHtml += '<td data-roll="함량(%)" class="al-right content_pct">' + formatWithComma(item.content_pct || 0) + ' %</td>';
+                rowHtml += '<td data-roll="제조지시량(kg)" class="al-right kg">' + formatWithComma(item.order_qty_kg || 0) + ' kg</td>';
+                rowHtml += '<td data-roll="제조지시량(g)" class="al-right g">' + formatWithComma(item.order_qty_g || 0) + ' g</td>';
                 rowHtml += qtyCell;
-                rowHtml += '<td class="al-center" rowspan="' + pInfo.rowspan + '">' + formattedMethod + '</td>';
-                rowHtml += '<td class="al-center" rowspan="' + pInfo.rowspan + '">' + (pInfo.noteDesc || '') + '</td>';
+                rowHtml += '<td data-roll="제조방법" class="al-center method" rowspan="' + pInfo.rowspan + '">' + formattedMethod + '</td>';
+                rowHtml += '<td data-roll="비고" class="al-center note" rowspan="' + pInfo.rowspan + '">' + (pInfo.noteDesc || '') + '</td>';
             } else if (rowPhaseMap[rowNum] && rowPhaseMap[rowNum].skip) {
-                rowHtml += '<td class="al-center">' + rowNum + '</td>';
-                rowHtml += '<td>' + (item.raw_material_name || '') + '</td>';
+                rowHtml += '<td class="al-center no">' + rowNum + '</td>';
+                rowHtml += '<td class="name">' + (item.raw_material_name || '') + '</td>';
                 rowHtml += lotCell;
-                rowHtml += '<td class="al-right">' + formatWithComma(item.content_pct || 0) + ' %</td>';
-                rowHtml += '<td class="al-right">' + formatWithComma(item.order_qty_kg || 0) + ' kg</td>';
-                rowHtml += '<td class="al-right">' + formatWithComma(item.order_qty_g || 0) + ' g</td>';
+                rowHtml += '<td data-roll="함량(%)" class="al-right content_pct">' + formatWithComma(item.content_pct || 0) + ' %</td>';
+                rowHtml += '<td data-roll="제조지시량(kg)" class="al-right kg">' + formatWithComma(item.order_qty_kg || 0) + ' kg</td>';
+                rowHtml += '<td data-roll="제조지시량(g)" class="al-right g">' + formatWithComma(item.order_qty_g || 0) + ' g</td>';
                 rowHtml += qtyCell;
             } else {
                 rowHtml += '<td>-</td>';
-                rowHtml += '<td class="al-center">' + rowNum + '</td>';
+                rowHtml += '<td class="al-center no">' + rowNum + '</td>';
                 rowHtml += '<td>' + (item.raw_material_name || '') + '</td>';
                 rowHtml += lotCell;
-                rowHtml += '<td class="al-right">' + formatWithComma(item.content_pct || 0) + ' %</td>';
-                rowHtml += '<td class="al-right">' + formatWithComma(item.order_qty_kg || 0) + ' kg</td>';
-                rowHtml += '<td class="al-right">' + formatWithComma(item.order_qty_g || 0) + ' g</td>';
+                rowHtml += '<td data-roll="함량(%)" class="al-right content_pct">' + formatWithComma(item.content_pct || 0) + ' %</td>';
+                rowHtml += '<td data-roll="제조지시량(kg)" class="al-right kg">' + formatWithComma(item.order_qty_kg || 0) + ' kg</td>';
+                rowHtml += '<td data-roll="제조지시량(g)" class="al-right g">' + formatWithComma(item.order_qty_g || 0) + ' g</td>';
                 rowHtml += qtyCell;
                 rowHtml += '<td></td><td></td>';
             }
@@ -405,6 +395,32 @@
         $("#load-total-pct").text(formatWithComma(Math.round(totalPct)) + " %");
         $("#load-total-kg").text(formatWithComma(Math.round(totalKg)) + " kg");
         $("#load-total-g").text(formatWithComma(Math.round(totalG)) + " g");
+
+        //제조지시서 테이블 Mobile
+        $('.workOrderMakingTable tbody tr').each(function () {
+            var $lastTd = $(this).children('td').last();
+            if ($lastTd.hasClass('note') == true) {
+                $(this).addClass('has_rowspan');
+            }
+        });
+        function workOrderResponsiveTable() {
+            $('.workOrderMakingTable tr.has_rowspan').each(function () {
+                if ($(window).width() <= 960) {
+                    var thisPhaseHT = $(this).find('.phase').outerHeight();
+                    var thisMethodHT = $(this).find('.method').outerHeight();
+                    var thisNoteHT = $(this).find('.note').outerHeight();
+                    $(this).css('padding-top', thisPhaseHT + thisNoteHT + thisMethodHT);
+                    $(this).find('.method').css('top', thisPhaseHT);
+                    $(this).find('.note').css('top', thisPhaseHT + thisMethodHT);
+                } else {
+                    $(this).css('padding', 0);
+                }
+            });
+        }
+        workOrderResponsiveTable();
+        $(window).resize(function () {
+            workOrderResponsiveTable();
+        });
     }
 
     // 제조중 저장된 최종 데이터를 화면에 반영 (지시서 원료 + 제조 중 추가원료 모두, 값만 표시)
@@ -431,12 +447,12 @@
                 let rowHtml = '<tr data-row-id="' + it.item_row_id + '" class="extra-row">'
                     + '<td class="al-center">-</td>'
                     + '<td class="al-center">' + it.item_row_id + '</td>'
-                    + '<td>' + (it.raw_material_name || '') + '</td>'
-                    + '<td class="al-center lot-cell" data-row="' + it.item_row_id + '"></td>'
-                    + '<td class="al-center">-</td>'
-                    + '<td class="al-center">-</td>'
-                    + '<td class="al-center">-</td>'
-                    + '<td class="al-right qty-cell" data-row="' + it.item_row_id + '"></td>'
+                    + '<td class="name">' + (it.raw_material_name || '') + '</td>'
+                    + '<td data-roll="Lot" class="al-center lot-cell lot" data-row="' + it.item_row_id + '"></td>'
+                    + '<td data-roll="함량(%)" class="al-center content_pct">-</td>'
+                    + '<td data-roll="제조지시량(kg)" class="al-center kg">-</td>'
+                    + '<td data-roll="제조지시량(g)" class="al-center g">-</td>'
+                    + '<td data-roll="투입량" class="al-right qty-cell enter" data-row="' + it.item_row_id + '"></td>'
                     + '<td>-</td>'
                     + '<td>' + (it.note || '(제조 중 추가)') + '</td>'
                     + '</tr>';
@@ -450,5 +466,10 @@
             });
         }
     }
+    $(document).ready(function(){
+        $('#container').stop().delay(10).animate({'padding-left' : 0});
+        $('header').stop().animate({'left' : -280});
+        $('h5.page_tit .toggle').fadeIn();
+    });
 </script>
 <jsp:include page="/app/include/FooterDocType.jsp" />

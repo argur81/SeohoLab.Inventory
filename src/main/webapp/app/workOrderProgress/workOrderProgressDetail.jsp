@@ -3,20 +3,6 @@
     String requestIdStr = request.getParameter("request_id");
 %>
 <jsp:include page="/app/include/HeaderDocType.jsp" />
-<style>
-    .recipe-diff-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    .recipe-diff-table th, .recipe-diff-table td {border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 13px;}
-    .recipe-diff-table th { background: #f5f5f5; }
-    .recipe-diff-table tr.diff-added td { background: #eefbea; }
-    .recipe-diff-table tr.diff-removed td { background: #fdeaea; }
-    .recipe-diff-table tr.diff-changed td { background: #fff8e6; }
-    .diff-status { font-weight: bold; }
-    .diff-status.added { color: #16a34a; }
-    .diff-status.removed { color: #dc2626; }
-    .diff-status.changed { color: #ea580c; }
-    #recipeDiffPopup .body { max-height: 420px; overflow-y: auto; }
-    #recipeDiffPopup .diff-info { margin-bottom: 10px; color: #555; font-size: 13px; }
-</style>
 <div id="wrap">
     <jsp:include page="/app/include/Header.jsp" />
     <div id="container">
@@ -34,21 +20,20 @@
                             <col width="80">
                             <col width="50">
                             <col width="auto">
-                            <col width="80">
                             <col width="100">
                             <col width="100">
                             <col width="100">
                             <col width="100">
                             <col width="100">
                             <col width="100">
-                            <col width="100">
+                            <col width="200">
                         </colgroup>
                         <thead>
                             <tr>
                                 <th>제품명</th>
                                 <td colspan="5" id="load-product-name"></td>
                                 <th colspan="3">제조지시량</th>
-                                <td colspan="2"><span id="load-target-qty"></span> <span id="load-target-unit"></span></td>
+                                <td><span id="load-target-qty"></span> <span id="load-target-unit"></span></td>
                             </tr>
                             <tr>
                                 <th>제조기기</th>
@@ -56,7 +41,7 @@
                                 <th>제조지시자</th>
                                 <td id="load-manager-name"></td>
                                 <th>제조지시일</th>
-                                <td colspan="2" id="load-request-date"></td>
+                                <td id="load-request-date"></td>
                             </tr>
                             <tr>
                                 <th>상</th>
@@ -67,7 +52,7 @@
                                 <th>제조지시량(kg)</th>
                                 <th>제조지시량(g)</th>
                                 <th colspan="2">제조방법</th>
-                                <th colspan="2">비고</th>
+                                <th>비고</th>
                             </tr>
                         </thead>
                         <tbody id="load-items-tbody">
@@ -79,30 +64,30 @@
                                 <td id="load-total-pct" class="al-right"></td>
                                 <td id="load-total-kg" class="al-right"></td>
                                 <td id="load-total-g" class="al-right"></td>
-                                <td colspan="4">&nbsp;</td>
+                                <td colspan="3">&nbsp;</td>
                             </tr>
                             <tr>
                                 <th>성상</th>
                                 <td colspan="3" id="load-appearance"></td>
                                 <th>이론제조량</th>
-                                <td colspan="6"><span id="load-theor-qty"></span> <span id="load-theor-unit"></span></td>
+                                <td colspan="5"><span id="load-theor-qty"></span> <span id="load-theor-unit"></span></td>
                             </tr>
                             <tr>
                                 <th>향취</th>
                                 <td colspan="3" id="load-scent"></td>
                                 <th>제조수율</th>
-                                <td colspan="6"><span id="load-yield-rate"></span>%</td>
+                                <td colspan="5"><span id="load-yield-rate"></span>%</td>
                             </tr>
                             <tr>
                                 <th>비중</th>
                                 <td colspan="3" id="load-specific-gravity"></td>
                                 <th>제조수율기준</th>
-                                <td colspan="6" id="load-yield-standard"></td>
+                                <td colspan="5" id="load-yield-standard"></td>
                             </tr>
                             <tr>
                                 <th>ph</th>
                                 <td colspan="3" id="load-ph"></td>
-                                <td colspan="7" class="al-center">제조수율 = (실제제조량/이론제조량) * 100</td>
+                                <td colspan="6" class="al-center">제조수율 = (실제제조량/이론제조량) * 100</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -121,7 +106,7 @@
 <div class="layer_popup" id="recipeDiffPopup" style="display: none;">
     <div class="pop_data" data-width="700">
         <div class="head">
-            <h6>이전 제조 기록과 원료 구성이 다릅니다</h6>
+            <h6>확인사항</h6>
             <button type="button" class="close btn_close_pop" title="닫기"><img src="/images/svg/popup_close.svg"></button>
         </div>
         <div class="body">
@@ -140,7 +125,7 @@
         </div>
         <div class="bottom_btns">
             <button type="button" id="btnDiffCancel" class="Button bgGray" data-width="180">취소</button>
-            <button type="button" id="btnDiffProceed" class="Button bgBlue" data-width="180">그래도 진행</button>
+            <button type="button" id="btnDiffProceed" class="Button bgBlue" data-width="180">계속 진행</button>
         </div>
     </div>
 </div>
@@ -298,7 +283,7 @@
                             tbodyHtml += `<td data-roll="제조지시량(kg)" class="al-right kg">\${formatWithComma(item.order_qty_kg || 0)} kg</td>`;
                             tbodyHtml += `<td data-roll="제조지시량(g)" class="al-right g">\${formatWithComma(item.order_qty_g || 0)} g</td>`;
                             tbodyHtml += `<td data-roll="제조방법" class="al-center method" colspan="2" rowspan="\${pInfo.rowspan}">\${formattedMethod}</td>`;
-                            tbodyHtml += `<td data-roll="비고" class="al-center note" colspan="2" rowspan="\${pInfo.rowspan}">\${pInfo.noteDesc || ''}</td>`;
+                            tbodyHtml += `<td data-roll="비고" class="al-center note" rowspan="\${pInfo.rowspan}">\${pInfo.noteDesc || ''}</td>`;
                         } else {
                             tbodyHtml += `<td class="al-center no">\${rowNum}</td>`;
                             tbodyHtml += `<td class="name"><span>\${item.raw_material_name || ''}</span></td>`;
@@ -308,15 +293,15 @@
                             tbodyHtml += `<td data-roll="제조지시량(g)" class="al-right g">\${formatWithComma(item.order_qty_g || 0)} g</td>`;
                         }
                     } else {
-                        tbodyHtml += `<td>-</td>`;
+                        tbodyHtml += `<td class="al-center phase">-</td>`;
                         tbodyHtml += `<td class="al-center no">\${rowNum}</td>`;
                         tbodyHtml += `<td class="name"><span>\${item.raw_material_name || ''}</span></td>`;
-                        tbodyHtml += `<td class="al-center test_number">\${item.test_number || ''}</td>`;
-                        tbodyHtml += `<td class="al-right content_pct">\${formatWithComma(item.content_pct || 0)} %</td>`;
-                        tbodyHtml += `<td data-roll="함량(%)" class="al-right kg">\${formatWithComma(item.order_qty_kg || 0)} kg</td>`;
-                        tbodyHtml += `<td data-roll="제조지시량(kg)" class="al-right g">\${formatWithComma(item.order_qty_g || 0)} g</td>`;
-                        tbodyHtml += `<td data-roll="제조지시량(g)" class="al-center" colspan="2"></td>`;
-                        tbodyHtml += `<td class="al-center" colspan="2"></td>`;
+                        tbodyHtml += `<td class="al-center test_num">\${item.test_number || ''}</td>`;
+                        tbodyHtml += `<td data-roll="함량(%)" class="al-right content_pct">\${formatWithComma(item.content_pct || 0)} %</td>`;
+                        tbodyHtml += `<td data-roll="제조지시량(kg)" class="al-right kg">\${formatWithComma(item.order_qty_kg || 0)} kg</td>`;
+                        tbodyHtml += `<td data-roll="제조지시량(g)" class="al-right g">\${formatWithComma(item.order_qty_g || 0)} g</td>`;
+                        tbodyHtml += `<td data-roll="제조방법" class="al-center method" colspan="2"></td>`;
+                        tbodyHtml += `<td data-roll="비고" class="al-center note"></td>`;
                     }
 
                     tbodyHtml += `</tr>`;
@@ -430,7 +415,7 @@
     function showRecipeDiffPopup(res, diffs) {
         let dateStr = res.previous_date ? res.previous_date.substring(0, 16) : "";
         let batchStr = res.previous_batch_no ? res.previous_batch_no : "-";
-        $("#diffInfoText").text("가장 최근 완료 기록 (제조번호: " + batchStr + ", " + dateStr + ") 과 비교했을 때 아래 원료 구성이 다릅니다.");
+        $("#diffInfoText").html("최근 완료 기록<br>(Lot: <span>" + batchStr + "</span>, 제조완료일: <span>" + dateStr + "</span>)과<br> 비교했을 때 구성이 다릅니다.");
 
         let statusLabel = { added: '추가됨', removed: '삭제됨', changed: '변경됨' };
         let rowClass = { added: 'diff-added', removed: 'diff-removed', changed: 'diff-changed' };
@@ -440,10 +425,10 @@
             let prevText = (d.previous !== null) ? (formatWithComma(d.previous) + " %") : "-";
             let curText = (d.current !== null) ? (formatWithComma(d.current) + " %") : "-";
             bodyHtml += '<tr class="' + rowClass[d.status] + '">'
-                + '<td>' + d.name + '</td>'
-                + '<td>' + prevText + '</td>'
-                + '<td>' + curText + '</td>'
-                + '<td class="diff-status ' + d.status + '">' + statusLabel[d.status] + '</td>'
+                + '<td data-roll="원료명">' + d.name + '</td>'
+                + '<td data-roll="이전 함량(%)">' + prevText + '</td>'
+                + '<td data-roll="현재 함량(%)">' + curText + '</td>'
+                + '<td data-roll="상태" class="diff-status ' + d.status + '">' + statusLabel[d.status] + '</td>'
                 + '</tr>';
         });
         $("#diffTableBody").html(bodyHtml);
