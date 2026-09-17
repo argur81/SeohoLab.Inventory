@@ -29,9 +29,10 @@
     String yieldRateStr = request.getParameter("yield_rate");
     String yieldStandard = request.getParameter("yield_standard");
 
-    double targetQty = (targetQtyStr != null && !targetQtyStr.isEmpty()) ? Double.parseDouble(targetQtyStr.replace(",", "")) : 0;
-    double theorQty = (theorQtyStr != null && !theorQtyStr.isEmpty()) ? Double.parseDouble(theorQtyStr.replace(",", "")) : 0;
-    double yieldRate = (yieldRateStr != null && !yieldRateStr.isEmpty()) ? Double.parseDouble(yieldRateStr.replace(",", "")) : 0;
+    // ★ 숫자가 아닌 값이 들어와도(예: "a") 500 에러로 죽지 않고 0으로 안전 처리
+    double targetQty = parseDoubleSafe(targetQtyStr);
+    double theorQty = parseDoubleSafe(theorQtyStr);
+    double yieldRate = parseDoubleSafe(yieldRateStr);
 
     // 3. 하위 동적 행 파라미터들 수신 (배열 형태)
     String[] rawMaterialNames = request.getParameterValues("raw_material_name");
@@ -144,10 +145,10 @@
             for (int i = 0; i < rawMaterialNames.length; i++) {
                 if (rawMaterialNames[i] == null || rawMaterialNames[i].trim().isEmpty()) continue;
 
-                double cPct = (contentPcts != null && i < contentPcts.length && contentPcts[i] != null && !contentPcts[i].isEmpty()) ? Double.parseDouble(contentPcts[i].replace(",", "")) : 0;
-                double oKg = (orderQtyKgs != null && i < orderQtyKgs.length && orderQtyKgs[i] != null && !orderQtyKgs[i].isEmpty()) ? Double.parseDouble(orderQtyKgs[i].replace(",", "")) : 0;
-                double oG = (orderQtyGs != null && i < orderQtyGs.length && orderQtyGs[i] != null && !orderQtyGs[i].isEmpty()) ? Double.parseDouble(orderQtyGs[i].replace(",", "")) : 0;
-                double uPrice = (unitPrices != null && i < unitPrices.length && unitPrices[i] != null && !unitPrices[i].isEmpty()) ? Double.parseDouble(unitPrices[i].replace(",", "")) : 0;
+                double cPct = parseDoubleSafe(contentPcts != null && i < contentPcts.length ? contentPcts[i] : null);
+                double oKg = parseDoubleSafe(orderQtyKgs != null && i < orderQtyKgs.length ? orderQtyKgs[i] : null);
+                double oG = parseDoubleSafe(orderQtyGs != null && i < orderQtyGs.length ? orderQtyGs[i] : null);
+                double uPrice = parseDoubleSafe(unitPrices != null && i < unitPrices.length ? unitPrices[i] : null);
 
                 pstmt.setInt(1, orderId);
                 pstmt.setInt(2, actualIdx);   // item_row_id
@@ -173,8 +174,10 @@
 
             int actualPhaseIdx = 1;
             for (int i = 0; i < phaseTitles.length; i++) {
-                int startNum = (phaseStarts != null && i < phaseStarts.length && phaseStarts[i] != null && !phaseStarts[i].isEmpty()) ? Integer.parseInt(phaseStarts[i]) : 1;
-                int endNum = (phaseEnds != null && i < phaseEnds.length && phaseEnds[i] != null && !phaseEnds[i].isEmpty()) ? Integer.parseInt(phaseEnds[i]) : 1;
+                int startNum = (int) parseDoubleSafe(phaseStarts != null && i < phaseStarts.length ? phaseStarts[i] : null);
+                int endNum = (int) parseDoubleSafe(phaseEnds != null && i < phaseEnds.length ? phaseEnds[i] : null);
+                if (startNum <= 0) startNum = 1;
+                if (endNum <= 0) endNum = 1;
 
                 pstmt.setInt(1, orderId);
                 pstmt.setInt(2, actualPhaseIdx); // phase_row_id
@@ -205,7 +208,7 @@
         e.printStackTrace();
 %>
         <script>
-            alert('임시저장 중 오류가 발생했습니다: <%= e.getMessage().replaceAll("'", "\\\\'") %>');
+            alert('임시저장 중 오류가 발생했습니다: <%= e.getMessage() != null ? e.getMessage().replaceAll("'", "\\\\'").replaceAll("\\r?\\n", " ") : "알 수 없는 오류" %>');
             history.back();
         </script>
 <%
@@ -213,5 +216,16 @@
         if (rs != null) try { rs.close(); } catch (SQLException e) {}
         if (pstmt != null) try { pstmt.close(); } catch (SQLException e) {}
         if (conn != null) try { conn.close(); } catch (SQLException e) {}
+    }
+%>
+<%!
+    // 콤마(,)가 섞여 있거나 숫자가 아닌 값("a" 등)이 들어와도 절대 예외를 던지지 않는 안전한 파싱
+    private double parseDoubleSafe(String str) {
+        if (str == null || str.trim().isEmpty()) return 0.0;
+        try {
+            return Double.parseDouble(str.replace(",", "").trim());
+        } catch (NumberFormatException e) {
+            return 0.0;
+        }
     }
 %>
