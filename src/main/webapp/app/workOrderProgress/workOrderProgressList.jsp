@@ -17,7 +17,7 @@
     <!-- 로딩 오버레이 -->
     <div id="loadingOverlay">
         <div class="spinner"></div>
-        <p class="loading_text">데이터를 불러오는 중입니다...</p>
+        <p class="loading_text">Loading</p>
     </div>
     <div id="wrap">
         <jsp:include page="/app/include/Header.jsp" />
@@ -30,14 +30,14 @@
                 </div>
 
                 <!-- 화면용 테이블 -->
-                <table id="stockTable" class="display cell-border hover" style="width:100%">
+                <table id="stockTable" class="display cell-border hover workOrderProgressList">
                     <thead>
                         <tr>
-                            <th>No</th>
+                            <th class="no">No</th>
                             <th class="name">제품명</th>
-                            <th>제조지시량</th>
-                            <th>요청일</th>
-                            <th>진행현황</th>
+                            <th class="qty">제조지시량</th>
+                            <th class="date">요청일</th>
+                            <th class="progress">진행현황</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -48,9 +48,9 @@
 
                                 // work_order_making을 LEFT JOIN하여 제조번호(batch_no) 함께 조회
                                 String sql = "SELECT r.request_id, r.product_name, r.target_qty, r.target_unit, r.progress_status, r.request_date, m.batch_no "
-                                           + "FROM work_order_requests r "
-                                           + "LEFT JOIN work_order_making m ON r.request_id = m.request_id "
-                                           + "ORDER BY r.request_id DESC";
+                                        + "FROM work_order_requests r "
+                                        + "LEFT JOIN work_order_making m ON r.request_id = m.request_id "
+                                        + "ORDER BY r.request_id DESC";
                                 pstmt = conn.prepareStatement(sql);
                                 rs = pstmt.executeQuery();
 
@@ -74,17 +74,17 @@
                                     String batchNo = rs.getString("batch_no");
 
                                     // 상세/작업 페이지 URL 분기
-                                    String detailUrl = "workOrderProgressDetail.jsp?request_id=" + requestId;
+                                    String detailUrl = "step1-Detail/workOrderProgressDetail.jsp?request_id=" + requestId;
                                     if ("제조중".equals(progressStatus) || "수정중".equals(progressStatus)) {
-                                        detailUrl = "workOrderProgressMaking.jsp?request_id=" + requestId;
+                                        detailUrl = "step2-Making/workOrderProgressMaking.jsp?request_id=" + requestId;
                                     } else if ("승인요청".equals(progressStatus)) {
-                                        detailUrl = "workOrderProgressApproval.jsp?request_id=" + requestId;
+                                        detailUrl = "step3-Approval/workOrderProgressApproval.jsp?request_id=" + requestId;
                                     } else if ("제조완료".equals(progressStatus)) {
-                                        detailUrl = "workOrderProgressCompleted.jsp?request_id=" + requestId;
+                                        detailUrl = "step4-Complete/workOrderProgressCompleted.jsp?request_id=" + requestId;
                                     } else if ("충진중".equals(progressStatus)) {
-                                        detailUrl = "workOrderProgressFilling.jsp?request_id=" + requestId;
+                                        detailUrl = "step5-Filling/workOrderProgressFilling.jsp?request_id=" + requestId;
                                     } else if ("생산완료".equals(progressStatus)) {
-                                        detailUrl = "workOrderProgressDone.jsp?request_id=" + requestId;
+                                        detailUrl = "step6-Done/workOrderProgressDone.jsp?request_id=" + requestId;
                                     }
 
                                     String badgeClass = "req";
@@ -104,15 +104,15 @@
                                     String requestDateDisplay = (requestDate != null) ? sdf.format(requestDate) : "-";
                         %>
                         <tr>
-                            <td><%= count++ %></td>
-                            <td>
+                            <td class="no"><%= count++ %></td>
+                            <td class="name">
                                 <a href="<%= detailUrl %>" class="item-link <%= badgeClass %>">
                                     <%= productName %><% if (showLot) { %> <span class="lot-tag">(<%= batchNo.trim() %>)</span><% } %>
                                 </a>
                             </td>
-                            <td><%= targetQtyStr %></td>
-                            <td><%= requestDateDisplay %></td>
-                            <td class="dt-center"><span class="progress-badge <%= badgeClass %>"><%= progressStatus %></span></td>
+                            <td class="qty"><%= targetQtyStr %></td>
+                            <td class="date"><%= requestDateDisplay %></td>
+                            <td class="dt-center progress"><span class="progress-badge <%= badgeClass %>"><%= progressStatus %></span></td>
                         </tr>
                         <%
                                 }
@@ -162,8 +162,8 @@
 
                                     String batchNo = rs.getString("batch_no");
                                     boolean showLot = ("승인요청".equals(progressStatus) || "수정중".equals(progressStatus)
-                                                       || "제조완료".equals(progressStatus) || "충진중".equals(progressStatus) || "생산완료".equals(progressStatus))
-                                                       && batchNo != null && !batchNo.trim().isEmpty();
+                                                    || "제조완료".equals(progressStatus) || "충진중".equals(progressStatus) || "생산완료".equals(progressStatus))
+                                                    && batchNo != null && !batchNo.trim().isEmpty();
                                     String displayProductName = showLot ? (productName + " (" + batchNo.trim() + ")") : productName;
 
                                     double targetQty = rs.getDouble("target_qty");
@@ -197,13 +197,14 @@
                     $(document).ready(function () {
                         var table = $('#stockTable').DataTable({
                             autoWidth: false,
+                            responsive: true,
                             columnDefs: [
                                 { width: "80px", targets: 0, className: "dt-center" },
                                 { width: "150px", targets: 2, className: "dt-right" },
                                 { width: "180px", targets: 3, className: "dt-center" },
                                 { width: "120px", targets: 4, className: "dt-center" },
+                                { responsivePriority: 1, targets: [0, 1, 2] }
                             ],
-                            responsive: true,
                             language: {
                                 emptyTable: "등록된 제조요청이 없습니다.",
                                 lengthMenu: "_MENU_ 개씩 보기",

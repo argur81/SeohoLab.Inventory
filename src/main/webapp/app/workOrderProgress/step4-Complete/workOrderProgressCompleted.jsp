@@ -119,7 +119,7 @@
                         <button type="button" id="addExtraRowBtn" class="Button">부자재 추가</button>
                     </div>
                     <div class="bottom_btns">
-                        <button type="button" class="Button bgGray" data-width="180" onclick="location.href='workOrderProgressList.jsp';">목록</button>
+                        <button type="button" class="Button bgGray" data-width="180" onclick="location.href='../workOrderProgressList.jsp';">목록</button>
                         <button type="submit" id="btnStartFilling" class="Button bgBlue" data-width="180">충진시작</button>
                     </div>
                 </section>

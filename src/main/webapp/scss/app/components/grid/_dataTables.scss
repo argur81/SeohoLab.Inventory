@@ -284,6 +284,15 @@
                             }
                             &.dtr-control {
                                 white-space: nowrap;
+                                &::before {
+                                    font-size: 1.6rem;
+                                }
+                            }
+                            &.name {
+                                white-space: nowrap;
+                                > a {
+                                    white-space: nowrap;
+                                }
                             }
                         }
                         &.child {
@@ -301,7 +310,7 @@
                                                 width: 100%;
                                                 padding: 1.5rem 0;
                                                 border-bottom: 1px solid #d1d5d9;
-                                                @include flexLayout(row, flex-start, stretch);
+                                                @include flexLayout(row, space-between, stretch);
                                                 font-size: 2.4rem;
                                                 gap:2rem;
                                                 .dtr-title {
@@ -359,6 +368,47 @@
                         &.paginate_button {
                             &.current {
                                 border-radius: 1rem;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    /*페이지별 사이즈*/
+    .dataTables_wrapper {
+        table {
+            &.dataTable {
+                /*제조 지시서 > 관리·신규등록*/
+                &.workOrderMgmtList {
+                    thead {
+                        th {
+                            &.no {
+                                width: 10rem !important;
+                            }
+                            &.qty {
+                                width: 15rem !important;
+                            }
+                            &.unit,
+                            &.created {
+                                width: auto !important;
+                            }
+                        }
+                    }
+                }
+                /*제조 지시서 > 진행현황*/
+                &.workOrderProgressList {
+                    thead {
+                        th {
+                            &.no {
+                                width: 10rem !important;
+                            }
+                            &.qty {
+                                width: 15rem !important;
+                            }
+                            &.date,
+                            &.progress {
+                                width: auto !important;
                             }
                         }
                     }

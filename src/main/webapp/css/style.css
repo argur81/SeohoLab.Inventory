@@ -1245,6 +1245,15 @@ h6.page_sub_tit {
   .dataTables_wrapper table.dataTable tbody tr td.dtr-control {
     white-space: nowrap;
   }
+  .dataTables_wrapper table.dataTable tbody tr td.dtr-control::before {
+    font-size: 1.6rem;
+  }
+  .dataTables_wrapper table.dataTable tbody tr td.name {
+    white-space: nowrap;
+  }
+  .dataTables_wrapper table.dataTable tbody tr td.name > a {
+    white-space: nowrap;
+  }
   .dataTables_wrapper table.dataTable tbody tr.child {
     padding: 0;
   }
@@ -1280,9 +1289,9 @@ h6.page_sub_tit {
     -webkit-box-direction: normal;
         -ms-flex-direction: row;
             flex-direction: row;
-    -webkit-box-pack: start;
-        -ms-flex-pack: start;
-            justify-content: flex-start;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
     -webkit-box-align: stretch;
         -ms-flex-align: stretch;
             align-items: stretch;
@@ -1340,6 +1349,31 @@ h6.page_sub_tit {
   }
   .dataTables_wrapper .bottom_group .dataTables_paginate > span a.paginate_button.current {
     border-radius: 1rem;
+  }
+  /*페이지별 사이즈*/
+  .dataTables_wrapper table.dataTable {
+    /*제조 지시서 > 관리·신규등록*/
+  }
+  .dataTables_wrapper table.dataTable.workOrderMgmtList thead th.no {
+    width: 10rem !important;
+  }
+  .dataTables_wrapper table.dataTable.workOrderMgmtList thead th.qty {
+    width: 15rem !important;
+  }
+  .dataTables_wrapper table.dataTable.workOrderMgmtList thead th.unit, .dataTables_wrapper table.dataTable.workOrderMgmtList thead th.created {
+    width: auto !important;
+  }
+  .dataTables_wrapper table.dataTable {
+    /*제조 지시서 > 진행현황*/
+  }
+  .dataTables_wrapper table.dataTable.workOrderProgressList thead th.no {
+    width: 10rem !important;
+  }
+  .dataTables_wrapper table.dataTable.workOrderProgressList thead th.qty {
+    width: 15rem !important;
+  }
+  .dataTables_wrapper table.dataTable.workOrderProgressList thead th.date, .dataTables_wrapper table.dataTable.workOrderProgressList thead th.progress {
+    width: auto !important;
   }
 }
 .comm_tab {
@@ -2481,6 +2515,21 @@ header .gnb li.has_depth .depth a.on, header .gnb li.has_depth .depth a:hover {
     z-index: 15;
     padding: 0 20px;
     left: 0 !important;
+    background-color: transparent;
+  }
+  header::after {
+    content: "";
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    backdrop-filter: blur(6px) brightness(100%);
+    transition: opacity 0.5s;
+    -webkit-transition: opacity 0.5s;
+    opacity: 1;
+    z-index: -1;
+    pointer-events: none;
   }
   header .logo {
     width: 100%;
@@ -5698,6 +5747,14 @@ footer a {
     height: 8rem;
     border-radius: 2rem;
   }
+  .content.workOrderList section.radius .add_btn.fix {
+    padding: 2rem 6rem;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    background-color: #fff;
+    border-top: 1px solid #e6e8eb;
+  }
   .content.workOrderList section.radius .delRowBtn,
   .content.workOrderList section.radius .delPhaseBtn {
     width: 4rem;
@@ -6852,6 +6909,7 @@ footer a {
   }
   .content.workOrderProgressMaking .road_data .requestTable tbody tr td.lot.lot-cell::before {
     content: attr(data-roll);
+    white-space: nowrap;
   }
   .content.workOrderProgressMaking .road_data .requestTable tbody tr td.content_pct, .content.workOrderProgressMaking .road_data .requestTable tbody tr td.kg {
     border-right: none;
@@ -6872,6 +6930,7 @@ footer a {
   }
   .content.workOrderProgressMaking .road_data .requestTable tbody tr td.content_pct::before, .content.workOrderProgressMaking .road_data .requestTable tbody tr td.kg::before, .content.workOrderProgressMaking .road_data .requestTable tbody tr td.g::before {
     content: attr(data-roll);
+    white-space: nowrap;
   }
   .content.workOrderProgressMaking .road_data .requestTable tbody tr td.enter {
     width: 100%;
@@ -6905,6 +6964,7 @@ footer a {
     position: static;
     -webkit-transform: none;
             transform: none;
+    white-space: nowrap;
   }
   .content.workOrderProgressMaking .road_data .requestTable tbody tr td.enter::before {
     content: attr(data-roll);
@@ -6913,6 +6973,7 @@ footer a {
     -webkit-transform: translateY(-50%);
             transform: translateY(-50%);
     left: 3rem;
+    white-space: nowrap;
   }
   .content.workOrderProgressMaking .road_data .requestTable tbody tr td.enter .input_enter {
     width: 100%;
@@ -7065,6 +7126,7 @@ footer a {
     color: #292929;
     border-right: 1px solid #8d8d8d;
     padding: 1rem 0;
+    white-space: nowrap;
   }
   .content.workOrderProgressMaking .road_data .requestTable tfoot tr td.result .inputText {
     padding-left: 15rem;

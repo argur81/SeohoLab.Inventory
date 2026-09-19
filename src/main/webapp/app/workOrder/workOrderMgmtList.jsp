@@ -17,7 +17,7 @@
     <!-- 로딩 오버레이 -->
     <div id="loadingOverlay">
         <div class="spinner"></div>
-        <p class="loading_text">데이터를 불러오는 중입니다...</p>
+        <p class="loading_text">Loading</p>
     </div>
     <div id="wrap">
         <jsp:include page="/app/include/Header.jsp" />
@@ -31,14 +31,14 @@
                 <button type="button" class="new_regist_btn" onclick="location.href='/app/workOrder/workOrderRegist.jsp'">신규등록</button>
                 
                 <!-- 화면용 테이블 -->
-                <table id="stockTable" class="display cell-border hover" style="width:100%">
+                <table id="stockTable" class="display cell-border hover workOrderMgmtList" style="width:100%">
                     <thead>
                         <tr>
-                            <th>No</th>
+                            <th class="no">No</th>
                             <th class="name">제품명</th>
-                            <th>제조지시량</th>
-                            <th>합계단가</th>
-                            <th>Update</th>
+                            <th class="qty">제조지시량</th>
+                            <th class="unit">합계단가</th>
+                            <th class="created">Update</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -178,13 +178,14 @@
                     $(document).ready(function () {
                         var table = $('#stockTable').DataTable({
                             autoWidth: false,
+                            responsive: true,
                             columnDefs: [
                                 { width: "80px", targets: 0, className: "dt-center" },
                                 { width: "130px", targets: 2, className: "dt-right" },
                                 { width: "130px", targets: 3, className: "dt-right" },
                                 { width: "180px", targets: 4, className: "dt-center" },
+                                { responsivePriority: 1, targets: [0, 1] }
                             ],
-                            responsive: true,
                             language: {
                                 emptyTable: "등록된 제조 지시서가 없습니다.",
                                 lengthMenu: "_MENU_ 개씩 보기",

@@ -92,7 +92,7 @@
 
         if (isSuccess) {
             conn.commit();
-            out.println("<script>alert('충진이 시작되었습니다.'); location.href='workOrderProgressList.jsp';</script>");
+            out.println("<script>alert('충진이 시작되었습니다.'); location.href='../workOrderProgressList.jsp';</script>");
         } else {
             conn.rollback();
             out.println("<script>alert('충진 시작 처리 실패: 지시서 정보를 찾을 수 없습니다.'); history.back();</script>");

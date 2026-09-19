@@ -8,8 +8,8 @@
     <link rel="shortcut icon" href="https://seoholab.com/favicon.ico">
     <title>서호랩::Smart Inventory ERP</title>
     <!--DataTables CSS-->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="/css/module/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="/css/module/responsive.dataTables.min.css">
     <!--System CSS-->
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="stylesheet" href="/css/module/swiper-bundle.min.css" />
@@ -18,8 +18,8 @@
     <script src="/scripts/module/swiper-bundle.min.js"></script>
     <script src="/scripts/ui.js"></script>
     <!--DataTables JS-->
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="/scripts/module/jquery.dataTables.min.js"></script>
+    <script src="/scripts/module/dataTables.responsive.min.js"></script>
     <!-- jQuery UI Autocomplete용 -->
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>

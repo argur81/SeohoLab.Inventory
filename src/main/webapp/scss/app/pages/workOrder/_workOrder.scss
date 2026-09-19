@@ -921,6 +921,14 @@
                             height: 8rem;
                             border-radius: 2rem;
                         }
+                        &.fix {
+                            padding: 2rem 6rem;
+                            position: fixed;
+                            left: 0;
+                            bottom: 0;
+                            background-color: #fff;
+                            border-top: 1px solid #e6e8eb;
+                        }
                     }
                     .delRowBtn,
                     .delPhaseBtn {
@@ -1704,6 +1712,7 @@
                                         padding: 1rem 3rem !important;
                                         &::before {
                                             content: attr(data-roll);
+                                            white-space: nowrap;
                                         }
                                     }
                                 }
@@ -1723,6 +1732,7 @@
                                     flex: 1;
                                     &::before {
                                         content: attr(data-roll);
+                                        white-space: nowrap;
                                     }
                                 }
                                 &.enter {
@@ -1744,12 +1754,14 @@
                                             content: attr(data-roll);
                                             position: static;
                                             transform: none;
+                                            white-space: nowrap;
                                         }
                                     }
                                     &::before {
                                         content: attr(data-roll);
                                         @include positionLayout(absolute, y);
                                         left: 3rem;
+                                        white-space: nowrap;
                                     }
                                     .input_enter {
                                         width: 100%;
@@ -1865,6 +1877,7 @@
                                         color: #292929;
                                         border-right: 1px solid #8d8d8d;
                                         padding: 1rem 0;
+                                        white-space: nowrap;
                                     }
                                     .inputText {
                                         padding-left: 15rem;

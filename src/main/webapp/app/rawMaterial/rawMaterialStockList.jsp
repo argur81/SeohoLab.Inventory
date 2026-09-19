@@ -17,7 +17,7 @@
     <!-- 로딩 오버레이 -->
     <div id="loadingOverlay">
         <div class="spinner"></div>
-        <p class="loading_text">데이터를 불러오는 중입니다...</p>
+        <p class="loading_text">Loading</p>
     </div>
     <div id="wrap">
         <jsp:include page="/app/include/Header.jsp" />

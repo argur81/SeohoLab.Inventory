@@ -3,6 +3,11 @@
     String requestIdStr = request.getParameter("request_id");
 %>
 <jsp:include page="/app/include/HeaderDocType.jsp" />
+<!-- 로딩 오버레이 -->
+<div id="loadingOverlay">
+    <div class="spinner"></div>
+    <p class="loading_text">Loading</p>
+</div>
 <div id="wrap">
     <jsp:include page="/app/include/Header.jsp" />
     <div id="container">
@@ -168,7 +173,7 @@
             if (!confirm("정말 이 제조요청을 삭제하시겠습니까?")) return;
             
             $.ajax({
-                url: "workOrderProgressDeleteAction.jsp",
+                url: "/app/workOrderProgress/common/workOrderProgressDeleteAction.jsp",
                 type: "POST",
                 data: { request_id: currentRequestId },
                 dataType: "json",
@@ -200,7 +205,7 @@
 
     function loadProgressDetailData(requestId) {
         $.ajax({
-            url: "getWorkOrderProgressDetail.jsp",
+            url: "/app/workOrderProgress/common/getWorkOrderProgressDetail.jsp",
             type: "GET",
             data: { request_id: requestId },
             dataType: "json",
@@ -307,6 +312,8 @@
                     tbodyHtml += `</tr>`;
                 });
 
+                $('#loadingOverlay').fadeOut();
+
                 $("#load-items-tbody").html(tbodyHtml);
 
                 $("#load-total-pct").text(formatWithComma(Math.round(totalPct)) + " %");
@@ -354,7 +361,7 @@
         }
 
         $.ajax({
-            url: "getLatestCompletedRecipe.jsp",
+            url: "/app/workOrderProgress/common/getLatestCompletedRecipe.jsp",
             type: "GET",
             data: { product_name: currentProductName, exclude_request_id: currentRequestId },
             dataType: "json",
@@ -441,13 +448,13 @@
         if (!confirm("제조를 시작하시겠습니까?")) return;
 
         $.ajax({
-            url: "workOrderProgressMakingAction.jsp",
+            url: "/app/workOrderProgress/step2-Making/workOrderProgressMakingAction.jsp",
             type: "POST",
             data: { request_id: currentRequestId },
             dataType: "json",
             success: function (res) {
                 if (res && res.success) {
-                    location.href = "workOrderProgressMaking.jsp?request_id=" + currentRequestId;
+                    location.href = "/app/workOrderProgress/step2-Making/workOrderProgressMaking.jsp?request_id=" + currentRequestId;
                 } else {
                     alert(res && res.message ? res.message : "제조 시작 처리에 실패했습니다.");
                 }

@@ -82,7 +82,7 @@
 
         if ("생산완료".equals(currentStatus)) {
             conn.rollback();
-            out.println("<script>alert('이미 생산완료 처리된 항목입니다.'); location.href='workOrderProgressList.jsp';</script>");
+            out.println("<script>alert('이미 생산완료 처리된 항목입니다.'); location.href='../workOrderProgressList.jsp';</script>");
             return;
         }
 

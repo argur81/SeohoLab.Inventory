@@ -3,8 +3,6 @@
     String requestIdStr = request.getParameter("request_id");
 %>
 <jsp:include page="/app/include/HeaderDocType.jsp" />
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 <style>
     /* 인쇄 시 표(road_data) 영역만 출력 */
     @media print {
@@ -32,144 +30,133 @@
         size: A4;
         margin: 10mm;
     }
-    #loadingOverlay {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(255,255,255,1); z-index: 9999;
-        display: flex; flex-direction: column; justify-content: center; align-items: center;
-    }
-    .spinner {
-        width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #3498db;
-        border-radius: 50%; animation: spin 1s linear infinite;
-    }
-    .loading_text { margin-top: 15px; font-weight: bold; color: #333; font-size: 14px; }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     tr.extra-row td { background: #fffceb; }
     .delExtraRowBtn { padding: 4px 8px; font-size: 12px; }
 </style>
 <div id="loadingOverlay">
     <div class="spinner"></div>
-    <p class="loading_text">데이터를 불러오는 중입니다...</p>
+    <p class="loading_text">Loading</p>
 </div>
 <div id="wrap">
     <jsp:include page="/app/include/Header.jsp" />
     <div id="container">
-        <div class="content workOrderProgressDetail">
+        <div class="content workOrderProgressMaking">
             <div class="title_set">
                 <h5 class="page_tit">
                     <p>제조 지시서</p><i><img src="/images/svg/location_arrow.svg"></i><b>진행현황</b><i><img src="/images/svg/location_arrow.svg"></i>제조중</b>
+                    <button type="button" class="toggle"></button>
                 </h5>
             </div>
             <section class="radius">
                 <form id="makingForm">
-                <div class="road_data">
-                    <table>
-                        <colgroup>
-                            <col width="100"><col width="45"><col width="220"><col width="130">
-                            <col width="110"><col width="120"><col width="120"><col width="170">
-                            <col width="140"><col width="170">
-                        </colgroup>
-                        <thead>
-                            <tr>
-                                <th colspan="7" rowspan="3" class="doc_name">제조 지시 및 공정 기록서</th>
-                                <th>작성</th><th>검토</th><th>승인</th>
-                            </tr>
-                            <tr>
-                                <td class="sign">&nbsp;</td><td class="sign">&nbsp;</td><td class="sign">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <th>제품명</th>
-                                <td colspan="5" id="load-product-name"></td>
-                                <th colspan="2">제조지시량</th>
-                                <td colspan="2"><span id="load-target-qty"></span> <span id="load-target-unit"></span></td>
-                            </tr>
-                            <tr>
-                                <th>제조번호</th>
-                                <td colspan="2"><input type="text" id="batch_no" name="batch_no" class="inputText" placeholder="자동생성 (제조완료 시 확정됩니다)" title="제조완료 버튼을 누르면 완료일 기준으로 확정됩니다"></td>
-                                <td colspan="3">
-                                    <div class="yy-mm-dd"><input type="date" id="due_date" name="due_date" class="inputText"><span>까지</span></div>
-                                </td>
-                                <th>제조지시자</th>
-                                <td id="load-manager-name"></td>
-                                <th>제조자</th>
-                                <td><input type="text" id="maker_name" name="maker_name" class="inputText" value="윤철우"></td>
-                            </tr>
-                            <tr>
-                                <th>제조기기</th>
-                                <td colspan="5" id="load-machine"></td>
-                                <th>제조지시일</th>
-                                <td id="load-request-date"></td>
-                                <th>제조일자</th>
-                                <td><input type="date" id="mfg_date" name="mfg_date" class="inputText"></td>
-                            </tr>
-                            <tr>
-                                <th>상</th>
-                                <th>No.</th>
-                                <th>원료명</th>
-                                <th>Lot</th>
-                                <th>함량(%)</th>
-                                <th>제조지시량(kg)</th>
-                                <th>제조지시량(g)</th>
-                                <th>투입량</th>
-                                <th>제조방법</th>
-                                <th>비고 / 관리</th>
-                            </tr>
-                        </thead>
-                        <tbody id="load-items-tbody">
-                            <!-- AJAX로 원료 행이 동적으로 삽입됩니다 -->
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <th colspan="4">합계 (지시서 원료 기준)</th>
-                                <td id="load-total-pct" class="al-right"></td>
-                                <td id="load-total-kg" class="al-right"></td>
-                                <td id="load-total-g" class="al-right"></td>
-                                <td colspan="3">&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <th>항목</th>
-                                <th colspan="2">기준</th>
-                                <th colspan="3">결과</th>
-                                <th colspan="2">이론제조량</th>
-                                <td colspan="2"><span id="load-theor-qty"></span> <span id="load-theor-unit"></span></td>
-                            </tr>
-                            <tr>
-                                <th>성상</th>
-                                <td colspan="2" id="load-appearance"></td>
-                                <td colspan="3"><input type="text" id="appearance_result" name="appearance_result" class="inputText"></td>
-                                <th colspan="2">실제제조량</th>
-                                <td colspan="2">
-                                    <div class="unit"><input type="text" id="actual_qty" name="actual_qty" class="inputText" readonly><i>kg</i></div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>향취</th>
-                                <td colspan="2" id="load-scent"></td>
-                                <td colspan="3"><input type="text" id="scent_result" name="scent_result" class="inputText"></td>
-                                <th colspan="2">제조수율</th>
-                                <td colspan="2"><input type="text" id="yield_rate_actual" name="yield_rate_actual" class="inputText" placeholder="숫자 입력"></td>
-                            </tr>
-                            <tr>
-                                <th>비중</th>
-                                <td colspan="2" id="load-specific-gravity"></td>
-                                <td colspan="3"><input type="text" id="specific_gravity_result" name="specific_gravity_result" class="inputText"></td>
-                                <th colspan="2">제조수율기준</th>
-                                <td colspan="2" id="load-yield-standard"></td>
-                            </tr>
-                            <tr>
-                                <th>ph</th>
-                                <td colspan="2" id="load-ph"></td>
-                                <td colspan="3"><input type="text" id="ph_result" name="ph_result" class="inputText"></td>
-                                <td colspan="4" class="al-center">제조수율 = (실제제조량/이론제조량) * 100</td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
+                    <div class="road_data">
+                        <table class="requestTable workOrderMakingTable">
+                            <colgroup>
+                                <col width="100"><col width="45"><col width="220"><col width="130">
+                                <col width="110"><col width="120"><col width="120"><col width="170">
+                                <col width="140"><col width="170">
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th colspan="7" rowspan="3" class="doc_name">제조 지시 및 공정 기록서</th>
+                                    <th>작성</th><th>검토</th><th>승인</th>
+                                </tr>
+                                <tr>
+                                    <td class="sign">&nbsp;</td><td class="sign">&nbsp;</td><td class="sign">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <th>제품명</th>
+                                    <td colspan="5" id="load-product-name"></td>
+                                    <th colspan="2">제조지시량</th>
+                                    <td colspan="2"><span id="load-target-qty"></span> <span id="load-target-unit"></span></td>
+                                </tr>
+                                <tr>
+                                    <th>제조번호</th>
+                                    <td colspan="2"><input type="text" id="batch_no" name="batch_no" class="inputText" placeholder="자동생성 (제조완료 시 확정됩니다)" title="제조완료 버튼을 누르면 완료일 기준으로 확정됩니다"></td>
+                                    <td colspan="3">
+                                        <div class="yy-mm-dd"><input type="date" id="due_date" name="due_date" class="inputText"><span>까지</span></div>
+                                    </td>
+                                    <th>제조지시자</th>
+                                    <td id="load-manager-name"></td>
+                                    <th>제조자</th>
+                                    <td><input type="text" id="maker_name" name="maker_name" class="inputText" value="윤철우"></td>
+                                </tr>
+                                <tr>
+                                    <th>제조기기</th>
+                                    <td colspan="5" id="load-machine"></td>
+                                    <th>제조지시일</th>
+                                    <td id="load-request-date"></td>
+                                    <th>제조일자</th>
+                                    <td><input type="date" id="mfg_date" name="mfg_date" class="inputText"></td>
+                                </tr>
+                                <tr>
+                                    <th>상</th>
+                                    <th>No.</th>
+                                    <th>원료명</th>
+                                    <th>Lot</th>
+                                    <th>함량(%)</th>
+                                    <th>제조지시량(kg)</th>
+                                    <th>제조지시량(g)</th>
+                                    <th>투입량</th>
+                                    <th>제조방법</th>
+                                    <th>비고</th>
+                                </tr>
+                            </thead>
+                            <tbody id="load-items-tbody">
+                                <!-- AJAX로 원료 행이 동적으로 삽입됩니다 -->
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="4">합계 (지시서 원료 기준)</th>
+                                    <td id="load-total-pct" class="al-right"></td>
+                                    <td id="load-total-kg" class="al-right"></td>
+                                    <td id="load-total-g" class="al-right"></td>
+                                    <td colspan="3">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <th>항목</th>
+                                    <th colspan="2">기준</th>
+                                    <th colspan="3">결과</th>
+                                    <th colspan="2">이론제조량</th>
+                                    <td colspan="2"><span id="load-theor-qty"></span> <span id="load-theor-unit"></span></td>
+                                </tr>
+                                <tr>
+                                    <th>성상</th>
+                                    <td colspan="2" id="load-appearance"></td>
+                                    <td colspan="3" data-roll="성상결과" class="result"><input type="text" id="appearance_result" name="appearance_result" class="inputText"></td>
+                                    <th colspan="2">실제제조량</th>
+                                    <td colspan="2">
+                                        <div class="unit"><input type="text" id="actual_qty" name="actual_qty" class="inputText" readonly><i>kg</i></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>향취</th>
+                                    <td colspan="2" id="load-scent"></td>
+                                    <td colspan="3" data-roll="향취결과" class="result"><input type="text" id="scent_result" name="scent_result" class="inputText"></td>
+                                    <th colspan="2">제조수율</th>
+                                    <td colspan="2"><input type="text" id="yield_rate_actual" name="yield_rate_actual" class="inputText" placeholder="숫자 입력"></td>
+                                </tr>
+                                <tr>
+                                    <th>비중</th>
+                                    <td colspan="2" id="load-specific-gravity"></td>
+                                    <td colspan="3" data-roll="비중결과" class="result"><input type="text" id="specific_gravity_result" name="specific_gravity_result" class="inputText"></td>
+                                    <th colspan="2">제조수율기준</th>
+                                    <td colspan="2" id="load-yield-standard"></td>
+                                </tr>
+                                <tr>
+                                    <th>ph</th>
+                                    <td colspan="2" id="load-ph"></td>
+                                    <td colspan="3" data-roll="ph결과" class="result"><input type="text" id="ph_result" name="ph_result" class="inputText"></td>
+                                    <td colspan="4" class="al-center">제조수율 = (실제제조량/이론제조량) * 100</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 </form>
 
-                <!-- 원료 Lot 선택 팝업 (usedRegist.jsp / releaseRegist.jsp 와 동일한 UX) -->
                 <div class="layer_popup" id="itemLotPopup" style="display: none;">
                     <div class="pop_data people_pop" data-width="860">
                         <div class="head">
@@ -310,7 +297,7 @@
         $("#deleteBtn").on("click", function () {
             if (!confirm("정말 이 제조요청을 삭제하시겠습니까?")) return;
             $.ajax({
-                url: "workOrderProgressDeleteAction.jsp",
+                url: "/app/workOrderProgress/common/workOrderProgressDeleteAction.jsp",
                 type: "POST",
                 data: { request_id: currentRequestId },
                 dataType: "json",
@@ -342,13 +329,13 @@
             // 마지막 상태를 먼저 저장한 뒤 승인요청 상태로 전환 (재고 차감은 승인 단계에서 처리)
             saveMakingData(function () {
                 $.ajax({
-                    url: "workOrderProgressSubmitApprovalAction.jsp",
+                    url: "/app/workOrderProgress/step3-Approval/workOrderProgressSubmitApprovalAction.jsp",
                     type: "POST",
                     data: { request_id: currentRequestId },
                     dataType: "json",
                     success: function (res) {
                         if (res && res.success) {
-                            location.href = "/app/workOrderProgress/workOrderProgressApproval.jsp?request_id=" + currentRequestId;
+                            location.href = "/app/workOrderProgress/step3-Approval/workOrderProgressApproval.jsp?request_id=" + currentRequestId;
                         } else {
                             alert(res && res.message ? res.message : "처리에 실패했습니다.");
                             $btn.prop("disabled", false);
@@ -504,7 +491,7 @@
     // 지시서 원본 데이터 로드 (마스터/원료목록/제조방법) + 이전 저장된 제조중 데이터 로드
     function loadOrderData(requestId) {
         $.ajax({
-            url: "getWorkOrderProgressDetail.jsp",
+            url: "/app/workOrderProgress/common/getWorkOrderProgressDetail.jsp",
             type: "GET",
             data: { request_id: requestId },
             dataType: "json",
@@ -539,7 +526,7 @@
 
                 // 저장되어 있던 제조중 데이터 불러와서 복원
                 $.ajax({
-                    url: "getWorkOrderMakingData.jsp",
+                    url: "/app/workOrderProgress/common/getWorkOrderMakingData.jsp",
                     type: "GET",
                     data: { request_id: requestId },
                     dataType: "json",
@@ -585,8 +572,8 @@
 
             let safeName = (item.raw_material_name || '').replace(/"/g, '&quot;');
 
-            let lotCell = '<td><input type="text" class="inputText lot-input" data-row="' + rowNum + '" placeholder="클릭하여 Lot 선택" readonly></td>';
-            let qtyCell = '<td><div class="input_enter">'
+            let lotCell = '<td data-roll="Lot" class="lot-cell lot"><input type="text" class="inputText lot-input" data-row="' + rowNum + '" placeholder="클릭하여 Lot 선택" readonly></td>';
+            let qtyCell = '<td data-roll="투입량" class="qty-cell enter"><div class="input_enter">'
                 + '<input type="text" class="inputText input-qty" data-row="' + rowNum + '" readonly>'
                 + '<select class="og_select input-unit" data-row="' + rowNum + '" disabled>'
                 + '<option value="kg">kg</option><option value="g">g</option>'
@@ -597,32 +584,32 @@
             if (rowPhaseMap[rowNum] && !rowPhaseMap[rowNum].skip) {
                 let pInfo = rowPhaseMap[rowNum];
                 let formattedMethod = (pInfo.methodDesc || '').replace(/\(/g, '<br>(');
-                rowHtml += '<td class="al-center" rowspan="' + pInfo.rowspan + '">' + (pInfo.phaseName || '') + '</td>';
-                rowHtml += '<td class="al-center">' + rowNum + '</td>';
-                rowHtml += '<td>' + (item.raw_material_name || '') + '</td>';
+                rowHtml += '<td class="al-center phase" rowspan="' + pInfo.rowspan + '">' + (pInfo.phaseName || '') + '</td>';
+                rowHtml += '<td class="al-center no">' + rowNum + '</td>';
+                rowHtml += '<td class="name">' + (item.raw_material_name || '') + '</td>';
                 rowHtml += lotCell;
-                rowHtml += '<td class="al-right">' + formatWithComma(item.content_pct || 0) + ' %</td>';
-                rowHtml += '<td class="al-right">' + formatWithComma(item.order_qty_kg || 0) + ' kg</td>';
-                rowHtml += '<td class="al-right">' + formatWithComma(item.order_qty_g || 0) + ' g</td>';
+                rowHtml += '<td data-roll="함량(%)" class="al-right content_pct">' + formatWithComma(item.content_pct || 0) + ' %</td>';
+                rowHtml += '<td data-roll="제조지시량(kg)" class="al-right kg">' + formatWithComma(item.order_qty_kg || 0) + ' kg</td>';
+                rowHtml += '<td data-roll="제조지시량(g)" class="al-right g">' + formatWithComma(item.order_qty_g || 0) + ' g</td>';
                 rowHtml += qtyCell;
-                rowHtml += '<td class="al-center" rowspan="' + pInfo.rowspan + '">' + formattedMethod + '</td>';
-                rowHtml += '<td class="al-center" rowspan="' + pInfo.rowspan + '">' + (pInfo.noteDesc || '') + '</td>';
+                rowHtml += '<td data-roll="제조방법" class="al-center method" rowspan="' + pInfo.rowspan + '">' + formattedMethod + '</td>';
+                rowHtml += '<td data-roll="비고" class="al-center note" rowspan="' + pInfo.rowspan + '">' + (pInfo.noteDesc || '') + '</td>';
             } else if (rowPhaseMap[rowNum] && rowPhaseMap[rowNum].skip) {
-                rowHtml += '<td class="al-center">' + rowNum + '</td>';
-                rowHtml += '<td>' + (item.raw_material_name || '') + '</td>';
+                rowHtml += '<td class="al-center no">' + rowNum + '</td>';
+                rowHtml += '<td class="name">' + (item.raw_material_name || '') + '</td>';
                 rowHtml += lotCell;
-                rowHtml += '<td class="al-right">' + formatWithComma(item.content_pct || 0) + ' %</td>';
-                rowHtml += '<td class="al-right">' + formatWithComma(item.order_qty_kg || 0) + ' kg</td>';
-                rowHtml += '<td class="al-right">' + formatWithComma(item.order_qty_g || 0) + ' g</td>';
+                rowHtml += '<td data-roll="함량(%)" class="al-right content_pct">' + formatWithComma(item.content_pct || 0) + ' %</td>';
+                rowHtml += '<td data-roll="제조지시량(kg)" class="al-right kg">' + formatWithComma(item.order_qty_kg || 0) + ' kg</td>';
+                rowHtml += '<td data-roll="제조지시량(g)" class="al-right g">' + formatWithComma(item.order_qty_g || 0) + ' g</td>';
                 rowHtml += qtyCell;
             } else {
                 rowHtml += '<td>-</td>';
-                rowHtml += '<td class="al-center">' + rowNum + '</td>';
+                rowHtml += '<td class="al-center no">' + rowNum + '</td>';
                 rowHtml += '<td>' + (item.raw_material_name || '') + '</td>';
                 rowHtml += lotCell;
-                rowHtml += '<td class="al-right">' + formatWithComma(item.content_pct || 0) + ' %</td>';
-                rowHtml += '<td class="al-right">' + formatWithComma(item.order_qty_kg || 0) + ' kg</td>';
-                rowHtml += '<td class="al-right">' + formatWithComma(item.order_qty_g || 0) + ' g</td>';
+                rowHtml += '<td data-roll="함량(%)" class="al-right content_pct">' + formatWithComma(item.content_pct || 0) + ' %</td>';
+                rowHtml += '<td data-roll="제조지시량(kg)" class="al-right kg">' + formatWithComma(item.order_qty_kg || 0) + ' kg</td>';
+                rowHtml += '<td data-roll="제조지시량(g)" class="al-right g">' + formatWithComma(item.order_qty_g || 0) + ' g</td>';
                 rowHtml += qtyCell;
                 rowHtml += '<td></td><td></td>';
             }
@@ -634,13 +621,40 @@
         // 마지막 행: [원료 행 추가] 버튼 (인쇄 시에는 숨김)
         tbodyHtml += '<tr id="addRowTr" class="no-print">'
             + '<td colspan="10" class="al-center">'
-            + '<button type="button" id="addExtraRowBtn" class="Button">원료 행 추가 (pH 조정 등)</button>'
+            + '<button type="button" id="addExtraRowBtn" class="Button">원료 행 추가</button>'
             + '</td></tr>';
 
         $("#load-items-tbody").html(tbodyHtml);
         $("#load-total-pct").text(formatWithComma(Math.round(totalPct)) + " %");
         $("#load-total-kg").text(formatWithComma(Math.round(totalKg)) + " kg");
         $("#load-total-g").text(formatWithComma(Math.round(totalG)) + " g");
+        
+        //제조지시서 테이블 Mobile
+        $('.workOrderMakingTable tbody tr').each(function () {
+            var $lastTd = $(this).children('td').last();
+            if ($lastTd.hasClass('note') == true) {
+                $(this).addClass('has_rowspan');
+            }
+        });
+
+        function workOrderResponsiveTable() {
+            $('.workOrderMakingTable tr.has_rowspan').each(function () {
+                if ($(window).width() <= 960) {
+                    var thisPhaseHT = $(this).find('.phase').outerHeight();
+                    var thisMethodHT = $(this).find('.method').outerHeight();
+                    var thisNoteHT = $(this).find('.note').outerHeight();
+                    $(this).css('padding-top', thisPhaseHT + thisNoteHT + thisMethodHT);
+                    $(this).find('.method').css('top', thisPhaseHT);
+                    $(this).find('.note').css('top', thisPhaseHT + thisMethodHT);
+                } else {
+                    $(this).css('padding', 0);
+                }
+            });
+        }
+        workOrderResponsiveTable();
+        $(window).resize(function () {
+            workOrderResponsiveTable();
+        });
 
         totalOriginalRows = items.length;
         nextExtraRowId = totalOriginalRows;
@@ -657,21 +671,21 @@
         let noteValue = prefill ? (prefill.note || '') : '';
 
         let rowHtml = '<tr data-row-id="' + rowId + '" class="extra-row">'
-            + '<td class="al-center">-</td>'
-            + '<td class="al-center">' + rowId + '</td>'
-            + '<td><input type="text" class="inputText item-autocomplete-extra" data-row="' + rowId + '" placeholder="원료명 입력 (자동완성)" value="' + nameValue.replace(/"/g, '&quot;') + '"></td>'
-            + '<td><input type="text" class="inputText lot-input" data-row="' + rowId + '" placeholder="원료명 먼저 입력" readonly></td>'
-            + '<td class="al-center">-</td>'
-            + '<td class="al-center">-</td>'
-            + '<td class="al-center">-</td>'
-            + '<td><div class="input_enter">'
+            + '<td class="al-center phase">-</td>'
+            + '<td class="al-center no">' + rowId + '</td>'
+            + '<td class="name"><input type="text" class="inputText item-autocomplete-extra" data-row="' + rowId + '" placeholder="원료명 입력 (자동완성)" value="' + nameValue.replace(/"/g, '&quot;') + '"></td>'
+            + '<td data-roll="Lot" class="lot-cell lot"><input type="text" class="inputText lot-input" data-row="' + rowId + '" placeholder="원료명 먼저 입력" readonly></td>'
+            + '<td data-roll="함량(%)" class="al-center content_pct">-</td>'
+            + '<td data-roll="제조지시량(kg)" class="al-center kg">-</td>'
+            + '<td data-roll="제조지시량(g)" class="al-center g">-</td>'
+            + '<td data-roll="투입량" class="al-right qty-cell enter"><div class="input_enter">'
             +   '<input type="text" class="inputText input-qty" data-row="' + rowId + '" readonly>'
             +   '<select class="og_select input-unit" data-row="' + rowId + '" disabled>'
             +     '<option value="kg">kg</option><option value="g">g</option>'
             +   '</select></div></td>'
             + '<td>-</td>'
-            + '<td><input type="text" class="inputText extra-note" data-row="' + rowId + '" placeholder="추가 사유 (예: pH 조정)" value="' + noteValue.replace(/"/g, '&quot;') + '">'
-            +   ' <button type="button" class="delExtraRowBtn" data-row="' + rowId + '">삭제</button></td>'
+            + '<td><div class="memo"><input type="text" class="inputText extra-note" data-row="' + rowId + '" placeholder="추가 사유" value="' + noteValue.replace(/"/g, '&quot;') + '">'
+            +   ' <button type="button" class="delExtraRowBtn" data-row="' + rowId + '">삭제</button></div></td>'
             + '</tr>';
 
         // [원료 행 추가] 버튼이 있는 tr(#addRowTr) 바로 위에 새 행을 삽입
@@ -903,5 +917,10 @@
             }
         });
     }
+    $(document).ready(function () {
+        $('#container').stop().delay(10).animate({ 'padding-left': 0 });
+        $('header').stop().animate({ 'left': -280 });
+        $('h5.page_tit .toggle').fadeIn();
+    });
 </script>
 <jsp:include page="/app/include/FooterDocType.jsp" />

@@ -18,7 +18,7 @@
 </style>
 <div id="loadingOverlay">
     <div class="spinner"></div>
-    <p class="loading_text">데이터를 불러오는 중입니다...</p>
+    <p class="loading_text">Loading</p>
 </div>
 <div id="wrap">
     <jsp:include page="/app/include/Header.jsp" />
@@ -182,7 +182,7 @@
         $("#deleteBtn").on("click", function () {
             if (!confirm("정말 이 제조 기록을 삭제하시겠습니까?\n(완료된 기록이 영구 삭제됩니다)")) return;
             $.ajax({
-                url: "workOrderProgressDeleteAction.jsp",
+                url: "/app/workOrderProgress/common/workOrderProgressDeleteAction.jsp",
                 type: "POST",
                 data: { request_id: currentRequestId },
                 dataType: "json",
@@ -266,7 +266,7 @@
     // 지시서 원본 + 제조 최종 데이터를 불러와서 화면에 채움 (읽기 전용, 값만 표시)
     function loadAllData(requestId) {
         $.ajax({
-            url: "getWorkOrderProgressDetail.jsp",
+            url: "/app/workOrderProgress/common/getWorkOrderProgressDetail.jsp",
             type: "GET",
             data: { request_id: requestId },
             dataType: "json",
@@ -303,7 +303,7 @@
                 renderItemsTable(items, phases);
 
                 $.ajax({
-                    url: "getWorkOrderMakingData.jsp",
+                    url: "/app/workOrderProgress/common/getWorkOrderMakingData.jsp",
                     type: "GET",
                     data: { request_id: requestId },
                     dataType: "json",

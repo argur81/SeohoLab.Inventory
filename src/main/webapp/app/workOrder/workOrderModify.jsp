@@ -249,7 +249,7 @@
                                 </tr>
                             </tfoot>
                         </table>
-                        <div class="add_btn">
+                        <div class="add_btn cellAdd">
                             <button type="button" id="addRowBtn" class="Button">원료 행 추가</button>
                         </div>
                     </section>
@@ -833,6 +833,40 @@
                     if(rawVal === '') rawVal = '0';
                     $(this).val(rawVal);
                 });
+            });
+        });
+        $(document).ready(function () {
+            function mobileDeviceAddBtn() {
+                if ($(window).width() <= 960) {
+                    $('.add_btn.cellAdd').addClass('for_mobile');
+                } else {
+                    $('.add_btn.cellAdd').removeClass('for_mobile');
+                }
+            }
+            mobileDeviceAddBtn();
+            $(window).resize(function () {
+                mobileDeviceAddBtn();
+            });
+
+            $(window).scroll(function () {
+                var headerPos = $('header').offset().top;
+                var headerHT = $('header').outerHeight();
+                var firstTR = $('table.order_table tbody tr:first-child').offset().top;
+                var tfootPos = $('table.order_table tfoot').offset().top;
+                if (firstTR - headerHT < headerPos) {
+                    $('.add_btn.cellAdd.for_mobile').addClass('fix');
+                } else {
+                    $('.add_btn.cellAdd.for_mobile').removeClass('fix');
+                }
+                if (tfootPos - headerHT < headerPos) {
+                    $('.add_btn.cellAdd.for_mobile').removeClass('fix');
+                }
+            });
+
+            $('.add_btn.cellAdd.for_mobile').click(function () {
+                var lastOption = $('table.order_table tbody tr:last-child').offset().top;
+                var headerHT = $('header').outerHeight();
+                $('html, body').animate({ scrollTop: lastOption - headerHT - 20 }, 1000);
             });
         });
     </script>
