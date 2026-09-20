@@ -1249,10 +1249,7 @@ h6.page_sub_tit {
     font-size: 1.6rem;
   }
   .dataTables_wrapper table.dataTable tbody tr td.name {
-    white-space: nowrap;
-  }
-  .dataTables_wrapper table.dataTable tbody tr td.name > a {
-    white-space: nowrap;
+    min-width: 60vw;
   }
   .dataTables_wrapper table.dataTable tbody tr.child {
     padding: 0;
@@ -1385,6 +1382,15 @@ h6.page_sub_tit {
     width: 15rem !important;
   }
   .dataTables_wrapper table.dataTable.rawMaterialStockList thead th.min, .dataTables_wrapper table.dataTable.rawMaterialStockList thead th.state, .dataTables_wrapper table.dataTable.rawMaterialStockList thead th.user, .dataTables_wrapper table.dataTable.rawMaterialStockList thead th.date {
+    width: auto !important;
+  }
+  .dataTables_wrapper table.dataTable.rawMaterialStockList tbody td.no {
+    width: 10rem !important;
+  }
+  .dataTables_wrapper table.dataTable.rawMaterialStockList tbody td.stock {
+    width: 15rem !important;
+  }
+  .dataTables_wrapper table.dataTable.rawMaterialStockList tbody td.min, .dataTables_wrapper table.dataTable.rawMaterialStockList tbody td.state, .dataTables_wrapper table.dataTable.rawMaterialStockList tbody td.user, .dataTables_wrapper table.dataTable.rawMaterialStockList tbody td.date {
     width: auto !important;
   }
 }

@@ -202,17 +202,17 @@
                     $(document).ready(function () {
                         var table = $('#stockTable').DataTable({
                             autoWidth: false,
+                            responsive: true,
                             columnDefs: [
-                                { targets: [2, 3], visible: false },
                                 { width: "70px", targets: 0, className: "dt-center" },
                                 { width: "130px", targets: 4, className: "dt-right" },
                                 { width: "130px", targets: 5, className: "dt-right" },
                                 { width: "90px", targets: 6, className: "dt-center" },
                                 { width: "120px", targets: 7, className: "dt-center" },
                                 { width: "180px", targets: 8, className: "dt-center" },
+                                { targets: [2, 3], visible: false },
                                 { responsivePriority: 1, targets: [0, 1, 4] }
                             ],
-                            responsive: true,
                             language: {
                                 emptyTable: "등록된 원료 재고가 없습니다.",
                                 lengthMenu: "_MENU_ 개씩 보기",

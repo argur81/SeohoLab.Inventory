@@ -107,7 +107,7 @@
                             <td class="no"><%= count++ %></td>
                             <td class="name">
                                 <a href="<%= detailUrl %>" class="item-link <%= badgeClass %>">
-                                    <%= productName %><% if (showLot) { %> <span class="lot-tag">(<%= batchNo.trim() %>)</span><% } %>
+                                    <span class="for_mo">[<%= progressStatus %>]</span><%= productName %><% if (showLot) { %> <span class="lot-tag">(<%= batchNo.trim() %>)</span><% } %>
                                 </a>
                             </td>
                             <td class="qty"><%= targetQtyStr %></td>
@@ -203,7 +203,7 @@
                                 { width: "150px", targets: 2, className: "dt-right" },
                                 { width: "180px", targets: 3, className: "dt-center" },
                                 { width: "120px", targets: 4, className: "dt-center" },
-                                { responsivePriority: 1, targets: [0, 1, 2] }
+                                { responsivePriority: 1, targets: [0, 1] }
                             ],
                             language: {
                                 emptyTable: "등록된 제조요청이 없습니다.",

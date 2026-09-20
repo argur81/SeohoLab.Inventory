@@ -289,10 +289,7 @@
                                 }
                             }
                             &.name {
-                                white-space: nowrap;
-                                > a {
-                                    white-space: nowrap;
-                                }
+                                min-width: 60vw;
                             }
                         }
                         &.child {
@@ -417,6 +414,22 @@
                 &.rawMaterialStockList {
                     thead {
                         th {
+                            &.no {
+                                width: 10rem !important;
+                            }
+                            &.stock {
+                                width: 15rem !important;
+                            }
+                            &.min,
+                            &.state,
+                            &.user,
+                            &.date {
+                                width: auto !important;
+                            }
+                        }
+                    }
+                    tbody {
+                        td {
                             &.no {
                                 width: 10rem !important;
                             }
