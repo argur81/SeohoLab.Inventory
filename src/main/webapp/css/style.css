@@ -1375,6 +1375,18 @@ h6.page_sub_tit {
   .dataTables_wrapper table.dataTable.workOrderProgressList thead th.date, .dataTables_wrapper table.dataTable.workOrderProgressList thead th.progress {
     width: auto !important;
   }
+  .dataTables_wrapper table.dataTable {
+    /*재고현황 > 원료*/
+  }
+  .dataTables_wrapper table.dataTable.rawMaterialStockList thead th.no {
+    width: 10rem !important;
+  }
+  .dataTables_wrapper table.dataTable.rawMaterialStockList thead th.stock {
+    width: 15rem !important;
+  }
+  .dataTables_wrapper table.dataTable.rawMaterialStockList thead th.min, .dataTables_wrapper table.dataTable.rawMaterialStockList thead th.state, .dataTables_wrapper table.dataTable.rawMaterialStockList thead th.user, .dataTables_wrapper table.dataTable.rawMaterialStockList thead th.date {
+    width: auto !important;
+  }
 }
 .comm_tab {
   width: 100%;

@@ -413,6 +413,25 @@
                         }
                     }
                 }
+                /*재고현황 > 원료*/
+                &.rawMaterialStockList {
+                    thead {
+                        th {
+                            &.no {
+                                width: 10rem !important;
+                            }
+                            &.stock {
+                                width: 15rem !important;
+                            }
+                            &.min,
+                            &.state,
+                            &.user,
+                            &.date {
+                                width: auto !important;
+                            }
+                        }
+                    }
+                }
             }
         }
     }

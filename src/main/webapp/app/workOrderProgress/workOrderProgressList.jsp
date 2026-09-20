@@ -75,7 +75,7 @@
 
                                     // 상세/작업 페이지 URL 분기
                                     String detailUrl = "step1-Detail/workOrderProgressDetail.jsp?request_id=" + requestId;
-                                    if ("제조중".equals(progressStatus) || "수정중".equals(progressStatus)) {
+                                    if ("제조중".equals(progressStatus) || "보정중".equals(progressStatus)) {
                                         detailUrl = "step2-Making/workOrderProgressMaking.jsp?request_id=" + requestId;
                                     } else if ("승인요청".equals(progressStatus)) {
                                         detailUrl = "step3-Approval/workOrderProgressApproval.jsp?request_id=" + requestId;
@@ -89,14 +89,14 @@
 
                                     String badgeClass = "req";
                                     if ("제조중".equals(progressStatus)) badgeClass = "making";
-                                    else if ("수정중".equals(progressStatus)) badgeClass = "revising";
+                                    else if ("보정중".equals(progressStatus)) badgeClass = "revising";
                                     else if ("승인요청".equals(progressStatus)) badgeClass = "approval";
                                     else if ("제조완료".equals(progressStatus)) badgeClass = "completed";
                                     else if ("충진중".equals(progressStatus)) badgeClass = "filling";
                                     else if ("생산완료".equals(progressStatus)) badgeClass = "done";
 
                                     // 제조번호(Lot)가 이미 확정된 이후 단계일 때만 제품명 뒤에 표시
-                                    boolean showLot = ("승인요청".equals(progressStatus) || "수정중".equals(progressStatus)
+                                    boolean showLot = ("승인요청".equals(progressStatus) || "보정중".equals(progressStatus)
                                                     || "제조완료".equals(progressStatus) || "충진중".equals(progressStatus) || "생산완료".equals(progressStatus))
                                                     && batchNo != null && !batchNo.trim().isEmpty();
 
@@ -161,7 +161,7 @@
                                     if (progressStatus == null || progressStatus.trim().isEmpty()) progressStatus = "요청";
 
                                     String batchNo = rs.getString("batch_no");
-                                    boolean showLot = ("승인요청".equals(progressStatus) || "수정중".equals(progressStatus)
+                                    boolean showLot = ("승인요청".equals(progressStatus) || "보정중".equals(progressStatus)
                                                     || "제조완료".equals(progressStatus) || "충진중".equals(progressStatus) || "생산완료".equals(progressStatus))
                                                     && batchNo != null && !batchNo.trim().isEmpty();
                                     String displayProductName = showLot ? (productName + " (" + batchNo.trim() + ")") : productName;

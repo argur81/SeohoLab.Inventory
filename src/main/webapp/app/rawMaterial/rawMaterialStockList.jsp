@@ -31,18 +31,18 @@
                 <button type="button" class="new_regist_btn" onclick="location.href='/app/rawMaterial/rawMaterialRegist.jsp'">신규등록</button>
                 
                 <!-- 화면용 테이블 -->
-                <table id="stockTable" class="display cell-border hover" style="width:100%">
+                <table id="stockTable" class="display cell-border hover rawMaterialStockList" style="width:100%">
                     <thead>
                         <tr>
-                            <th>No</th>
+                            <th class="no">No</th>
                             <th class="name">원료명</th>
                             <th>작업지시서1~2</th>
                             <th>화학명(한글)</th>
-                            <th>현재 재고량</th>
-                            <th>최소 재고량</th>
-                            <th>상태</th>
-                            <th>최종 처리자</th>
-                            <th>Update</th>
+                            <th class="stock">현재 재고량</th>
+                            <th class="min">최소 재고량</th>
+                            <th class="state">상태</th>
+                            <th class="user">최종 처리자</th>
+                            <th class="date">Update</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -108,19 +108,19 @@
                                     String updatedAtDisplay = (updatedAt != null) ? sdf.format(updatedAt) : "-";
                         %>
                         <tr class="<%= isLowStock ? " low-stock" : "" %>">
-                            <td><%= count++ %></td>
+                            <td class="no"><%= count++ %></td>
                             <td class="name">
                                 <a href="rawMaterialModify.jsp?id=<%= itemId %>" class="item-link"><%= itemName %></a>
                             </td>
                             <td><%= workOrderStr %></td>
                             <td><%= chemName %></td>
-                            <td><%= stockDisplay %></td>
-                            <td><%= minDisplay %></td>
+                            <td class="stock"><%= stockDisplay %></td>
+                            <td class="min"><%= minDisplay %></td>
                             <td class="state">
                                 <%= statusStr %>
                             </td>
-                            <td><%= userName %></td>
-                            <td><%= updatedAtDisplay %></td>
+                            <td class="user"><%= userName %></td>
+                            <td class="date"><%= updatedAtDisplay %></td>
                         </tr>
                         <% 
                                 } 
@@ -210,6 +210,7 @@
                                 { width: "90px", targets: 6, className: "dt-center" },
                                 { width: "120px", targets: 7, className: "dt-center" },
                                 { width: "180px", targets: 8, className: "dt-center" },
+                                { responsivePriority: 1, targets: [0, 1, 4] }
                             ],
                             responsive: true,
                             language: {
