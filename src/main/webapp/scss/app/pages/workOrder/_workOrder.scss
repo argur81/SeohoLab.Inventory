@@ -305,6 +305,9 @@
                 font-weight: 500;
                 font-size: 14px;
             }
+            .for_mo {
+                display: none;
+            }
         } 
     }
     /*상세,제조중,제조완료*/
@@ -469,6 +472,10 @@
                                 @include positionLayout(absolute, y);
                                 right: 15px;
                             }
+                        }
+                        .has_input-select {
+                            @include flexLayout(row, flex-start, stretch);
+                            gap: 5px;
                         }
                     }
                 }
@@ -1312,6 +1319,9 @@
             .item-link {
                 .lot-tag {
                     font-size: 2rem;
+                }
+                .for_mo {
+                    display: inline-block;
                 }
             }
         }

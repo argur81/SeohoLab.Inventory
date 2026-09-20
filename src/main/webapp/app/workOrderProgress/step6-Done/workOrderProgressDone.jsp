@@ -158,6 +158,14 @@
         return parts.join('.');
     }
 
+    // ISO 날짜 문자열("2029-08-14") -> "290814" (제조번호 스타일과 통일된 EXP 표기)
+    function formatExpYYMMDD(isoDateStr) {
+        if (!isoDateStr) return "";
+        let parts = isoDateStr.split('-');
+        if (parts.length !== 3) return isoDateStr;
+        return parts[0].slice(-2) + parts[1] + parts[2];
+    }
+
     $(document).ready(function () {
         if (!currentRequestId) {
             alert("유효하지 않은 접근입니다. (요청 ID 누락)");
@@ -429,7 +437,7 @@
             let hdr = mk.making;
             currentBatchNo = hdr.batch_no || "";
             $("#load-batch-no").text(hdr.batch_no || "-");
-            $("#load-due-date").text(hdr.due_date ? (hdr.due_date + " 까지") : "");
+            $("#load-due-date").text(hdr.due_date ? ("EXP " + formatExpYYMMDD(hdr.due_date)) : "");
             $("#load-maker-name").text(hdr.maker_name || "");
             $("#load-mfg-date").text(hdr.mfg_date || "");
             $("#load-appearance-result").text(hdr.appearance_result || "");

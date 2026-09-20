@@ -49,112 +49,123 @@
             </div>
             <section class="radius">
                 <form id="makingForm">
-                    <div class="road_data">
-                        <table class="requestTable workOrderMakingTable">
-                            <colgroup>
-                                <col width="100"><col width="45"><col width="220"><col width="130">
-                                <col width="110"><col width="120"><col width="120"><col width="170">
-                                <col width="140"><col width="170">
-                            </colgroup>
-                            <thead>
-                                <tr>
-                                    <th colspan="7" rowspan="3" class="doc_name">제조 지시 및 공정 기록서</th>
-                                    <th>작성</th><th>검토</th><th>승인</th>
-                                </tr>
-                                <tr>
-                                    <td class="sign">&nbsp;</td><td class="sign">&nbsp;</td><td class="sign">&nbsp;</td>
-                                </tr>
-                                <tr>
-                                    <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
-                                </tr>
-                                <tr>
-                                    <th>제품명</th>
-                                    <td colspan="5" id="load-product-name"></td>
-                                    <th colspan="2">제조지시량</th>
-                                    <td colspan="2"><span id="load-target-qty"></span> <span id="load-target-unit"></span></td>
-                                </tr>
-                                <tr>
-                                    <th>제조번호</th>
-                                    <td colspan="2"><input type="text" id="batch_no" name="batch_no" class="inputText" placeholder="자동생성 (제조완료 시 확정됩니다)" title="제조완료 버튼을 누르면 완료일 기준으로 확정됩니다"></td>
-                                    <td colspan="3">
-                                        <div class="yy-mm-dd"><input type="date" id="due_date" name="due_date" class="inputText"><span>까지</span></div>
-                                    </td>
-                                    <th>제조지시자</th>
-                                    <td id="load-manager-name"></td>
-                                    <th>제조자</th>
-                                    <td><input type="text" id="maker_name" name="maker_name" class="inputText" value="윤철우"></td>
-                                </tr>
-                                <tr>
-                                    <th>제조기기</th>
-                                    <td colspan="5" id="load-machine"></td>
-                                    <th>제조지시일</th>
-                                    <td id="load-request-date"></td>
-                                    <th>제조일자</th>
-                                    <td><input type="date" id="mfg_date" name="mfg_date" class="inputText"></td>
-                                </tr>
-                                <tr>
-                                    <th>상</th>
-                                    <th>No.</th>
-                                    <th>원료명</th>
-                                    <th>Lot</th>
-                                    <th>함량(%)</th>
-                                    <th>제조지시량(kg)</th>
-                                    <th>제조지시량(g)</th>
-                                    <th>투입량</th>
-                                    <th>제조방법</th>
-                                    <th>비고</th>
-                                </tr>
-                            </thead>
-                            <tbody id="load-items-tbody">
-                                <!-- AJAX로 원료 행이 동적으로 삽입됩니다 -->
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <th colspan="4">합계 (지시서 원료 기준)</th>
-                                    <td id="load-total-pct" class="al-right"></td>
-                                    <td id="load-total-kg" class="al-right"></td>
-                                    <td id="load-total-g" class="al-right"></td>
-                                    <td colspan="3">&nbsp;</td>
-                                </tr>
-                                <tr>
-                                    <th>항목</th>
-                                    <th colspan="2">기준</th>
-                                    <th colspan="3">결과</th>
-                                    <th colspan="2">이론제조량</th>
-                                    <td colspan="2"><span id="load-theor-qty"></span> <span id="load-theor-unit"></span></td>
-                                </tr>
-                                <tr>
-                                    <th>성상</th>
-                                    <td colspan="2" id="load-appearance"></td>
-                                    <td colspan="3" data-roll="성상결과" class="result"><input type="text" id="appearance_result" name="appearance_result" class="inputText"></td>
-                                    <th colspan="2">실제제조량</th>
-                                    <td colspan="2">
-                                        <div class="unit"><input type="text" id="actual_qty" name="actual_qty" class="inputText" readonly><i>kg</i></div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>향취</th>
-                                    <td colspan="2" id="load-scent"></td>
-                                    <td colspan="3" data-roll="향취결과" class="result"><input type="text" id="scent_result" name="scent_result" class="inputText"></td>
-                                    <th colspan="2">제조수율</th>
-                                    <td colspan="2"><input type="text" id="yield_rate_actual" name="yield_rate_actual" class="inputText" placeholder="숫자 입력"></td>
-                                </tr>
-                                <tr>
-                                    <th>비중</th>
-                                    <td colspan="2" id="load-specific-gravity"></td>
-                                    <td colspan="3" data-roll="비중결과" class="result"><input type="text" id="specific_gravity_result" name="specific_gravity_result" class="inputText"></td>
-                                    <th colspan="2">제조수율기준</th>
-                                    <td colspan="2" id="load-yield-standard"></td>
-                                </tr>
-                                <tr>
-                                    <th>ph</th>
-                                    <td colspan="2" id="load-ph"></td>
-                                    <td colspan="3" data-roll="ph결과" class="result"><input type="text" id="ph_result" name="ph_result" class="inputText"></td>
-                                    <td colspan="4" class="al-center">제조수율 = (실제제조량/이론제조량) * 100</td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
+                <div class="road_data">
+                    <table class="requestTable workOrderMakingTable">
+                        <colgroup>
+                            <col width="100"><col width="45"><col width="220"><col width="130">
+                            <col width="110"><col width="120"><col width="120"><col width="170">
+                            <col width="140"><col width="170">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th colspan="7" rowspan="3" class="doc_name">제조 지시 및 공정 기록서</th>
+                                <th>작성</th><th>검토</th><th>승인</th>
+                            </tr>
+                            <tr>
+                                <td class="sign">&nbsp;</td><td class="sign">&nbsp;</td><td class="sign">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <th>제품명</th>
+                                <td colspan="5" id="load-product-name"></td>
+                                <th colspan="2">제조지시량</th>
+                                <td colspan="2"><span id="load-target-qty"></span> <span id="load-target-unit"></span></td>
+                            </tr>
+                            <tr>
+                                <th>제조번호</th>
+                                <td colspan="2"><input type="text" id="batch_no" name="batch_no" class="inputText" placeholder="자동생성 (제조완료 시 확정됩니다)" title="제조완료 버튼을 누르면 완료일 기준으로 확정됩니다"></td>
+                                <td colspan="3">
+                                    <div class="yy-mm-dd">
+                                        <select id="due_years" name="due_years" class="og_select">
+                                            <option value="">EXP</option>
+                                            <option value="1">1년</option>
+                                            <option value="2">2년</option>
+                                            <option value="3">3년</option>
+                                            <option value="4">4년</option>
+                                            <option value="5">5년</option>
+                                        </select>
+                                        <span id="due_date_display"></span>
+                                        <input type="hidden" id="due_date" name="due_date">
+                                    </div>
+                                </td>
+                                <th>제조지시자</th>
+                                <td id="load-manager-name"></td>
+                                <th>제조자</th>
+                                <td><input type="text" id="maker_name" name="maker_name" class="inputText" value="윤철우"></td>
+                            </tr>
+                            <tr>
+                                <th>제조기기</th>
+                                <td colspan="5" id="load-machine"></td>
+                                <th>제조지시일</th>
+                                <td id="load-request-date"></td>
+                                <th>제조일자</th>
+                                <td><input type="date" id="mfg_date" name="mfg_date" class="inputText"></td>
+                            </tr>
+                            <tr>
+                                <th>상</th>
+                                <th>No.</th>
+                                <th>원료명</th>
+                                <th>Lot</th>
+                                <th>함량(%)</th>
+                                <th>제조지시량(kg)</th>
+                                <th>제조지시량(g)</th>
+                                <th>투입량</th>
+                                <th>제조방법</th>
+                                <th>비고</th>
+                            </tr>
+                        </thead>
+                        <tbody id="load-items-tbody">
+                            <!-- AJAX로 원료 행이 동적으로 삽입됩니다 -->
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="4">합계 (지시서 원료 기준)</th>
+                                <td id="load-total-pct" class="al-right"></td>
+                                <td id="load-total-kg" class="al-right"></td>
+                                <td id="load-total-g" class="al-right"></td>
+                                <td colspan="3">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <th>항목</th>
+                                <th colspan="2">기준</th>
+                                <th colspan="3">결과</th>
+                                <th colspan="2">이론제조량</th>
+                                <td colspan="2"><span id="load-theor-qty"></span> <span id="load-theor-unit"></span></td>
+                            </tr>
+                            <tr>
+                                <th>성상</th>
+                                <td colspan="2" id="load-appearance"></td>
+                                <td colspan="3" data-roll="성상결과" class="result"><input type="text" id="appearance_result" name="appearance_result" class="inputText"></td>
+                                <th colspan="2">실제제조량</th>
+                                <td colspan="2">
+                                    <div class="unit"><input type="text" id="actual_qty" name="actual_qty" class="inputText" readonly><i>kg</i></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>향취</th>
+                                <td colspan="2" id="load-scent"></td>
+                                <td colspan="3" data-roll="향취결과" class="result"><input type="text" id="scent_result" name="scent_result" class="inputText"></td>
+                                <th colspan="2">제조수율</th>
+                                <td colspan="2"><input type="text" id="yield_rate_actual" name="yield_rate_actual" class="inputText" placeholder="숫자 입력"></td>
+                            </tr>
+                            <tr>
+                                <th>비중</th>
+                                <td colspan="2" id="load-specific-gravity"></td>
+                                <td colspan="3" data-roll="비중결과" class="result"><input type="text" id="specific_gravity_result" name="specific_gravity_result" class="inputText"></td>
+                                <th colspan="2">제조수율기준</th>
+                                <td colspan="2" id="load-yield-standard"></td>
+                            </tr>
+                            <tr>
+                                <th>ph</th>
+                                <td colspan="2" id="load-ph"></td>
+                                <td colspan="3" data-roll="ph결과" class="result"><input type="text" id="ph_result" name="ph_result" class="inputText"></td>
+                                <td colspan="4" class="al-center">제조수율 = (실제제조량/이론제조량) * 100</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
                 </form>
 
                 <div class="layer_popup" id="itemLotPopup" style="display: none;">
@@ -242,6 +253,49 @@
         return yyyy + '-' + mm + '-' + dd;
     }
 
+    // Date 객체 -> "YYMMDD" 6자리 문자열 (EXP 표시용, 제조번호 스타일과 통일)
+    function formatYYMMDD(dateObj) {
+        let yy = String(dateObj.getFullYear()).slice(-2);
+        let mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+        let dd = String(dateObj.getDate()).padStart(2, '0');
+        return yy + mm + dd;
+    }
+
+    // 제조번호(M+YY+월코드+DD)를 역파싱하여 제조일 Date 객체로 복원 (예: M26H15 -> 2026-08-15)
+    function parseBatchNoDate(batchNo) {
+        if (!batchNo || batchNo.length !== 6 || batchNo.charAt(0) !== 'M') return null;
+        let yy = parseInt(batchNo.substring(1, 3), 10);
+        let monthLetter = batchNo.charAt(3);
+        let dd = parseInt(batchNo.substring(4, 6), 10);
+        let monthIdx = MONTH_LETTERS.indexOf(monthLetter);
+        if (isNaN(yy) || monthIdx === -1 || isNaN(dd)) return null;
+        return new Date(2000 + yy, monthIdx, dd);
+    }
+
+    // 사용기한(EXP) = 제조일 + N년 - 1일
+    function calcExpDate(mfgDate, years) {
+        if (!mfgDate || !years) return null;
+        let exp = new Date(mfgDate.getFullYear() + years, mfgDate.getMonth(), mfgDate.getDate());
+        exp.setDate(exp.getDate() - 1);
+        return exp;
+    }
+
+    // 제조번호 + 선택한 연수를 기준으로 EXP를 재계산하여 화면/저장값에 반영
+    function recalcDueDate() {
+        let years = parseInt($("#due_years").val());
+        let mfgDate = parseBatchNoDate($("#batch_no").val());
+
+        if (!mfgDate || !years) {
+            $("#due_date_display").text("");
+            $("#due_date").val("");
+            return;
+        }
+
+        let expDate = calcExpDate(mfgDate, years);
+        $("#due_date_display").text("EXP " + formatYYMMDD(expDate));
+        $("#due_date").val(formatDateForInput(expDate));
+    }
+
     // 인쇄 시 표(.road_data) 실제 높이를 측정해 A4 한 장(여백 10mm 기준)에 들어가도록 자동 축소
     // ※ transform:scale은 화면에만 축소되어 보이고 인쇄 페이지분할 계산에는 반영되지 않으므로
     //    실제 레이아웃 크기 자체를 줄이는 zoom 속성을 사용한다 (Chrome/Edge 기준 확실히 동작)
@@ -285,6 +339,11 @@
 
         loadOrderData(currentRequestId);
 
+        // 사용기한 연수 선택이 바뀔 때마다 EXP 재계산
+        $(document).on("change", "#due_years", function () {
+            recalcDueDate();
+        });
+
         // ===================== 하단 버튼 =====================
         $("#backListBtn").on("click", function () {
             location.href = "/app/workOrderProgress/workOrderProgressList.jsp";
@@ -320,6 +379,9 @@
 
             // 제조일자도 [제조완료]를 클릭한 날짜로 확정 (승인요청 화면에 그대로 표시됨)
             $("#mfg_date").val(formatDateForInput(new Date()));
+
+            // 제조번호가 방금 확정되었으므로 EXP도 그 제조번호 기준으로 다시 계산
+            recalcDueDate();
 
             if (!confirm("제조를 완료하고 승인요청 하시겠습니까?\n\n확정 제조번호: " + confirmedBatchNo)) return;
 
@@ -729,7 +791,7 @@
         if (mk && mk.making) {
             let hdr = mk.making;
             $("#batch_no").val(hdr.batch_no || "");
-            $("#due_date").val(hdr.due_date || "");
+            $("#due_years").val(hdr.due_years || "");
             $("#maker_name").val(hdr.maker_name || "윤철우");
             $("#mfg_date").val(hdr.mfg_date || "");
             $("#appearance_result").val(hdr.appearance_result || "");
@@ -744,6 +806,9 @@
         if (!$("#batch_no").val()) {
             $("#batch_no").val(generateBatchNo(new Date()));
         }
+
+        // 제조번호 + 저장된 연수를 기준으로 EXP 표시를 복원
+        recalcDueDate();
 
         if (mk && mk.items && mk.items.length > 0) {
             // 1) 추가원료 행부터 먼저 화면에 만들어 둔다 (그래야 아래에서 tr을 찾을 수 있음)

@@ -18,6 +18,19 @@
     }
     int requestId = Integer.parseInt(requestIdStr);
 
+    // [제품 용량] 및 [단위] 파라미터 받기 추가
+    String productCapacityStr = request.getParameter("product_capacity");
+    String capacityUnit = request.getParameter("capacity_unit");
+
+    double productCapacity = 0;
+    if (productCapacityStr != null && !productCapacityStr.trim().isEmpty()) {
+        try {
+            productCapacity = Double.parseDouble(productCapacityStr.replace(",", ""));
+        } catch (NumberFormatException e) {
+            productCapacity = 0;
+        }
+    }
+
     // 배열로 전달된 부자재 정보 받기
     String[] itemNames = request.getParameterValues("item_name[]");
     String[] subsidiaryTypes = request.getParameterValues("subsidiary_type[]");
@@ -39,6 +52,7 @@
         boolean isSuccess = false;
 
         // 1. work_order_requests 상태를 '충진중'으로 업데이트
+        // (필요에 따라 제품 용량/단위를 다른 테이블이나 work_order_requests에 업데이트하도록 이 영역을 수정하시면 됩니다)
         String updateStatusSql = "UPDATE work_order_requests SET progress_status = '충진중', updated_at = CURRENT_TIMESTAMP WHERE request_id = ?";
         pstmt = conn.prepareStatement(updateStatusSql);
         pstmt.setInt(1, requestId);
@@ -48,6 +62,16 @@
         if (statusUpdateResult > 0) {
             isSuccess = true;
         }
+
+        // 만약 제품 용량을 work_order_making이나 다른 테이블에 저장해야 한다면 아래와 같이 쿼리를 추가/수정하세요.
+        // 예시: 
+        // String updateCapacitySql = "UPDATE work_order_making SET product_capacity = ?, capacity_unit = ? WHERE request_id = ?";
+        // pstmt = conn.prepareStatement(updateCapacitySql);
+        // pstmt.setDouble(1, productCapacity);
+        // pstmt.setString(2, capacityUnit != null ? capacityUnit.trim() : "");
+        // pstmt.setInt(3, requestId);
+        // pstmt.executeUpdate();
+        // pstmt.close();
 
         // 2. 기존 등록된 부자재 내역이 있다면 삭제 후 재등록 (중복 방지용)
         String deleteSubSql = "DELETE FROM work_order_subsidiary WHERE request_id = ?";

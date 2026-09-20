@@ -35,7 +35,7 @@
         json.append("{");
 
         // 1. 제조 헤더 정보
-        String makingSql = "SELECT batch_no, due_date, maker_name, mfg_date, appearance_result, scent_result, "
+        String makingSql = "SELECT batch_no, due_date, due_years, maker_name, mfg_date, appearance_result, scent_result, "
                           + "specific_gravity_result, ph_result, actual_qty, yield_rate_actual "
                           + "FROM work_order_making WHERE request_id = ?";
         pstmt = conn.prepareStatement(makingSql);
@@ -46,6 +46,7 @@
             json.append("\"making\":{");
             json.append("\"batch_no\":\"").append(esc(rs.getString("batch_no"))).append("\",");
             json.append("\"due_date\":\"").append(rs.getString("due_date") != null ? rs.getString("due_date") : "").append("\",");
+            json.append("\"due_years\":").append(rs.getObject("due_years") != null ? rs.getInt("due_years") : 0).append(",");
             json.append("\"maker_name\":\"").append(esc(rs.getString("maker_name"))).append("\",");
             json.append("\"mfg_date\":\"").append(rs.getString("mfg_date") != null ? rs.getString("mfg_date") : "").append("\",");
             json.append("\"appearance_result\":\"").append(esc(rs.getString("appearance_result"))).append("\",");
@@ -61,8 +62,9 @@
         rs.close();
         pstmt.close();
 
-        // 2. 행별 Lot 요약 (item_row_id -> lot_numbers/input_qty/input_unit)
-        String itemsSql = "SELECT item_row_id, lot_numbers, input_qty, input_unit FROM work_order_making_items WHERE request_id = ?";
+        // 2. 행별 요약 (item_row_id -> raw_material_name/is_extra/lot_numbers/input_qty/input_unit/note)
+        String itemsSql = "SELECT item_row_id, raw_material_name, is_extra, lot_numbers, input_qty, input_unit, note "
+                         + "FROM work_order_making_items WHERE request_id = ? ORDER BY item_row_id ASC";
         pstmt = conn.prepareStatement(itemsSql);
         pstmt.setInt(1, requestId);
         rs = pstmt.executeQuery();
@@ -73,9 +75,12 @@
             StringBuilder itemJson = new StringBuilder();
             itemJson.append("{");
             itemJson.append("\"item_row_id\":").append(rowId).append(",");
+            itemJson.append("\"raw_material_name\":\"").append(esc(rs.getString("raw_material_name"))).append("\",");
+            itemJson.append("\"is_extra\":").append(rs.getInt("is_extra")).append(",");
             itemJson.append("\"lot_numbers\":\"").append(esc(rs.getString("lot_numbers"))).append("\",");
             itemJson.append("\"input_qty\":").append(rs.getDouble("input_qty")).append(",");
             itemJson.append("\"input_unit\":\"").append(esc(rs.getString("input_unit"))).append("\",");
+            itemJson.append("\"note\":\"").append(esc(rs.getString("note"))).append("\",");
             itemJson.append("\"lots\":[");
             itemMap.put(rowId, itemJson);
         }

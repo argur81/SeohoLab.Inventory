@@ -88,7 +88,7 @@
                                     <th>향취</th>
                                     <td colspan="3" id="load-scent"></td>
                                     <th>제조수율</th>
-                                    <td colspan="6><span id="load-yield-rate"></span>%</td>
+                                    <td colspan="6"><span id="load-yield-rate"></span>%</td>
                                 </tr>
                                 <tr>
                                     <th>비중</th>

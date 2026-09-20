@@ -126,6 +126,7 @@
                                     <option value="Pump">Pump</option>
                                     <option value="Cap">Cap</option>
                                     <option value="Box">Box</option>
+                                    <option value="Tube">Tube</option>
                                     <option value="기타">기타</option>
                                 </select>
                             </dd>

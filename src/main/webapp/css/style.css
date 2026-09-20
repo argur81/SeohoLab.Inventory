@@ -5261,6 +5261,9 @@ footer a {
   font-weight: 500;
   font-size: 14px;
 }
+.content.workOrderProgressList .item-link .for_mo {
+  display: none;
+}
 .content {
   /*상세,제조중,제조완료*/
 }
@@ -5483,6 +5486,22 @@ footer a {
   -webkit-transform: translateY(-50%);
           transform: translateY(-50%);
   right: 15px;
+}
+.content.workOrderProgressDetail .radius.subsidiary_reg dl dd .has_input-select, .content.workOrderProgressMaking .radius.subsidiary_reg dl dd .has_input-select {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+  gap: 5px;
 }
 .content.workOrderProgressDetail .radius.subsidiary_reg #subsidiaryRowContainer, .content.workOrderProgressMaking .radius.subsidiary_reg #subsidiaryRowContainer {
   width: 100%;
@@ -6316,6 +6335,9 @@ footer a {
   }
   .content.workOrderProgressList .item-link .lot-tag {
     font-size: 2rem;
+  }
+  .content.workOrderProgressList .item-link .for_mo {
+    display: inline-block;
   }
   .content {
     /*상세*/

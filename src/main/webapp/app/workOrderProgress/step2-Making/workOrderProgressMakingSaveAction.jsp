@@ -25,6 +25,7 @@
 
     String batchNo = request.getParameter("batch_no");
     String dueDate = nullIfEmpty(request.getParameter("due_date"));
+    Integer dueYears = parseIntOrNull(request.getParameter("due_years"));
     String makerName = request.getParameter("maker_name");
     String mfgDate = nullIfEmpty(request.getParameter("mfg_date"));
     String appearanceResult = request.getParameter("appearance_result");
@@ -49,10 +50,10 @@
 
         // 1. work_order_making 헤더 upsert
         String makingSql = "INSERT INTO work_order_making "
-                + "(request_id, batch_no, due_date, maker_name, mfg_date, appearance_result, scent_result, specific_gravity_result, ph_result, actual_qty, yield_rate_actual) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
+                + "(request_id, batch_no, due_date, due_years, maker_name, mfg_date, appearance_result, scent_result, specific_gravity_result, ph_result, actual_qty, yield_rate_actual) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
                 + "ON DUPLICATE KEY UPDATE "
-                + "  batch_no = VALUES(batch_no), due_date = VALUES(due_date), maker_name = VALUES(maker_name), "
+                + "  batch_no = VALUES(batch_no), due_date = VALUES(due_date), due_years = VALUES(due_years), maker_name = VALUES(maker_name), "
                 + "  mfg_date = VALUES(mfg_date), appearance_result = VALUES(appearance_result), scent_result = VALUES(scent_result), "
                 + "  specific_gravity_result = VALUES(specific_gravity_result), ph_result = VALUES(ph_result), "
                 + "  actual_qty = VALUES(actual_qty), yield_rate_actual = VALUES(yield_rate_actual), updated_at = CURRENT_TIMESTAMP";
@@ -60,14 +61,15 @@
         pstmt.setInt(1, requestId);
         pstmt.setString(2, batchNo);
         if (dueDate != null) pstmt.setString(3, dueDate); else pstmt.setNull(3, Types.DATE);
-        pstmt.setString(4, makerName);
-        if (mfgDate != null) pstmt.setString(5, mfgDate); else pstmt.setNull(5, Types.DATE);
-        pstmt.setString(6, appearanceResult);
-        pstmt.setString(7, scentResult);
-        pstmt.setString(8, specificGravityResult);
-        pstmt.setString(9, phResult);
-        pstmt.setDouble(10, actualQty);
-        pstmt.setDouble(11, yieldRateActual);
+        if (dueYears != null) pstmt.setInt(4, dueYears); else pstmt.setNull(4, Types.TINYINT);
+        pstmt.setString(5, makerName);
+        if (mfgDate != null) pstmt.setString(6, mfgDate); else pstmt.setNull(6, Types.DATE);
+        pstmt.setString(7, appearanceResult);
+        pstmt.setString(8, scentResult);
+        pstmt.setString(9, specificGravityResult);
+        pstmt.setString(10, phResult);
+        pstmt.setDouble(11, actualQty);
+        pstmt.setDouble(12, yieldRateActual);
         pstmt.executeUpdate();
         pstmt.close();
 
@@ -165,5 +167,9 @@
     private double parseDouble(String s) {
         if (s == null || s.trim().isEmpty()) return 0.0;
         try { return Double.parseDouble(s.replace(",", "")); } catch (Exception e) { return 0.0; }
+    }
+    private Integer parseIntOrNull(String s) {
+        if (s == null || s.trim().isEmpty()) return null;
+        try { return Integer.parseInt(s.trim()); } catch (Exception e) { return null; }
     }
 %>

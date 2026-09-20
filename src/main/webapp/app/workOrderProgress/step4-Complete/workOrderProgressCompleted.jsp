@@ -73,13 +73,24 @@
                     <dl class="w50">
                         <dt>제품명</dt>
                         <dd>
-                            <input type="hidden" name="product_name" value="<%= productName %>">
-                            <input type="text" class="inputText" value="<%= productName %>" disabled>
+                            <input type="hidden" name="product_name" value="<%= productName %>(<%= targetQty %> <%= targetUnit %>)">
+                            <input type="text" class="inputText" value="<%= productName %>(제조량:<%= targetQty %> <%= targetUnit %>)" disabled>
                         </dd>
                     </dl>
                     <dl class="w25">
-                        <dt>제조지시량</dt>
-                        <dd class="only_text"><%= targetQty %> <%= targetUnit %></dd>
+                        <dt>제품 용량</dt>
+                        <dd>
+                            <div class="has_input-select">
+                                <input type="text" name="product_capacity" id="product_capacity" class="inputText" inputmode="decimal" placeholder="용량 입력">
+                                <select name="capacity_unit" id="capacity_unit" class="og_select">
+                                    <option value="">용량선택</option>
+                                    <option value="mL">mL(밀리리터)</option>
+                                    <option value="dL">dL(데시리터)</option>
+                                    <option value="L">L(리터)</option>
+                                    <option value="kL">kL(킬로리터)</option>
+                                </select>
+                            </div>
+                        </dd>
                     </dl>
                     
                     <h5 class="in_tit">부자재 등록</h5>
@@ -107,7 +118,7 @@
                                 </dd>
                             </dl>
                             <dl class="volume stock w25">
-                                <dt>사용개수</dt>
+                                <dt>예상사용 개수</dt>
                                 <dd>
                                     <div class="unit_ea"><input type="text" name="out_qty[]" class="inputText" inputmode="decimal"><i>개</i></div>
                                 </dd>
