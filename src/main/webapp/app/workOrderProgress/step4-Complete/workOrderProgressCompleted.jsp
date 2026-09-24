@@ -141,7 +141,7 @@
 
 <script>
     $(document).ready(function() {
-        // 4. 부자재 자동완성 및 종류 자동 연동 함수 정의
+        // 4. 부자재 자동완성 및 종류 자동 연동 + 현재재고 조회 함수 정의
         function initAutocomplete(element) {
             $(element).autocomplete({
                 source: function (request, response) {
@@ -163,11 +163,30 @@
                 select: function (event, ui) {
                     let $row = $(this).closest(".row");
                     $(this).val(ui.item.value); // 자재명 입력
-                    
+
                     let sType = ui.item.type || "";
                     $row.find(".sub_subsidiary_type").val(sType);        // 화면 select 표시용
                     $row.find(".sub_subsidiary_type_hidden").val(sType); // 서버 전송용 hidden 필드
-                    
+
+                    let $qtyInput = $row.find("input[name='out_qty[]']");
+                    $qtyInput.removeData('stock').attr('placeholder', '재고 조회 중...');
+
+                    // ★ 현재 재고 조회 후 placeholder 및 data-stock 세팅
+                    $.ajax({
+                        url: "/app/workOrderProgress/common/getSubsidiaryStock.jsp",
+                        type: "GET",
+                        data: { item_name: ui.item.value, subsidiary_type: sType },
+                        dataType: "json",
+                        success: function (res) {
+                            let stock = (res && res.found) ? res.stock_qty : 0;
+                            $qtyInput.data('stock', stock);
+                            $qtyInput.attr('placeholder', '현재재고:' + stock.toLocaleString('en-US') + '개 가능');
+                        },
+                        error: function () {
+                            $qtyInput.attr('placeholder', '');
+                        }
+                    });
+
                     return false;
                 }
             });
@@ -214,8 +233,30 @@
             initAutocomplete($addedRow.find(".sub_item_name"));
         });
 
-        // 6. 충진시작 버튼 전송 전 처리 (쉼표 제거 등)
+        // 6. 충진시작 버튼 전송 전 처리
+        // - 재고 부족 자재가 있으면 alert으로 안내만 하고, 제출(페이지 이동)은 막지 않음
+        //   (부자재는 이후 입고될 수 있으므로 여기서는 재고를 차감하지 않음)
         $("#fillingForm").on("submit", function() {
+            let shortageMsgs = [];
+
+            $(".row").each(function () {
+                let $row = $(this);
+                let itemName = $row.find(".sub_item_name").val();
+                let $qtyInput = $row.find("input[name='out_qty[]']");
+                let outQty = parseInt(($qtyInput.val() || "0").replace(/,/g, '')) || 0;
+                let stock = $qtyInput.data('stock');
+
+                if (itemName && itemName.trim() !== "" && stock !== undefined && outQty > stock) {
+                    let shortage = outQty - stock;
+                    shortageMsgs.push(itemName.trim() + ' : ' + shortage.toLocaleString('en-US') + '개 더 필요합니다');
+                }
+            });
+
+            if (shortageMsgs.length > 0) {
+                alert(shortageMsgs.join('\n'));
+                // 재고는 추후 입고로 채워질 수 있으므로 제출은 그대로 진행됨
+            }
+
             $(this).find("input[name='out_qty[]']").each(function() {
                 let val = $(this).val().replace(/,/g, '');
                 $(this).val(val);

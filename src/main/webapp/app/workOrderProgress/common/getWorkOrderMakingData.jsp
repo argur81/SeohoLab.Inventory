@@ -36,8 +36,8 @@
 
         // 1. 제조 헤더 정보
         String makingSql = "SELECT batch_no, due_date, due_years, maker_name, mfg_date, appearance_result, scent_result, "
-                          + "specific_gravity_result, ph_result, actual_qty, yield_rate_actual "
-                          + "FROM work_order_making WHERE request_id = ?";
+                  + "specific_gravity_result, ph_result, actual_qty, yield_rate_actual, product_capacity, capacity_unit "
+                  + "FROM work_order_making WHERE request_id = ?";
         pstmt = conn.prepareStatement(makingSql);
         pstmt.setInt(1, requestId);
         rs = pstmt.executeQuery();
@@ -55,6 +55,8 @@
             json.append("\"ph_result\":\"").append(esc(rs.getString("ph_result"))).append("\",");
             json.append("\"actual_qty\":").append(rs.getDouble("actual_qty")).append(",");
             json.append("\"yield_rate_actual\":").append(rs.getDouble("yield_rate_actual"));
+            json.append("\"product_capacity\":").append(rs.getObject("product_capacity") != null ? rs.getDouble("product_capacity") : 0).append(",");
+            json.append("\"capacity_unit\":\"").append(esc(rs.getString("capacity_unit"))).append("\",");
             json.append("},");
         } else {
             json.append("\"making\":null,");
