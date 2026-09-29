@@ -1855,13 +1855,13 @@ textarea.textArea.input_size {
   -webkit-box-direction: normal;
       -ms-flex-direction: row;
           flex-direction: row;
-  -webkit-box-pack: start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  gap: 30px;
+  gap: 15px;
 }
 
 .radioButton {
@@ -1901,7 +1901,7 @@ textarea.textArea.input_size {
   transition: all 0.4s;
 }
 .radioButton span {
-  color: #595959;
+  color: #292929;
 }
 
 @media screen and (max-width: 960px) {
@@ -5043,23 +5043,24 @@ footer a {
 .content.workOrderList section.radius table.phase_table tfoot td {
   padding: 5px;
 }
-.content.workOrderList section.radius .unit {
+.content.workOrderList .bottom_btns {
+  margin-top: 40px;
+}
+
+div.unit {
   width: 100%;
   position: relative;
 }
-.content.workOrderList section.radius .unit .inputText {
+div.unit .inputText {
   padding-right: 35px;
   text-align: right;
 }
-.content.workOrderList section.radius .unit i {
+div.unit i {
   position: absolute;
   top: 50%;
   -webkit-transform: translateY(-50%);
           transform: translateY(-50%);
   right: 10px;
-}
-.content.workOrderList .bottom_btns {
-  margin-top: 40px;
 }
 
 /*작업요청*/
@@ -5557,6 +5558,117 @@ footer a {
   margin-top: 15px;
 }
 
+/*충진*/
+.content.workOrderProgressFilling .radius {
+  padding: 25px;
+}
+.content.workOrderProgressFilling .radius h6.doc_tit {
+  width: 100%;
+  border-bottom: 1px solid #292929;
+  text-align: center;
+  padding-bottom: 25px;
+  font-size: 24px;
+  margin-bottom: 25px;
+}
+.content.workOrderProgressFilling .radius fieldset.head {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+.content.workOrderProgressFilling .radius fieldset.head ul li {
+  font-weight: 500;
+  margin: 10px 0;
+}
+.content.workOrderProgressFilling .radius fieldset.head table {
+  width: 320px;
+}
+.content.workOrderProgressFilling .radius fieldset.head table th {
+  border: 1px solid #292929;
+  height: 40px;
+}
+.content.workOrderProgressFilling .radius fieldset.head table th[rowspan="2"] {
+  width: 45px;
+  padding: 0 10px;
+}
+.content.workOrderProgressFilling .radius fieldset.head table td {
+  border: 1px solid #292929;
+  height: 60px;
+}
+.content.workOrderProgressFilling .radius fieldset.head table td input {
+  width: 100%;
+  height: 58px;
+  text-align: center;
+  border: none;
+}
+.content.workOrderProgressFilling .radius fieldset.head table td input::-webkit-input-placeholder {
+  color: #8d8d8d;
+}
+.content.workOrderProgressFilling .radius fieldset.head table td input::-moz-placeholder {
+  color: #8d8d8d;
+}
+.content.workOrderProgressFilling .radius fieldset.head table td input:-ms-input-placeholder {
+  color: #8d8d8d;
+}
+.content.workOrderProgressFilling .radius fieldset.head table td input::-ms-input-placeholder {
+  color: #8d8d8d;
+}
+.content.workOrderProgressFilling .radius fieldset.head table td input::placeholder {
+  color: #8d8d8d;
+}
+.content.workOrderProgressFilling .radius fieldset.body {
+  margin-top: 40px;
+}
+.content.workOrderProgressFilling .radius fieldset.body table {
+  table-layout: fixed;
+  border: 1px solid #8d8d8d;
+  border-collapse: collapse;
+}
+.content.workOrderProgressFilling .radius fieldset.body table thead th {
+  height: 50px;
+  padding: 0 10px;
+}
+.content.workOrderProgressFilling .radius fieldset.body table th {
+  border: 1px solid #8d8d8d;
+  padding: 10px;
+  line-height: 1.2;
+}
+.content.workOrderProgressFilling .radius fieldset.body table td {
+  border: 1px solid #8d8d8d;
+  padding: 5px;
+}
+.content.workOrderProgressFilling .radius fieldset.body table td.name {
+  font-size: 16px;
+  font-weight: 700;
+  padding: 5px 10px;
+}
+.content.workOrderProgressFilling .radius fieldset.body table td.lot {
+  text-align: center;
+  line-height: 1.2;
+  font-weight: 700;
+}
+.content.workOrderProgressFilling .radius fieldset.body table td.item {
+  text-align: center;
+  font-weight: 700;
+}
+.content.workOrderProgressFilling .radius fieldset.body table td p.ex {
+  width: 100%;
+  text-align: center;
+  margin-top: 10px;
+}
+.content.workOrderProgressFilling .bottom_btns {
+  margin-top: 40px;
+}
+
 @media screen and (max-width: 1500px) {
   /*작업지시서*/
   .content.workOrderList section.radius table colgroup {
@@ -5929,15 +6041,15 @@ footer a {
   .content.workOrderList section.radius table.phase_table tbody td:nth-child(3) .textArea, .content.workOrderList section.radius table.phase_table tbody td:nth-child(4) .textArea {
     height: 12rem;
   }
-  .content.workOrderList section.radius .unit .inputText {
-    padding-right: 6rem;
-  }
-  .content.workOrderList section.radius .unit i {
-    right: 2rem;
-    font-size: 2.6rem;
-  }
   .content.workOrderList .bottom_btns {
     margin-top: 0;
+  }
+  div.unit .inputText {
+    padding-right: 6rem;
+  }
+  div.unit i {
+    right: 2rem;
+    font-size: 2.6rem;
   }
   /*작업요청*/
   #container.workOrderRequest .content .top_btn {

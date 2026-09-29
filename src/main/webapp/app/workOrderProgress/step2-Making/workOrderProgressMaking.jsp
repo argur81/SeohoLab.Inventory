@@ -213,6 +213,9 @@
     let activePopupRowId = null;
     let wasFullUseClicked = false; // 팝업 세션 동안 [전체사용]을 눌렀는지 여부 (조건4: g기준 강제)
 
+    // ★ 5초 자동저장 타이머 (완료 처리 중에는 경합 방지를 위해 일시 정지시킬 수 있도록 변수로 보관)
+    let autoSaveTimer = null;
+
     const unitToGram = { t: 1000000, kg: 1000, g: 1, mg: 0.001 };
 
     function formatWithComma(value) {
@@ -373,6 +376,14 @@
         });
 
         $("#completedProgressBtn").on("click", function () {
+            // ★ 필수값 체크: 사용기한(EXP)을 선택하지 않으면 due_date가 빈값으로 저장되므로
+            //   승인요청 화면에서 EXP가 표시되지 않는 문제의 원인이 됨. 여기서 미리 막는다.
+            if (!$("#due_years").val()) {
+                alert("사용기한(EXP)을 선택해 주세요.");
+                $("#due_years").focus();
+                return;
+            }
+
             // 제조번호는 시작일이 아니라 "완료된 날짜" 기준으로 확정한다 (제조가 여러 날에 걸칠 수 있으므로)
             let confirmedBatchNo = generateBatchNo(new Date());
             $("#batch_no").val(confirmedBatchNo);
@@ -388,8 +399,24 @@
             let $btn = $(this);
             $btn.prop("disabled", true);
 
+            // ★ 완료 처리 중에는 5초 자동저장과의 경합(방금 확정한 제조번호/EXP를 옛 값으로
+            //   덮어쓰는 것)을 막기 위해 타이머를 잠시 정지시킨다.
+            if (autoSaveTimer) {
+                clearInterval(autoSaveTimer);
+                autoSaveTimer = null;
+            }
+
             // 마지막 상태를 먼저 저장한 뒤 승인요청 상태로 전환 (재고 차감은 승인 단계에서 처리)
-            saveMakingData(function () {
+            saveMakingData(function (saveSuccess) {
+                // ★ 저장 자체가 실패했다면 여기서 중단. 기존에는 실패해도 그냥 다음 단계로
+                //   진행되어, 승인요청 화면에서 제조번호/EXP가 빈 채로 보이는 원인이 되었음.
+                if (!saveSuccess) {
+                    alert("제조 데이터 저장에 실패했습니다. 네트워크 상태를 확인 후 다시 시도해 주세요.");
+                    $btn.prop("disabled", false);
+                    autoSaveTimer = setInterval(function () { saveMakingData(); }, 5000);
+                    return;
+                }
+
                 $.ajax({
                     url: "/app/workOrderProgress/step3-Approval/workOrderProgressSubmitApprovalAction.jsp",
                     type: "POST",
@@ -401,11 +428,13 @@
                         } else {
                             alert(res && res.message ? res.message : "처리에 실패했습니다.");
                             $btn.prop("disabled", false);
+                            autoSaveTimer = setInterval(function () { saveMakingData(); }, 5000);
                         }
                     },
                     error: function () {
                         alert("서버 통신 중 오류가 발생했습니다.");
                         $btn.prop("disabled", false);
+                        autoSaveTimer = setInterval(function () { saveMakingData(); }, 5000);
                     }
                 });
             });
@@ -547,7 +576,7 @@
         });
 
         // ===================== 자동저장 (5초) =====================
-        setInterval(function () { saveMakingData(); }, 5000);
+        autoSaveTimer = setInterval(function () { saveMakingData(); }, 5000);
     });
 
     // 지시서 원본 데이터 로드 (마스터/원료목록/제조방법) + 이전 저장된 제조중 데이터 로드
@@ -924,6 +953,8 @@
     }
 
     // 5초 자동저장 (조용히 처리, 완료 콜백 선택적)
+    // ★ callback(success)의 success는 저장 API 호출 성공/실패 여부(boolean)를 전달한다.
+    //   기존에는 실패해도 무조건 callback()을 호출해 제조완료 처리가 그대로 진행되는 문제가 있었음.
     function saveMakingData(callback) {
         if (!currentRequestId) return;
 
@@ -973,12 +1004,13 @@
             type: "POST",
             data: payload,
             dataType: "json",
-            success: function () {
-                if (typeof callback === 'function') callback();
+            success: function (res) {
+                let ok = !!(res && res.success);
+                if (typeof callback === 'function') callback(ok);
             },
             error: function () {
                 console.log("자동저장 실패 (다음 주기에 재시도)");
-                if (typeof callback === 'function') callback();
+                if (typeof callback === 'function') callback(false);
             }
         });
     }

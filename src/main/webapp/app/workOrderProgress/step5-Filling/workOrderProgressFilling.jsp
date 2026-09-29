@@ -1,209 +1,187 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.sql.*" %>
-<%@ page import="java.util.*" %>
-<%
-    request.setCharacterEncoding("UTF-8");
-
-    String requestIdStr = request.getParameter("request_id");
-    int requestId = (requestIdStr != null && !requestIdStr.trim().isEmpty()) ? Integer.parseInt(requestIdStr) : 1;
-
-    String batchNo = "";
-    String productName = "";
-    double targetQty = 0;
-    String targetUnit = "kg";
-
-    List<Map<String, Object>> subsidiaryList = new ArrayList<>();
-
-    String url = "jdbc:mariadb://svc.sel3.cloudtype.app:32170/seoholabdb?useUnicode=true&characterEncoding=utf8";
-    String dbUser = "root";
-    String dbPass = System.getenv("DB_PASSWORD");
-    if (dbPass == null) dbPass = "1234";
-
-    Connection conn = null;
-    PreparedStatement pstmt = null;
-    ResultSet rs = null;
-
-    try {
-        Class.forName("org.mariadb.jdbc.Driver");
-        conn = DriverManager.getConnection(url, dbUser, dbPass);
-
-        String sql = "SELECT r.product_name, r.target_qty, r.target_unit, m.batch_no "
-                + "FROM work_order_requests r "
-                + "LEFT JOIN work_order_making m ON r.request_id = m.request_id "
-                + "WHERE r.request_id = ?";
-        pstmt = conn.prepareStatement(sql);
-        pstmt.setInt(1, requestId);
-        rs = pstmt.executeQuery();
-
-        if (rs.next()) {
-            productName = rs.getString("product_name");
-            targetQty = rs.getDouble("target_qty");
-            targetUnit = rs.getString("target_unit");
-            batchNo = rs.getString("batch_no");
-            if (batchNo == null) batchNo = "";
-        }
-        rs.close();
-        pstmt.close();
-
-        String subSql = "SELECT item_name, subsidiary_type, out_qty FROM work_order_subsidiary WHERE request_id = ?";
-        pstmt = conn.prepareStatement(subSql);
-        pstmt.setInt(1, requestId);
-        rs = pstmt.executeQuery();
-
-        while (rs.next()) {
-            Map<String, Object> item = new HashMap<>();
-            item.put("item_name", rs.getString("item_name"));
-            item.put("subsidiary_type", rs.getString("subsidiary_type"));
-            item.put("out_qty", rs.getDouble("out_qty"));
-            subsidiaryList.add(item);
-        }
-
-    } catch (Exception e) {
-        e.printStackTrace();
-    } finally {
-        if (rs != null) try { rs.close(); } catch(Exception e) {}
-        if (pstmt != null) try { pstmt.close(); } catch(Exception e) {}
-        if (conn != null) try { conn.close(); } catch(Exception e) {}
-    }
-%>
 <jsp:include page="/app/include/HeaderDocType.jsp" />
 <div id="wrap">
     <jsp:include page="/app/include/Header.jsp" />
     <div id="container">
-        <div class="content workOrderProgressDetail">
+        <div class="content workOrderProgressFilling">
             <div class="title_set">
                 <h5 class="page_tit">
                     <p>제조 지시서</p><i><img src="/images/svg/location_arrow.svg"></i><b>진행현황</b><i><img src="/images/svg/location_arrow.svg"></i>충진중
                 </h5>
             </div>
-            
-            <form id="completeForm" action="workOrderProgressFillingAction.jsp" method="post">
-                <input type="hidden" name="request_id" id="request_id" value="<%= requestId %>">
-                <section class="radius subsidiary_reg">
-                    <dl class="w25">
-                        <dt>Lot</dt>
-                        <dd>
-                            <input type="hidden" name="batch_no" value="<%= batchNo %>">
-                            <input type="text" class="inputText" value="<%= batchNo %>" disabled>
-                        </dd>
-                    </dl>
-                    <dl class="w50">
-                        <dt>제품명</dt>
-                        <dd>
-                            <input type="hidden" name="product_name" value="<%= productName %>">
-                            <input type="text" class="inputText" value="<%= productName %>" disabled>
-                        </dd>
-                    </dl>
-                    <dl class="w25">
-                        <dt>제조지시량</dt>
-                        <dd class="only_text"><%= targetQty %> <%= targetUnit %></dd>
-                    </dl>
-
-                    <dl class="w25">
-                        <dt>생산수량 <span class="required">*</span></dt>
-                        <dd>
-                            <div class="unit_ea">
-                                <input type="text" name="production_qty" id="production_qty" class="inputText" inputmode="decimal" placeholder="완제품 생산개수 입력" required>
-                                <i>개</i>
-                            </div>
-                        </dd>
-                    </dl>
-                    <dl class="w25">
-                        <dt>제조일자</dt>
-                        <dd><input type="date" name="manufacture_date" class="inputText"></dd>
-                    </dl>
-                    <dl class="w25">
-                        <dt>EXP (만료일)</dt>
-                        <dd><input type="date" name="expiration_date" class="inputText"></dd>
-                    </dl>
-
-                    <h5 class="in_tit">사용한 부자재 목록</h5>
-                    
-                    <div id="subsidiaryRowContainer">
-                        <% if (subsidiaryList.isEmpty()) { %>
-                            <div class="row nodata">
-                                등록된 부자재가 없습니다.
-                            </div>
-                        <% } else { 
-                            for (Map<String, Object> sub : subsidiaryList) {
-                                String itemName = (String) sub.get("item_name");
-                                String subType = (String) sub.get("subsidiary_type");
-                                double outQty = (Double) sub.get("out_qty");
-                        %>
-                            <div class="row">
-                                <dl class="w50">
-                                    <dt>부자재명</dt>
-                                    <dd>
-                                        <input type="hidden" name="item_name[]" value="<%= itemName %>">
-                                        <input type="text" class="inputText" value="<%= itemName %>" disabled>
-                                    </dd>
-                                </dl>
-                                <dl class="w25">
-                                    <dt>종류</dt>
-                                    <dd>
-                                        <input type="hidden" name="subsidiary_type[]" value="<%= subType %>">
-                                        <select class="og_select" disabled>
-                                            <option value="">선택</option>
-                                            <option value="Label" <%= "Label".equals(subType) ? "selected" : "" %>>Label</option>
-                                            <option value="Bottle" <%= "Bottle".equals(subType) ? "selected" : "" %>>Bottle</option>
-                                            <option value="Pump" <%= "Pump".equals(subType) ? "selected" : "" %>>Pump</option>
-                                            <option value="Cap" <%= "Cap".equals(subType) ? "selected" : "" %>>Cap</option>
-                                            <option value="Box" <%= "Box".equals(subType) ? "selected" : "" %>>Box</option>
-                                            <option value="기타" <%= "기타".equals(subType) ? "selected" : "" %>>기타</option>
-                                        </select>
-                                    </dd>
-                                </dl>
-                                <dl class="volume stock w25">
-                                    <dt>사용개수</dt>
-                                    <dd>
-                                        <div class="unit_ea">
-                                            <input type="hidden" name="out_qty[]" value="<%= outQty %>">
-                                            <input type="text" class="inputText" value="<%= outQty %>" disabled>
-                                            <i>개</i>
+            <section class="radius">
+                <form>
+                    <h6 class="doc_tit">포장 지시 및 기록서</h6>
+                    <fieldset class="head">
+                        <ul>
+                            <li>지시일자 : 년 월 일</li>
+                            <li>작업일자 : 년 월 일</li>
+                        </ul>
+                        <table>
+                            <tr>
+                                <th rowspan="2">결<br>재</th>
+                                <th>담당</th>
+                                <th>팀장</th>
+                            </tr>
+                            <tr>
+                                <td class="box"><input type="text" placeholder="담당입력"></td>
+                                <td class="box"><input type="text" placeholder="담당입력"></td>
+                            </tr>
+                        </table>
+                    </fieldset>
+                    <fieldset class="body">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th colspan="4">제품명</th>
+                                    <th>제조번호<br>(LOT NO)</th>
+                                    <th>지시수량<br>(ea)</th>
+                                    <th>제조입고량<br>(kg)</th>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="name">제품명(용량mL)</td>
+                                    <td class="lot">M26I15<br>EXP290914</td>
+                                    <td><div class="unit"><input type="text" class="inputText"><i>ea</i></div></td>
+                                    <td><div class="unit"><input type="text" class="inputText"><i>kg</i></div></td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th rowspan="2">작업내용</th>
+                                    <th rowspan="2">설비명</th>
+                                    <th colspan="3">포장재 투입 수량 (ea)</th>
+                                    <th rowspan="2">작업자</th>
+                                    <th rowspan="2">자재불량(ea)</th>
+                                </tr>
+                                <tr>
+                                    <th colspan="2">포장재 명</th>
+                                    <th>수량</th>
+                                </tr>
+                                <tr>
+                                    <td><input type="text" class="inputText" value="충진" placeholder="작업내용 입력"></td>
+                                    <td><input type="text" class="inputText" value="충진기" placeholder="설비명 입력"></td>
+                                    <td colspan="2"><input type="text" class="inputText" value="포장재명 가져오기" placeholder="포장재명 입력"></td>
+                                    <td><div class="unit"><input type="text" class="inputText"><i>ea</i></div></td>
+                                    <td><input type="text" class="inputText" value="김정훈" placeholder="작업자 입력"></td>
+                                    <td><div class="unit"><input type="text" class="inputText"><i>ea</i></div></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th rowspan="6">작업 후<br>내부감사</th>
+                                    <th rowspan="2" colspan="3">항목</th>
+                                    <th colspan="2">확인</th>
+                                    <th rowspan="2">비고</th>
+                                </tr>
+                                <tr>
+                                    <th>적합/부적합</th>
+                                    <th>부적합(내용)</th>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="item">작업이 끝난 완제품의 인수인계 여부</td>
+                                    <td>
+                                        <div class="radioGroup">
+                                            <label class="radioButton"><input type="radio" name="item1" checked><i class="icon"></i><span>적합</span></label>
+                                            <label class="radioButton"><input type="radio" name="item1"><i class="icon"></i><span>부적합</span></label>
                                         </div>
-                                    </dd>
-                                </dl>
-                            </div>
-                        <% 
-                            } 
-                        } 
-                        %>
-                    </div>
-
-                    <div class="bottom_btns">
-                        <button type="button" class="Button bgGray" data-width="180" onclick="location.href='../workOrderProgressList.jsp';">목록</button>
-                        <button type="submit" id="btnComplete" class="Button bgBlue" data-width="180">충진완료</button>
-                    </div>
-                </section>
-            </form>
+                                    </td>
+                                    <td><input type="text" class="inputText" disabled="disabled" placeholder="내용입력"></td>
+                                    <td><input type="text" class="inputText" placeholder="비고입력"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="item">부적합 제품의 별도 보관 여부</td>
+                                    <td>
+                                        <div class="radioGroup">
+                                            <label class="radioButton"><input type="radio" name="item2" checked><i class="icon"></i><span>적합</span></label>
+                                            <label class="radioButton"><input type="radio" name="item2"><i class="icon"></i><span>부적합</span></label>
+                                        </div>
+                                    </td>
+                                    <td><input type="text" class="inputText" disabled="disabled" placeholder="내용입력"></td>
+                                    <td><input type="text" class="inputText" placeholder="비고입력"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="item">사용된 부자재의 제품 사양과의 일치 여부</td>
+                                    <td>
+                                        <div class="radioGroup">
+                                            <label class="radioButton"><input type="radio" name="item3" checked><i class="icon"></i><span>적합</span></label>
+                                            <label class="radioButton"><input type="radio" name="item3"><i class="icon"></i><span>부적합</span></label>
+                                        </div>
+                                    </td>
+                                    <td><input type="text" class="inputText" disabled="disabled" placeholder="내용입력"></td>
+                                    <td><input type="text" class="inputText" placeholder="비고입력"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="item">지시 수량과 생산수량의 일치 여부</td>
+                                    <td>
+                                        <div class="radioGroup">
+                                            <label class="radioButton"><input type="radio" name="item4" checked><i class="icon"></i><span>적합</span></label>
+                                            <label class="radioButton"><input type="radio" name="item4"><i class="icon"></i><span>부적합</span></label>
+                                        </div>
+                                    </td>
+                                    <td><input type="text" class="inputText" disabled="disabled" placeholder="내용입력"></td>
+                                    <td><input type="text" class="inputText" placeholder="비고입력"></td>
+                                </tr>
+                                <tr>
+                                    <th rowspan="6">생산현황</th>
+                                    <th>작업 시간</th>
+                                    <td><div class="unit"><input type="text" class="inputText"><i>hr</i></div></td>
+                                    <th rowspan="6">수율분석</th>
+                                    <th>제조량</th>
+                                    <td colspan="2"><div class="unit"><input type="text" class="inputText"><i>kg</i></div></td>
+                                </tr>
+                                <tr>
+                                    <th>작업 인원</th>
+                                    <td><div class="unit"><input type="text" class="inputText"><i>명</i></div></td>
+                                    <th>생산량</th>
+                                    <td colspan="2"><div class="unit"><input type="text" class="inputText"><i>kg</i></div></td>
+                                </tr>
+                                <tr>
+                                    <th>지시 수량</th>
+                                    <td><div class="unit"><input type="text" class="inputText"><i>ea</i></div></td>
+                                    <th rowspan="2">수율</th>
+                                    <td colspan="2" rowspan="2">
+                                        <div class="unit"><input type="text" class="inputText"><i>%</i></div>
+                                        <p class="ex">(생산량/제조량*100)</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>생산 수량</th>
+                                    <td><div class="unit"><input type="text" class="inputText"><i>ea</i></div></td>
+                                </tr>
+                                <tr>
+                                    <th>폐기 수량</th>
+                                    <td><div class="unit"><input type="text" class="inputText"><i>ea</i></div></td>
+                                    <th rowspan="2">불량율</th>
+                                    <td colspan="2" rowspan="2">
+                                        <div class="unit"><input type="text" class="inputText"><i>%</i></div>
+                                        <p class="ex">(폐기수량/생산수량*100)</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>출고 수량</th>
+                                    <td><div class="unit"><input type="text" class="inputText"><i>ea</i></div></td>
+                                </tr>
+                                <tr class="last">
+                                    <th>작성자</th>
+                                    <td colspan="2"><input type="text" class="inputText" placeholder="작성자 입력"></td>
+                                    <th colspan="2">판정</th>
+                                    <td colspan="2">
+                                        <div class="radioGroup">
+                                            <label class="radioButton"><input type="radio" name="verdict" checked><i class="icon"></i><span>적합</span></label>
+                                            <label class="radioButton"><input type="radio" name="verdict"><i class="icon"></i><span>부적합</span></label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </fieldset>
+                </form>
+                <div class="bottom_btns">
+                    <button type="button" class="Button bgGray" data-width="180" onclick="location.href='../workOrderProgressList.jsp';">목록</button>
+                    <button type="submit" id="btnComplete" class="Button bgBlue" data-width="180">충진완료</button>
+                </div>
+            </section>
         </div>
     </div>
 </div>
-<script>
-    $(document).ready(function () {
-        function formatWithComma(str) {
-            if (!str) return '';
-            return str.replace(/,/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-        }
-
-        $(document).on('input', 'input[inputmode="decimal"]:not([disabled])', function () {
-            let value = $(this).val().replace(/[^0-9]/g, '');
-            $(this).val(formatWithComma(value));
-        });
-
-        $('#completeForm').on('submit', function (e) {
-            let rawQty = $('#production_qty').val().replace(/,/g, '');
-            if (!rawQty || parseInt(rawQty) <= 0) {
-                e.preventDefault();
-                alert('생산수량을 입력해 주세요.');
-                return false;
-            }
-
-            $(this).find('input[inputmode="decimal"]:not([disabled])').each(function () {
-                let rawVal = $(this).val().replace(/,/g, '');
-                $(this).val(rawVal);
-            });
-        });
-    });
-</script>
 <jsp:include page="/app/include/FooterDocType.jsp" />

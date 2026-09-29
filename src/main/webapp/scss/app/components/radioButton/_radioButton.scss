@@ -1,6 +1,6 @@
 .radioGroup {
-    @include flexLayout(row, flex-start, center);
-    gap: 30px;
+    @include flexLayout(row, center, center);
+    gap: 15px;
 }
 .radioButton {
     @include flexLayout(row, flex-start, center);
@@ -27,7 +27,7 @@
         transition: all .4s;
     }
     span {
-        color: #595959;
+        color: #292929;
     }
 }
 @include mediaQuery(mobile) {
