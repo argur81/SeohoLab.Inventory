@@ -6,6 +6,9 @@
     // 1. production_qty(생산수량)만큼 products 총재고 증가
     // 2. product_lots에 제조번호(work_order_making.batch_no) 기준 Lot 재고 반영
     // 3. work_order_requests.progress_status 를 '생산완료'로 변경
+    // 4. 처리 완료 후 step6-Done/workOrderProgressDone.jsp 로 이동
+    // ※ 부자재(work_order_subsidiary)는 step4(제조완료)에서 이미 예상사용량이
+    //   기록되어 있으며, 실입고/실사용 확정 전이므로 이 단계에서 재고를 차감하지 않는다.
     // ※ 이미 '생산완료' 상태인 건은 재적용하지 않도록 가드 처리
     // ============================================================
     request.setCharacterEncoding("UTF-8");
@@ -42,11 +45,6 @@
     String manufactureDate = request.getParameter("manufacture_date");
     String expirationDate = request.getParameter("expiration_date");
 
-    // 배열로 전달된 부자재 정보 받기 (기존 충진 화면 표시용 - 재고 반영은 충진시작 단계에서 이미 처리됨)
-    String[] itemNames = request.getParameterValues("item_name[]");
-    String[] subsidiaryTypes = request.getParameterValues("subsidiary_type[]");
-    String[] outQtys = request.getParameterValues("out_qty[]");
-
     String url = "jdbc:mariadb://svc.sel3.cloudtype.app:32170/seoholabdb?useUnicode=true&characterEncoding=utf8";
     String dbUser = "root";
     String dbPass = System.getenv("DB_PASSWORD");
@@ -82,7 +80,7 @@
 
         if ("생산완료".equals(currentStatus)) {
             conn.rollback();
-            out.println("<script>alert('이미 생산완료 처리된 항목입니다.'); location.href='../workOrderProgressList.jsp';</script>");
+            out.println("<script>alert('이미 생산완료 처리된 항목입니다.'); location.href='../step6-Done/workOrderProgressDone.jsp?request_id=" + requestId + "';</script>");
             return;
         }
 
@@ -153,7 +151,7 @@
         pstmt.close();
 
         conn.commit();
-        out.println("<script>alert('생산이 완료되어 제품 재고(총재고 및 Lot)에 반영되었습니다.'); location.href='workOrderProgressList.jsp';</script>");
+        out.println("<script>alert('생산이 완료되어 제품 재고(총재고 및 Lot)에 반영되었습니다.'); location.href='../step6-Done/workOrderProgressDone.jsp?request_id=" + requestId + "';</script>");
 
     } catch (Exception e) {
         if (conn != null) {
