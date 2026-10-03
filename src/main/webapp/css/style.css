@@ -5669,6 +5669,14 @@ div.unit i {
   margin-top: 40px;
 }
 
+/*완료*/
+#container.workOrderProgressDone {
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
 @media screen and (max-width: 1500px) {
   /*작업지시서*/
   .content.workOrderList section.radius table colgroup {

@@ -615,6 +615,12 @@ div.unit {
         }
     }
 }
+/*완료*/
+#container {
+    &.workOrderProgressDone {
+        flex-direction: column;
+    }
+}
 
 @include mediaQuery(tablet) {
     /*작업지시서*/

@@ -108,8 +108,9 @@
     SimpleDateFormat korDf = new SimpleDateFormat("yyyy년 MM월 dd일");
 
     String orderDateDisplay = (requestDate != null) ? korDf.format(requestDate) : "";
-    String workDateDisplay = korDf.format(new Date()); // 작업일자 = 오늘(충진 작업을 등록하는 날짜)
-    String workDateForInput = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+    java.util.Date todayDate = new java.util.Date();
+    String workDateDisplay = korDf.format(todayDate); // 작업일자 = 오늘(충진 작업을 등록하는 날짜)
+    String workDateForInput = new SimpleDateFormat("yyyy-MM-dd").format(todayDate);
 
     // EXP 표시용 (yyMMdd), due_date는 "yyyy-MM-dd" 문자열이므로 하이픈만 제거해 가공
     String expDisplay = "";
@@ -128,9 +129,8 @@
     java.text.DecimalFormat qtyDf = new java.text.DecimalFormat("#,##0.####");
     String actualQtyDisplay = (actualQty > 0) ? qtyDf.format(actualQty) : "";
 
-    // 5. 부자재 표(tbody) 행 개수 = 등록된 부자재 + 미등록 대비 빈 행 4개
+    // 5. 부자재 표(tbody) 빈 행(미등록 부자재 현장 입력용) 개수
     int blankRowCount = 4;
-    int totalRowCount = subRows.size() + blankRowCount;
 %>
 <jsp:include page="/app/include/HeaderDocType.jsp" />
 <div id="wrap">
@@ -151,8 +151,8 @@
                     <h6 class="doc_tit">포장 지시 및 기록서</h6>
                     <fieldset class="head">
                         <ul>
-                            <li>지시일자 : <%= orderDateDisplay %></li>
-                            <li>작업일자 : <%= workDateDisplay %><input type="hidden" name="work_date" value="<%= workDateForInput %>"></li>
+                            <li>지시일자 : <span class="required"><%= orderDateDisplay %></span></li>
+                            <li>작업일자 : <span class="required"><%= workDateDisplay %></span><input type="hidden" name="work_date" value="<%= workDateForInput %>"></li>
                         </ul>
                         <table>
                             <tr>
@@ -176,8 +176,8 @@
                                     <th>제조입고량<br>(kg)</th>
                                 </tr>
                                 <tr>
-                                    <td colspan="4" class="name"><%= productDisplayName %></td>
-                                    <td class="lot"><%= batchNo %><% if (!expDisplay.isEmpty()) { %><br>EXP<%= expDisplay %><% } %></td>
+                                    <td colspan="4" class="name required"><%= productDisplayName %></td>
+                                    <td class="lot required"><%= batchNo %><% if (!expDisplay.isEmpty()) { %><br>EXP<%= expDisplay %><% } %></td>
                                     <td><div class="unit"><input type="text" class="inputText" name="order_qty_ea" inputmode="decimal"><i>ea</i></div></td>
                                     <td><div class="unit"><input type="text" class="inputText" name="mfg_input_qty" inputmode="decimal" value="<%= actualQtyDisplay %>"><i>kg</i></div></td>
                                 </tr>
@@ -195,7 +195,7 @@
                                     <th>수량</th>
                                 </tr>
 <%
-    // ── 부자재 데이터 행 (work_order_subsidiary 조회 결과) ──
+    // ── 부자재 데이터 행 (work_order_subsidiary 조회 결과) : 포장재 명은 가져온 값이므로 수정 불가(disabled) ──
     for (int i = 0; i < subRows.size(); i++) {
         String iName = subRows.get(i)[0];
         String sType = subRows.get(i)[1];
@@ -203,31 +203,33 @@
         String materialLabel = iName + (sType != null && !sType.trim().isEmpty() ? "(" + sType.trim() + ")" : "");
 %>
                                 <tr>
-<% if (i == 0) { %>
-                                    <td rowspan="<%= totalRowCount %>"><input type="text" class="inputText" value="충진" placeholder="작업내용 입력"></td>
-                                    <td rowspan="<%= totalRowCount %>"><input type="text" class="inputText" value="충진기" placeholder="설비명 입력"></td>
-<% } %>
-                                    <td colspan="2"><input type="text" name="item_name[]" class="inputText" value="<%= materialLabel %>" placeholder="포장재명 입력"></td>
-                                    <td><div class="unit"><input type="text" name="out_qty[]" class="inputText" inputmode="decimal" value="<%= oQty %>"><i>ea</i></div></td>
-                                    <td><input type="text" class="inputText" value="<%= loginUserName %>" placeholder="작업자 입력"></td>
-                                    <td><div class="unit"><input type="text" class="inputText" inputmode="decimal"><i>ea</i></div></td>
+                                    <td><input type="text" name="work_content[]" class="inputText required" value="충진" placeholder="작업내용 입력"></td>
+                                    <td><input type="text" name="machine_name[]" class="inputText required" value="충진기" placeholder="설비명 입력"></td>
+                                    <td colspan="2">
+                                        <input type="hidden" name="item_name[]" value="<%= materialLabel %>">
+                                        <input type="hidden" name="subsidiary_type[]" value="<%= sType != null ? sType.trim() : "" %>">
+                                        <input type="text" class="inputText required" value="<%= materialLabel %>" disabled="disabled">
+                                    </td>
+                                    <td><div class="unit"><input type="text" name="out_qty[]" class="inputText required" inputmode="decimal" value="<%= oQty %>"><i>ea</i></div></td>
+                                    <td><input type="text" name="worker_name[]" class="inputText required" value="<%= loginUserName %>" placeholder="작업자 입력"></td>
+                                    <td><div class="unit"><input type="text" name="defect_qty[]" class="inputText" inputmode="decimal"><i>ea</i></div></td>
                                 </tr>
 <%
     }
 
-    // ── 미등록 부자재 대비 빈 행 (기본 4개) ──
+    // ── 미등록 부자재 대비 빈 행 (기본 4개) : 포장재 명은 자동완성/수동입력 가능, 수량은 현재재고를 placeholder로 안내 ──
     for (int i = 0; i < blankRowCount; i++) {
-        boolean isFirstOverall = (subRows.size() == 0 && i == 0);
 %>
                                 <tr>
-<% if (isFirstOverall) { %>
-                                    <td rowspan="<%= totalRowCount %>"><input type="text" class="inputText" value="충진" placeholder="작업내용 입력"></td>
-                                    <td rowspan="<%= totalRowCount %>"><input type="text" class="inputText" value="충진기" placeholder="설비명 입력"></td>
-<% } %>
-                                    <td colspan="2"><input type="text" name="item_name[]" class="inputText" placeholder="포장재명 입력"></td>
-                                    <td><div class="unit"><input type="text" name="out_qty[]" class="inputText" inputmode="decimal"><i>ea</i></div></td>
-                                    <td><input type="text" class="inputText" placeholder="작업자 입력"></td>
-                                    <td><div class="unit"><input type="text" class="inputText" inputmode="decimal"><i>ea</i></div></td>
+                                    <td><input type="text" name="work_content[]" class="inputText required" value="충진" placeholder="작업내용 입력"></td>
+                                    <td><input type="text" name="machine_name[]" class="inputText required" value="충진기" placeholder="설비명 입력"></td>
+                                    <td colspan="2">
+                                        <input type="hidden" name="subsidiary_type[]" class="new-sub-type-hidden">
+                                        <input type="text" name="item_name[]" class="inputText required new-item-name" placeholder="포장재명 입력 (자동완성)">
+                                    </td>
+                                    <td><div class="unit"><input type="text" name="out_qty[]" class="inputText required new-out-qty" inputmode="decimal"><i>ea</i></div></td>
+                                    <td><input type="text" name="worker_name[]" class="inputText required" placeholder="작업자 입력"></td>
+                                    <td><div class="unit"><input type="text" name="defect_qty[]" class="inputText" inputmode="decimal"><i>ea</i></div></td>
                                 </tr>
 <%
     }
@@ -247,95 +249,95 @@
                                 <tr>
                                     <td colspan="3" class="item">작업이 끝난 완제품의 인수인계 여부</td>
                                     <td>
-                                        <div class="radioGroup">
+                                        <div class="radioGroup required">
                                             <label class="radioButton"><input type="radio" name="item1" class="judge-radio" data-reason-target="#item1_reason" value="적합" checked><i class="icon"></i><span>적합</span></label>
                                             <label class="radioButton"><input type="radio" name="item1" class="judge-radio" data-reason-target="#item1_reason" value="부적합"><i class="icon"></i><span>부적합</span></label>
                                         </div>
                                     </td>
                                     <td><input type="text" id="item1_reason" name="item1_reason" class="inputText" disabled="disabled" placeholder="내용입력"></td>
-                                    <td><input type="text" class="inputText" placeholder="비고입력"></td>
+                                    <td><input type="text" name="item1_remark" class="inputText" placeholder="비고입력"></td>
                                 </tr>
                                 <tr>
                                     <td colspan="3" class="item">부적합 제품의 별도 보관 여부</td>
                                     <td>
-                                        <div class="radioGroup">
+                                        <div class="radioGroup required">
                                             <label class="radioButton"><input type="radio" name="item2" class="judge-radio" data-reason-target="#item2_reason" value="적합" checked><i class="icon"></i><span>적합</span></label>
                                             <label class="radioButton"><input type="radio" name="item2" class="judge-radio" data-reason-target="#item2_reason" value="부적합"><i class="icon"></i><span>부적합</span></label>
                                         </div>
                                     </td>
                                     <td><input type="text" id="item2_reason" name="item2_reason" class="inputText" disabled="disabled" placeholder="내용입력"></td>
-                                    <td><input type="text" class="inputText" placeholder="비고입력"></td>
+                                    <td><input type="text" name="item2_remark" class="inputText" placeholder="비고입력"></td>
                                 </tr>
                                 <tr>
                                     <td colspan="3" class="item">사용된 부자재의 제품 사양과의 일치 여부</td>
                                     <td>
-                                        <div class="radioGroup">
+                                        <div class="radioGroup required">
                                             <label class="radioButton"><input type="radio" name="item3" class="judge-radio" data-reason-target="#item3_reason" value="적합" checked><i class="icon"></i><span>적합</span></label>
                                             <label class="radioButton"><input type="radio" name="item3" class="judge-radio" data-reason-target="#item3_reason" value="부적합"><i class="icon"></i><span>부적합</span></label>
                                         </div>
                                     </td>
                                     <td><input type="text" id="item3_reason" name="item3_reason" class="inputText" disabled="disabled" placeholder="내용입력"></td>
-                                    <td><input type="text" class="inputText" placeholder="비고입력"></td>
+                                    <td><input type="text" name="item3_remark" class="inputText" placeholder="비고입력"></td>
                                 </tr>
                                 <tr>
                                     <td colspan="3" class="item">지시 수량과 생산수량의 일치 여부</td>
                                     <td>
-                                        <div class="radioGroup">
+                                        <div class="radioGroup required">
                                             <label class="radioButton"><input type="radio" name="item4" class="judge-radio" data-reason-target="#item4_reason" value="적합" checked><i class="icon"></i><span>적합</span></label>
                                             <label class="radioButton"><input type="radio" name="item4" class="judge-radio" data-reason-target="#item4_reason" value="부적합"><i class="icon"></i><span>부적합</span></label>
                                         </div>
                                     </td>
                                     <td><input type="text" id="item4_reason" name="item4_reason" class="inputText" disabled="disabled" placeholder="내용입력"></td>
-                                    <td><input type="text" class="inputText" placeholder="비고입력"></td>
+                                    <td><input type="text" name="item4_remark" class="inputText" placeholder="비고입력"></td>
                                 </tr>
                                 <tr>
                                     <th rowspan="6">생산현황</th>
                                     <th>작업 시간</th>
-                                    <td><div class="unit"><input type="text" class="inputText" inputmode="decimal"><i>hr</i></div></td>
+                                    <td><div class="unit"><input type="text" name="work_hours" class="inputText" inputmode="decimal"><i>hr</i></div></td>
                                     <th rowspan="6">수율분석</th>
                                     <th>제조량</th>
-                                    <td colspan="2"><div class="unit"><input type="text" class="inputText" inputmode="decimal" value="<%= actualQtyDisplay %>"><i>kg</i></div></td>
+                                    <td colspan="2"><div class="unit"><input type="text" name="mfg_qty_kg" class="inputText" inputmode="decimal" value="<%= actualQtyDisplay %>"><i>kg</i></div></td>
                                 </tr>
                                 <tr>
                                     <th>작업 인원</th>
-                                    <td><div class="unit"><input type="text" class="inputText" inputmode="decimal"><i>명</i></div></td>
+                                    <td><div class="unit"><input type="text" name="work_person_count" class="inputText" inputmode="decimal"><i>명</i></div></td>
                                     <th>생산량</th>
-                                    <td colspan="2"><div class="unit"><input type="text" class="inputText" inputmode="decimal"><i>kg</i></div></td>
+                                    <td colspan="2"><div class="unit"><input type="text" name="produced_qty_kg" class="inputText" inputmode="decimal"><i>kg</i></div></td>
                                 </tr>
                                 <tr>
                                     <th>지시 수량</th>
-                                    <td><div class="unit"><input type="text" class="inputText" inputmode="decimal"><i>ea</i></div></td>
+                                    <td><div class="unit"><input type="text" name="status_order_qty_ea" class="inputText" inputmode="decimal"><i>ea</i></div></td>
                                     <th rowspan="2">수율</th>
                                     <td colspan="2" rowspan="2">
-                                        <div class="unit"><input type="text" class="inputText" inputmode="decimal"><i>%</i></div>
+                                        <div class="unit"><input type="text" name="yield_rate" class="inputText" inputmode="decimal"><i>%</i></div>
                                         <p class="ex">(생산량/제조량*100)</p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <th>생산 수량</th>
-                                    <td><div class="unit"><input type="text" id="production_qty" name="production_qty" class="inputText" inputmode="decimal" required><i>ea</i></div></td>
+                                    <td><div class="unit"><input type="text" id="production_qty" name="production_qty" class="inputText required" inputmode="decimal" required><i>ea</i></div></td>
                                 </tr>
                                 <tr>
                                     <th>폐기 수량</th>
-                                    <td><div class="unit"><input type="text" class="inputText" inputmode="decimal"><i>ea</i></div></td>
+                                    <td><div class="unit"><input type="text" name="waste_qty" class="inputText" inputmode="decimal"><i>ea</i></div></td>
                                     <th rowspan="2">불량율</th>
                                     <td colspan="2" rowspan="2">
-                                        <div class="unit"><input type="text" class="inputText" inputmode="decimal"><i>%</i></div>
+                                        <div class="unit"><input type="text" name="defect_rate" class="inputText" inputmode="decimal"><i>%</i></div>
                                         <p class="ex">(폐기수량/생산수량*100)</p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <th>출고 수량</th>
-                                    <td><div class="unit"><input type="text" class="inputText" inputmode="decimal"><i>ea</i></div></td>
+                                    <td><div class="unit"><input type="text" name="release_qty" class="inputText required" inputmode="decimal"><i>ea</i></div></td>
                                 </tr>
                                 <tr class="last">
                                     <th>작성자</th>
-                                    <td colspan="2"><input type="text" class="inputText" value="<%= loginUserName %>" placeholder="작성자 입력"></td>
+                                    <td colspan="2"><input type="text" name="writer_name" class="inputText required" value="<%= loginUserName %>" placeholder="작성자 입력"></td>
                                     <th colspan="2">판정</th>
                                     <td colspan="2">
-                                        <div class="radioGroup">
-                                            <label class="radioButton"><input type="radio" name="verdict" checked><i class="icon"></i><span>적합</span></label>
-                                            <label class="radioButton"><input type="radio" name="verdict"><i class="icon"></i><span>부적합</span></label>
+                                        <div class="radioGroup required">
+                                            <label class="radioButton"><input type="radio" name="verdict" value="적합" checked><i class="icon"></i><span>적합</span></label>
+                                            <label class="radioButton"><input type="radio" name="verdict" value="부적합"><i class="icon"></i><span>부적합</span></label>
                                         </div>
                                     </td>
                                 </tr>
@@ -367,6 +369,51 @@
             if (parts.length > 2) value = parts[0] + '.' + parts.slice(1).join('');
             $(this).val(formatWithComma(value));
         });
+
+        // ── 요구사항 2: 추가 입력행(4개) [포장재 명] 자동완성 + 현재재고 placeholder 안내 ──
+        function initNewItemAutocomplete($input) {
+            $input.autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "/app/totalRegist/searchItems.jsp",
+                        type: "GET",
+                        data: { category: "SUBSIDIARY", keyword: request.term },
+                        dataType: "json",
+                        success: function (data) { response(data); }
+                    });
+                },
+                minLength: 1,
+                appendTo: "body",
+                select: function (event, ui) {
+                    let $row = $(this).closest("tr");
+                    $(this).val(ui.item.value);
+
+                    let sType = ui.item.type || "";
+                    $row.find(".new-sub-type-hidden").val(sType);
+
+                    let $qtyInput = $row.find(".new-out-qty");
+                    $qtyInput.removeData('stock').attr('placeholder', '재고 조회 중...');
+
+                    $.ajax({
+                        url: "/app/totalRegist/getSubsidiaryStock.jsp",
+                        type: "GET",
+                        data: { item_name: ui.item.value, subsidiary_type: sType },
+                        dataType: "json",
+                        success: function (res) {
+                            let stock = (res && res.found) ? res.stock_qty : 0;
+                            $qtyInput.data('stock', stock);
+                            $qtyInput.attr('placeholder', '현재재고:' + stock.toLocaleString('en-US') + '개 가능');
+                        },
+                        error: function () {
+                            $qtyInput.attr('placeholder', '');
+                        }
+                    });
+
+                    return false;
+                }
+            });
+        }
+        initNewItemAutocomplete($(".new-item-name"));
 
         // ── 요구사항 5: 항목1~4 적합/부적합 라디오 → 내용 input 활성/비활성 ──
         $(document).on('change', '.judge-radio', function () {

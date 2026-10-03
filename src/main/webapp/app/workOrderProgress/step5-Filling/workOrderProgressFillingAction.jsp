@@ -5,8 +5,10 @@
     // [충진완료] 버튼 처리
     // 1. production_qty(생산수량)만큼 products 총재고 증가
     // 2. product_lots에 제조번호(work_order_making.batch_no) 기준 Lot 재고 반영
-    // 3. work_order_requests.progress_status 를 '생산완료'로 변경
-    // 4. 처리 완료 후 step6-Done/workOrderProgressDone.jsp 로 이동
+    // 3. work_order_filling_report / work_order_filling_items 에 포장 지시 및
+    //    기록서 전체 입력값 저장 (step6-Done 조회용)
+    // 4. work_order_requests.progress_status 를 '생산완료'로 변경
+    // 5. 처리 완료 후 step6-Done/workOrderProgressDone.jsp 로 이동
     // ※ 부자재(work_order_subsidiary)는 step4(제조완료)에서 이미 예상사용량이
     //   기록되어 있으며, 실입고/실사용 확정 전이므로 이 단계에서 재고를 차감하지 않는다.
     // ※ 이미 '생산완료' 상태인 건은 재적용하지 않도록 가드 처리
@@ -44,6 +46,46 @@
 
     String manufactureDate = request.getParameter("manufacture_date");
     String expirationDate = request.getParameter("expiration_date");
+
+    // ── 포장 지시 및 기록서 헤더 파라미터 ──
+    String workDate = nullIfEmpty(request.getParameter("work_date"));
+    int orderQtyEa = parseIntSafe(request.getParameter("order_qty_ea"));
+    double mfgInputQty = parseDoubleSafe(request.getParameter("mfg_input_qty"));
+
+    String item1Result = request.getParameter("item1");
+    String item1Reason = request.getParameter("item1_reason");
+    String item1Remark = request.getParameter("item1_remark");
+    String item2Result = request.getParameter("item2");
+    String item2Reason = request.getParameter("item2_reason");
+    String item2Remark = request.getParameter("item2_remark");
+    String item3Result = request.getParameter("item3");
+    String item3Reason = request.getParameter("item3_reason");
+    String item3Remark = request.getParameter("item3_remark");
+    String item4Result = request.getParameter("item4");
+    String item4Reason = request.getParameter("item4_reason");
+    String item4Remark = request.getParameter("item4_remark");
+
+    double workHours = parseDoubleSafe(request.getParameter("work_hours"));
+    int workPersonCount = parseIntSafe(request.getParameter("work_person_count"));
+    double mfgQtyKg = parseDoubleSafe(request.getParameter("mfg_qty_kg"));
+    double producedQtyKg = parseDoubleSafe(request.getParameter("produced_qty_kg"));
+    int statusOrderQtyEa = parseIntSafe(request.getParameter("status_order_qty_ea"));
+    int wasteQty = parseIntSafe(request.getParameter("waste_qty"));
+    int releaseQty = parseIntSafe(request.getParameter("release_qty"));
+    double yieldRate = parseDoubleSafe(request.getParameter("yield_rate"));
+    double defectRate = parseDoubleSafe(request.getParameter("defect_rate"));
+    String writerName = request.getParameter("writer_name");
+    String verdict = request.getParameter("verdict");
+    if (verdict == null || verdict.trim().isEmpty()) verdict = "적합";
+
+    // ── 포장재 투입 행 (work_content[] / machine_name[] / item_name[] / subsidiary_type[] / out_qty[] / worker_name[] / defect_qty[]) ──
+    String[] workContents = request.getParameterValues("work_content[]");
+    String[] machineNames = request.getParameterValues("machine_name[]");
+    String[] itemNames = request.getParameterValues("item_name[]");
+    String[] subsidiaryTypes = request.getParameterValues("subsidiary_type[]");
+    String[] outQtys = request.getParameterValues("out_qty[]");
+    String[] workerNames = request.getParameterValues("worker_name[]");
+    String[] defectQtys = request.getParameterValues("defect_qty[]");
 
     String url = "jdbc:mariadb://svc.sel3.cloudtype.app:32170/seoholabdb?useUnicode=true&characterEncoding=utf8";
     String dbUser = "root";
@@ -143,7 +185,99 @@
         pstmt.executeUpdate();
         pstmt.close();
 
-        // 4. 진행현황을 생산완료로 변경
+        // 4. work_order_filling_report 저장 (upsert)
+        String reportSql = "INSERT INTO work_order_filling_report "
+                + "(request_id, work_date, order_qty_ea, mfg_input_qty, "
+                + " item1_result, item1_reason, item1_remark, item2_result, item2_reason, item2_remark, "
+                + " item3_result, item3_reason, item3_remark, item4_result, item4_reason, item4_remark, "
+                + " work_hours, work_person_count, mfg_qty_kg, produced_qty_kg, status_order_qty_ea, "
+                + " production_qty, waste_qty, release_qty, yield_rate, defect_rate, writer_name, verdict) "
+                + "VALUES (?, NULLIF(?, ''), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
+                + "ON DUPLICATE KEY UPDATE "
+                + "  work_date = VALUES(work_date), order_qty_ea = VALUES(order_qty_ea), mfg_input_qty = VALUES(mfg_input_qty), "
+                + "  item1_result = VALUES(item1_result), item1_reason = VALUES(item1_reason), item1_remark = VALUES(item1_remark), "
+                + "  item2_result = VALUES(item2_result), item2_reason = VALUES(item2_reason), item2_remark = VALUES(item2_remark), "
+                + "  item3_result = VALUES(item3_result), item3_reason = VALUES(item3_reason), item3_remark = VALUES(item3_remark), "
+                + "  item4_result = VALUES(item4_result), item4_reason = VALUES(item4_reason), item4_remark = VALUES(item4_remark), "
+                + "  work_hours = VALUES(work_hours), work_person_count = VALUES(work_person_count), "
+                + "  mfg_qty_kg = VALUES(mfg_qty_kg), produced_qty_kg = VALUES(produced_qty_kg), status_order_qty_ea = VALUES(status_order_qty_ea), "
+                + "  production_qty = VALUES(production_qty), waste_qty = VALUES(waste_qty), release_qty = VALUES(release_qty), "
+                + "  yield_rate = VALUES(yield_rate), defect_rate = VALUES(defect_rate), writer_name = VALUES(writer_name), "
+                + "  verdict = VALUES(verdict), updated_at = CURRENT_TIMESTAMP";
+        pstmt = conn.prepareStatement(reportSql);
+        pstmt.setInt(1, requestId);
+        pstmt.setString(2, workDate);
+        pstmt.setInt(3, orderQtyEa);
+        pstmt.setDouble(4, mfgInputQty);
+        pstmt.setString(5, item1Result != null ? item1Result : "적합");
+        pstmt.setString(6, item1Reason);
+        pstmt.setString(7, item1Remark);
+        pstmt.setString(8, item2Result != null ? item2Result : "적합");
+        pstmt.setString(9, item2Reason);
+        pstmt.setString(10, item2Remark);
+        pstmt.setString(11, item3Result != null ? item3Result : "적합");
+        pstmt.setString(12, item3Reason);
+        pstmt.setString(13, item3Remark);
+        pstmt.setString(14, item4Result != null ? item4Result : "적합");
+        pstmt.setString(15, item4Reason);
+        pstmt.setString(16, item4Remark);
+        pstmt.setDouble(17, workHours);
+        pstmt.setInt(18, workPersonCount);
+        pstmt.setDouble(19, mfgQtyKg);
+        pstmt.setDouble(20, producedQtyKg);
+        pstmt.setInt(21, statusOrderQtyEa);
+        pstmt.setInt(22, productionQty);
+        pstmt.setInt(23, wasteQty);
+        pstmt.setInt(24, releaseQty);
+        pstmt.setDouble(25, yieldRate);
+        pstmt.setDouble(26, defectRate);
+        pstmt.setString(27, writerName);
+        pstmt.setString(28, verdict);
+        pstmt.executeUpdate();
+        pstmt.close();
+
+        // 5. work_order_filling_items 재구성 (기존 삭제 후 재삽입)
+        String deleteItemsSql = "DELETE FROM work_order_filling_items WHERE request_id = ?";
+        pstmt = conn.prepareStatement(deleteItemsSql);
+        pstmt.setInt(1, requestId);
+        pstmt.executeUpdate();
+        pstmt.close();
+
+        if (itemNames != null) {
+            String insertItemSql = "INSERT INTO work_order_filling_items "
+                    + "(request_id, row_no, work_content, machine_name, item_name, subsidiary_type, out_qty, worker_name, defect_qty) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            pstmt = conn.prepareStatement(insertItemSql);
+
+            int validRowNo = 0;
+            for (int i = 0; i < itemNames.length; i++) {
+                String iName = itemNames[i];
+                if (iName == null || iName.trim().isEmpty()) continue; // 비어있는 행(미사용)은 저장하지 않음
+
+                validRowNo++;
+                String wContent = (workContents != null && i < workContents.length) ? workContents[i] : "";
+                String mName = (machineNames != null && i < machineNames.length) ? machineNames[i] : "";
+                String sType = (subsidiaryTypes != null && i < subsidiaryTypes.length) ? subsidiaryTypes[i] : "";
+                int oQty = (outQtys != null && i < outQtys.length) ? parseIntSafe(outQtys[i]) : 0;
+                String wName = (workerNames != null && i < workerNames.length) ? workerNames[i] : "";
+                int dQty = (defectQtys != null && i < defectQtys.length) ? parseIntSafe(defectQtys[i]) : 0;
+
+                pstmt.setInt(1, requestId);
+                pstmt.setInt(2, validRowNo);
+                pstmt.setString(3, wContent);
+                pstmt.setString(4, mName);
+                pstmt.setString(5, iName.trim());
+                pstmt.setString(6, sType);
+                pstmt.setInt(7, oQty);
+                pstmt.setString(8, wName);
+                pstmt.setInt(9, dQty);
+                pstmt.addBatch();
+            }
+            if (validRowNo > 0) pstmt.executeBatch();
+            pstmt.close();
+        }
+
+        // 6. 진행현황을 생산완료로 변경
         String updateStatusSql = "UPDATE work_order_requests SET progress_status = '생산완료', updated_at = CURRENT_TIMESTAMP WHERE request_id = ?";
         pstmt = conn.prepareStatement(updateStatusSql);
         pstmt.setInt(1, requestId);
@@ -163,5 +297,19 @@
         if (rs != null) try { rs.close(); } catch(Exception e){}
         if (pstmt != null) try { pstmt.close(); } catch(Exception e){}
         if (conn != null) try { conn.close(); } catch(Exception e){}
+    }
+%>
+<%!
+    private String nullIfEmpty(String s) {
+        if (s == null || s.trim().isEmpty()) return null;
+        return s.trim();
+    }
+    private int parseIntSafe(String s) {
+        if (s == null || s.trim().isEmpty()) return 0;
+        try { return Integer.parseInt(s.replace(",", "").trim()); } catch (Exception e) { return 0; }
+    }
+    private double parseDoubleSafe(String s) {
+        if (s == null || s.trim().isEmpty()) return 0.0;
+        try { return Double.parseDouble(s.replace(",", "").trim()); } catch (Exception e) { return 0.0; }
     }
 %>

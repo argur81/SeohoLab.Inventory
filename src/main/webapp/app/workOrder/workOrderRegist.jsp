@@ -119,6 +119,9 @@
                                     <option value="AGI Mixer" <%= "AGI Mixer".equals(machine) ? "selected" : "" %>>AGI Mixer</option>
                                     <option value="Homo Mixer" <%= "Homo Mixer".equals(machine) ? "selected" : "" %>>Homo Mixer</option>
                                     <option value="AGI Mixer, Homo Mixer" <%= "AGI Mixer, Homo Mixer".equals(machine) ? "selected" : "" %>>AGI Mixer, Homo Mixer</option>
+                                    <option value="Paddle Mixer" <%= "Paddle Mixer".equals(machine) ? "selected" : "" %>>Paddle Mixer</option>
+                                    <option value="Paddle Mixer, Homo Mixer" <%= "Paddle Mixer, Homo Mixer".equals(machine) ? "selected" : "" %>>Paddle Mixer, Homo Mixer</option>
+                                    <option value="기타" <%= "기타".equals(machine) ? "selected" : "" %>>기타</option>
                                 </select>
                             </dd>
                         </dl>

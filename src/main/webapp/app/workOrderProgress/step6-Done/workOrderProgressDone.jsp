@@ -3,13 +3,17 @@
     String requestIdStr = request.getParameter("request_id");
 %>
 <jsp:include page="/app/include/HeaderDocType.jsp" />
+<!-- CDN: PDF 저장 기능용 (html2canvas + jsPDF) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-    /* 인쇄 시 표(road_data) 영역만 출력 */
+    /* ── 인쇄: 기능 동작에 필요한 최소 규칙만 (디자인은 별도 CSS로 추가 예정) ── */
     @media print {
         body * { visibility: hidden; }
-        .road_data, .road_data * { visibility: visible; }
-        .road_data { position: absolute; left: 0; top: 0; width: 100%; }
-        #loadingOverlay, .top_btn, .bottom_btns, header { display: none !important; }
+        .tab-content, .tab-content * { visibility: visible; }
+        .tab-content { page-break-after: always; }
+        .tab-content:last-of-type { page-break-after: auto; }
+        #loadingOverlay, .top_btn, .bottom_btns, header, .tab_buttons, .no-print { display: none !important; }
     }
     @page {
         size: A4;
@@ -22,14 +26,18 @@
 </div>
 <div id="wrap">
     <jsp:include page="/app/include/Header.jsp" />
-    <div id="container">
-        <div class="content workOrderProgressMaking">
-            <div class="title_set">
-                <h5 class="page_tit">
-                    <p>제조 지시서</p><i><img src="/images/svg/location_arrow.svg"></i><b>진행현황</b><i><img src="/images/svg/location_arrow.svg"></i>생산완료</b>
-                    <button type="button" class="toggle"></button>
-                </h5>
-            </div>
+    <div id="container" class="workOrderProgressDone">
+        <div class="title_set">
+            <h5 class="page_tit">
+                <p>제조 지시서</p><i><img src="/images/svg/location_arrow.svg"></i><b>진행현황</b><i><img src="/images/svg/location_arrow.svg"></i>생산완료
+            </h5>
+        </div>
+        <div class="doneTabButtons">
+            <button type="button" class="tab-btn active" data-tab="makingTabContent">제조 지시서</button>
+            <button type="button" class="tab-btn" data-tab="fillingTabContent">포장 지시 및 기록서</button>
+        </div>
+        <!--제조 지시 및 공정 기록서-->
+        <div id="makingTabContent" class="content workOrderProgressDetail tab-content active">
             <section class="radius">
                 <div class="road_data">
                     <table class="requestTable workOrderMakingTable">
@@ -133,14 +141,180 @@
                         </tfoot>
                     </table>
                 </div>
-
-                <div class="bottom_btns">
-                    <button type="button" id="backListBtn" class="Button bgGray" data-width="180">목록</button>
-                    <button type="button" id="printBtn" class="Button brdrYellow" data-width="180">인쇄</button>
-                    <button type="button" id="excelBtn" class="Button brdrGreen" data-width="180">엑셀저장</button>
-                    <button type="button" id="deleteBtn" class="Button brdrGray" data-width="180">삭제</button>
+            </section>
+        </div>
+        <!--//제조 지시 및 공정 기록서-->
+        <!--포장 지시 및 기록서-->
+        <div id="fillingTabContent" class="content workOrderProgressFilling tab-content">
+            <section class="radius">
+                <div class="road_data">
+                    <h6 class="doc_tit">포장 지시 및 기록서</h6>
+                    <fieldset class="head">
+                        <ul>
+                            <li>지시일자 : <span id="f-order-date"></span></li>
+                            <li>작업일자 : <span id="f-work-date"></span></li>
+                        </ul>
+                        <table>
+                            <tr>
+                                <th rowspan="2">결<br>재</th>
+                                <th>담당</th>
+                                <th>팀장</th>
+                            </tr>
+                            <tr>
+                                <td class="box">&nbsp;</td>
+                                <td class="box">&nbsp;</td>
+                            </tr>
+                        </table>
+                    </fieldset>
+                    <fieldset class="body">
+                        <table class="requestTable">
+                            <thead>
+                                <tr>
+                                    <th colspan="4">제품명</th>
+                                    <th>제조번호<br>(LOT NO)</th>
+                                    <th>지시수량<br>(ea)</th>
+                                    <th>제조입고량<br>(kg)</th>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" class="name" id="f-product-name"></td>
+                                    <td class="lot" id="f-lot"></td>
+                                    <td id="f-order-qty-ea"></td>
+                                    <td id="f-mfg-input-qty"></td>
+                                </tr>
+                            </thead>
+                            <tbody id="f-items-tbody">
+                                <tr>
+                                    <th rowspan="2">작업내용</th>
+                                    <th rowspan="2">설비명</th>
+                                    <th colspan="3">포장재 투입 수량 (ea)</th>
+                                    <th rowspan="2">작업자</th>
+                                    <th rowspan="2">자재불량(ea)</th>
+                                </tr>
+                                <tr>
+                                    <th colspan="2">포장재 명</th>
+                                    <th>수량</th>
+                                </tr>
+                                <!-- AJAX로 포장재 투입 행이 동적으로 삽입됩니다 -->
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th rowspan="6">작업 후<br>내부감사</th>
+                                    <th rowspan="2" colspan="3">항목</th>
+                                    <th colspan="2">확인</th>
+                                    <th rowspan="2">비고</th>
+                                </tr>
+                                <tr>
+                                    <th>적합/부적합</th>
+                                    <th>부적합(내용)</th>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="item">작업이 끝난 완제품의 인수인계 여부</td>
+                                    <td>
+                                        <div class="radioGroup">
+                                            <label class="radioButton"><input type="radio" name="f_item1" id="f-item1-fit" disabled value="적합"><i class="icon"></i><span>적합</span></label>
+                                            <label class="radioButton"><input type="radio" name="f_item1" id="f-item1-unfit" disabled value="부적합"><i class="icon"></i><span>부적합</span></label>
+                                        </div>
+                                    </td>
+                                    <td id="f-item1-reason"></td>
+                                    <td id="f-item1-remark"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="item">부적합 제품의 별도 보관 여부</td>
+                                    <td>
+                                        <div class="radioGroup">
+                                            <label class="radioButton"><input type="radio" name="f_item2" id="f-item2-fit" disabled value="적합"><i class="icon"></i><span>적합</span></label>
+                                            <label class="radioButton"><input type="radio" name="f_item2" id="f-item2-unfit" disabled value="부적합"><i class="icon"></i><span>부적합</span></label>
+                                        </div>
+                                    </td>
+                                    <td id="f-item2-reason"></td>
+                                    <td id="f-item2-remark"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="item">사용된 부자재의 제품 사양과의 일치 여부</td>
+                                    <td>
+                                        <div class="radioGroup">
+                                            <label class="radioButton"><input type="radio" name="f_item3" id="f-item3-fit" disabled value="적합"><i class="icon"></i><span>적합</span></label>
+                                            <label class="radioButton"><input type="radio" name="f_item3" id="f-item3-unfit" disabled value="부적합"><i class="icon"></i><span>부적합</span></label>
+                                        </div>
+                                    </td>
+                                    <td id="f-item3-reason"></td>
+                                    <td id="f-item3-remark"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="item">지시 수량과 생산수량의 일치 여부</td>
+                                    <td>
+                                        <div class="radioGroup">
+                                            <label class="radioButton"><input type="radio" name="f_item4" id="f-item4-fit" disabled value="적합"><i class="icon"></i><span>적합</span></label>
+                                            <label class="radioButton"><input type="radio" name="f_item4" id="f-item4-unfit" disabled value="부적합"><i class="icon"></i><span>부적합</span></label>
+                                        </div>
+                                    </td>
+                                    <td id="f-item4-reason"></td>
+                                    <td id="f-item4-remark"></td>
+                                </tr>
+                                <tr>
+                                    <th rowspan="6">생산현황</th>
+                                    <th>작업 시간</th>
+                                    <td><span id="f-work-hours"></span> hr</td>
+                                    <th rowspan="6">수율분석</th>
+                                    <th>제조량</th>
+                                    <td colspan="2"><span id="f-mfg-qty-kg"></span> kg</td>
+                                </tr>
+                                <tr>
+                                    <th>작업 인원</th>
+                                    <td><span id="f-work-person-count"></span> 명</td>
+                                    <th>생산량</th>
+                                    <td colspan="2"><span id="f-produced-qty-kg"></span> kg</td>
+                                </tr>
+                                <tr>
+                                    <th>지시 수량</th>
+                                    <td><span id="f-status-order-qty-ea"></span> ea</td>
+                                    <th rowspan="2">수율</th>
+                                    <td colspan="2" rowspan="2">
+                                        <p class="per"><span id="f-yield-rate"></span> %</p>
+                                        <p class="ex">(생산량/제조량*100)</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>생산 수량</th>
+                                    <td><span id="f-production-qty"></span> ea</td>
+                                </tr>
+                                <tr>
+                                    <th>폐기 수량</th>
+                                    <td><span id="f-waste-qty"></span> ea</td>
+                                    <th rowspan="2">불량율</th>
+                                    <td colspan="2" rowspan="2">
+                                        <p class="per"><span id="f-defect-rate"></span> %</p>
+                                        <p class="ex">(폐기수량/생산수량*100)</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>출고 수량</th>
+                                    <td><span id="f-release-qty"></span> ea</td>
+                                </tr>
+                                <tr class="last">
+                                    <th>작성자</th>
+                                    <td colspan="2" id="f-writer-name"></td>
+                                    <th colspan="2">판정</th>
+                                    <td colspan="2">
+                                        <div class="radioGroup">
+                                            <label class="radioButton"><input type="radio" name="f_verdict" id="f-verdict-fit" disabled value="적합"><i class="icon"></i><span>적합</span></label>
+                                            <label class="radioButton"><input type="radio" name="f_verdict" id="f-verdict-unfit" disabled value="부적합"><i class="icon"></i><span>부적합</span></label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </fieldset>
                 </div>
             </section>
+        </div>
+        <!--포장 지시 및 기록서-->
+        <div class="bottom_btns">
+            <button type="button" id="backListBtn" class="Button bgGray" data-width="180">목록</button>
+            <button type="button" id="printBtn" class="Button brdrYellow" data-width="180">인쇄</button>
+            <button type="button" id="excelBtn" class="Button brdrGreen" data-width="180">엑셀저장</button>
+            <button type="button" id="pdfBtn" class="Button brdrGreen" data-width="180">PDF저장</button>
+            <button type="button" id="deleteBtn" class="Button brdrGray" data-width="180">삭제</button>
         </div>
     </div>
 </div>
@@ -151,6 +325,9 @@
     let currentProductName = "";
     let currentRequestDate = "";
 
+    // 파일명(인쇄/엑셀/PDF 공통) 구성용 메타정보
+    let fileMeta = { batchNo: "", expYYMMDD: "", productName: "", capacityDisplay: "" };
+
     function formatWithComma(value) {
         if (value === null || value === undefined || value === "") return "";
         let parts = value.toString().split('.');
@@ -158,12 +335,35 @@
         return parts.join('.');
     }
 
-    // ISO 날짜 문자열("2029-08-14") -> "290814" (제조번호 스타일과 통일된 EXP 표기)
+    // ISO 날짜 문자열("2029-08-14") -> "290814"
     function formatExpYYMMDD(isoDateStr) {
         if (!isoDateStr) return "";
         let parts = isoDateStr.split('-');
         if (parts.length !== 3) return isoDateStr;
         return parts[0].slice(-2) + parts[1] + parts[2];
+    }
+
+    // ISO 날짜 문자열("2026-08-09") -> "2026년 08월 09일"
+    function formatKoreanDate(isoDateStr) {
+        if (!isoDateStr) return "";
+        let datePart = isoDateStr.split(' ')[0].split('T')[0];
+        let parts = datePart.split('-');
+        if (parts.length !== 3) return isoDateStr;
+        return parts[0] + "년 " + parts[1] + "월 " + parts[2] + "일";
+    }
+
+    // 파일명에 쓸 수 없는 문자 제거
+    function sanitizeFileName(str) {
+        return (str || "").replace(/[\\/:*?"<>|]/g, "").trim();
+    }
+
+    // 'lot+exp-제품명+용량' 파일명 베이스 생성 (예: M26I15-exp280914-스킨온유 미스트50mL)
+    function buildFileNameBase() {
+        let lot = fileMeta.batchNo || "NOLOT";
+        let expPart = fileMeta.expYYMMDD ? ("exp" + fileMeta.expYYMMDD) : "";
+        let prod = (fileMeta.productName || "") + (fileMeta.capacityDisplay || "");
+        let base = lot + (expPart ? ("-" + expPart) : "") + "-" + prod;
+        return sanitizeFileName(base);
     }
 
     $(document).ready(function () {
@@ -174,17 +374,31 @@
         }
 
         loadAllData(currentRequestId);
+        loadFillingData(currentRequestId);
 
+        // ===================== 탭 전환 =====================
+        $(document).on("click", ".tab-btn", function () {
+            $(".tab-btn").removeClass("active");
+            $(this).addClass("active");
+            $(".tab-content").removeClass("active");
+            $("#" + $(this).data("tab")).addClass("active");
+        });
+
+        // ===================== 하단 버튼 =====================
         $("#backListBtn").on("click", function () {
             location.href = "/app/workOrderProgress/workOrderProgressList.jsp";
         });
 
         $("#printBtn").on("click", function () {
-            printFitToA4();
+            printBothTabsFitToA4();
         });
 
         $("#excelBtn").on("click", function () {
-            exportToExcel();
+            exportToExcelTabs();
+        });
+
+        $("#pdfBtn").on("click", function () {
+            exportToPdf();
         });
 
         $("#deleteBtn").on("click", function () {
@@ -207,71 +421,9 @@
         });
     });
 
-    // 인쇄 시 A4 한 장에 맞도록 자동 축소 (zoom 사용 - 레이아웃 크기 자체가 줄어들어 페이지분할에도 반영됨)
-    function printFitToA4() {
-        let $road = $(".road_data");
-        $road.css("zoom", "1");
-
-        let contentHeightPx = $road[0].scrollHeight;
-        let contentWidthPx = $road[0].scrollWidth;
-
-        const A4_HEIGHT_PX = Math.round((297 - 20) * 3.78);
-        const A4_WIDTH_PX = Math.round((210 - 20) * 3.78);
-
-        let scaleH = A4_HEIGHT_PX / contentHeightPx;
-        let scaleW = A4_WIDTH_PX / contentWidthPx;
-        let scale = Math.min(scaleH, scaleW, 1);
-
-        if (scale < 1) {
-            $road.css("zoom", scale);
-        }
-
-        window.print();
-
-        let restore = function () { $road.css("zoom", "1"); };
-        window.onafterprint = restore;
-        setTimeout(restore, 1000);
-    }
-
-    // 엑셀 저장 (표 전체가 순수 텍스트라서 그대로 내보내면 됨)
-    // 파일명에 쓸 수 없는 문자(\ / : * ? " < > |) 제거
-    function sanitizeFileName(str) {
-        return (str || "").replace(/[\\/:*?"<>|]/g, "").trim();
-    }
-
-    function exportToExcel() {
-        let tableHtml = $(".road_data table").prop("outerHTML");
-
-        // 엑셀은 외부 CSS(style.css)를 못 읽으므로, 인쇄화면과 같은 테두리/정렬을 <style>로 직접 넣어줌
-        let styleBlock = '<style>'
-            + 'table { border-collapse: collapse; width: 100%; font-family: "맑은 고딕", sans-serif; font-size: 12px; }'
-            + 'th, td { border: 1px solid #000; padding: 4px 6px; text-align: center; vertical-align: middle; }'
-            + 'th { background-color: #f2f2f2; font-weight: bold; }'
-            + '.al-left { text-align: left; }'
-            + '.al-right { text-align: right; }'
-            + '.al-center { text-align: center; }'
-            + '.name { text-align: left; }'
-            + '.doc_name { font-size: 16px; }'
-            + '</style>';
-
-        let html = '<html><head><meta charset="utf-8"/>' + styleBlock + '</head><body>' + tableHtml + '</body></html>';
-
-        let blob = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
-        let link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-
-        // 파일명: 제조지시일 + 제품명(Lot번호)
-        let datePart = sanitizeFileName(currentRequestDate) || sanitizeFileName(new Date().toISOString().slice(0, 10));
-        let namePart = sanitizeFileName(currentProductName) || ("request_" + currentRequestId);
-        let lotPart = sanitizeFileName(currentBatchNo);
-
-        let fileName = datePart + " " + namePart + (lotPart ? "(" + lotPart + ")" : "");
-
-        link.download = fileName + '.xls';
-        link.click();
-    }
-
-    // 지시서 원본 + 제조 최종 데이터를 불러와서 화면에 채움 (읽기 전용, 값만 표시)
+    // ============================================================
+    // TAB 1 : 제조 지시서 데이터 로드
+    // ============================================================
     function loadAllData(requestId) {
         $.ajax({
             url: "/app/workOrderProgress/common/getWorkOrderProgressDetail.jsp",
@@ -297,7 +449,7 @@
                 $("#load-machine").text(m.machine || "");
                 $("#load-manager-name").text(req.manager_name || m.manager_name || "");
                 if (req.request_date) {
-                    currentRequestDate = req.request_date.substring(0, 10); // yyyy-mm-dd
+                    currentRequestDate = req.request_date.substring(0, 10);
                     $("#load-request-date").text(currentRequestDate);
                 }
                 $("#load-appearance").text(m.appearance || "");
@@ -329,13 +481,11 @@
         });
     }
 
-    // 투입량 값+단위를 하나의 텍스트로 포맷 (예: "12,193.5 g")
     function formatQtyText(qty, unit) {
         if (!qty || qty <= 0) return "";
         return formatWithComma(qty) + " " + (unit || "g");
     }
 
-    // 원료 목록 테이블 렌더링 (지시서 원료, 상/제조방법/비고는 rowspan 처리) - 값만 표시 (input 없음)
     function renderItemsTable(items, phases) {
         let tbodyHtml = "";
         let totalPct = 0, totalKg = 0, totalG = 0;
@@ -403,35 +553,8 @@
         $("#load-total-pct").text(formatWithComma(Math.round(totalPct)) + " %");
         $("#load-total-kg").text(formatWithComma(Math.round(totalKg)) + " kg");
         $("#load-total-g").text(formatWithComma(Math.round(totalG)) + " g");
-
-        //제조지시서 테이블 Mobile
-        $('.workOrderMakingTable tbody tr').each(function () {
-            var $lastTd = $(this).children('td').last();
-            if ($lastTd.hasClass('note') == true) {
-                $(this).addClass('has_rowspan');
-            }
-        });
-        function workOrderResponsiveTable() {
-            $('.workOrderMakingTable tr.has_rowspan').each(function () {
-                if ($(window).width() <= 960) {
-                    var thisPhaseHT = $(this).find('.phase').outerHeight();
-                    var thisMethodHT = $(this).find('.method').outerHeight();
-                    var thisNoteHT = $(this).find('.note').outerHeight();
-                    $(this).css('padding-top', thisPhaseHT + thisNoteHT + thisMethodHT);
-                    $(this).find('.method').css('top', thisPhaseHT);
-                    $(this).find('.note').css('top', thisPhaseHT + thisMethodHT);
-                } else {
-                    $(this).css('padding', 0);
-                }
-            });
-        }
-        workOrderResponsiveTable();
-        $(window).resize(function () {
-            workOrderResponsiveTable();
-        });
     }
 
-    // 제조중 저장된 최종 데이터를 화면에 반영 (지시서 원료 + 제조 중 추가원료 모두, 값만 표시)
     function applyMakingData(mk) {
         if (mk && mk.making) {
             let hdr = mk.making;
@@ -449,7 +572,6 @@
         }
 
         if (mk && mk.items && mk.items.length > 0) {
-            // 1) 제조 중 추가로 등록된 원료(pH 조정 등) 행을 표 마지막에 별도로 추가
             let extraRows = mk.items.filter(function (it) { return it.is_extra === 1; });
             extraRows.forEach(function (it) {
                 let rowHtml = '<tr data-row-id="' + it.item_row_id + '" class="extra-row">'
@@ -467,17 +589,227 @@
                 $("#load-items-tbody").append(rowHtml);
             });
 
-            // 2) 지시서 원료 + 추가원료 모두에 Lot/투입량 값 채우기 (순수 텍스트)
             mk.items.forEach(function (it) {
                 $('.lot-cell[data-row="' + it.item_row_id + '"]').text(it.lot_numbers || "");
                 $('.qty-cell[data-row="' + it.item_row_id + '"]').text(formatQtyText(it.input_qty, it.input_unit));
             });
         }
     }
-    $(document).ready(function(){
-        $('#container').stop().delay(10).animate({'padding-left' : 0});
-        $('header').stop().animate({'left' : -280});
-        $('h5.page_tit .toggle').fadeIn();
-    });
+
+    // ============================================================
+    // TAB 2 : 포장 지시 및 기록서 데이터 로드
+    // ============================================================
+    function loadFillingData(requestId) {
+        $.ajax({
+            url: "/app/workOrderProgress/common/getWorkOrderFillingData.jsp",
+            type: "GET",
+            data: { request_id: requestId },
+            dataType: "json",
+            success: function (res) {
+                if (!res || !res.success) return;
+
+                let base = res.base || {};
+                let report = res.report || {};
+                let items = res.items || [];
+
+                // 제품명(용량) / 제조번호 / EXP / 지시일자 / 작업일자
+                let capacityDisplay = "";
+                if (base.product_capacity > 0) {
+                    let capNum = (base.product_capacity === Math.floor(base.product_capacity))
+                        ? base.product_capacity.toString() : base.product_capacity;
+                    capacityDisplay = capNum + (base.capacity_unit || "");
+                }
+                let productDisplayName = (base.product_name || "") + (capacityDisplay ? ("(" + capacityDisplay + ")") : "");
+                $("#f-product-name").text(productDisplayName);
+
+                let expYYMMDD = base.due_date ? formatExpYYMMDD(base.due_date) : "";
+                $("#f-lot").html((base.batch_no || "") + (expYYMMDD ? ("<br>EXP" + expYYMMDD) : ""));
+
+                $("#f-order-date").text(base.request_date ? formatKoreanDate(base.request_date) : "");
+                $("#f-work-date").text(report.work_date ? formatKoreanDate(report.work_date) : "");
+
+                // 파일명(인쇄/엑셀/PDF 공통) 메타 저장
+                fileMeta.batchNo = base.batch_no || "";
+                fileMeta.expYYMMDD = expYYMMDD;
+                fileMeta.productName = base.product_name || "";
+                fileMeta.capacityDisplay = capacityDisplay;
+
+                if (report) {
+                    $("#f-order-qty-ea").text(report.order_qty_ea > 0 ? formatWithComma(report.order_qty_ea) : "");
+                    $("#f-mfg-input-qty").text(report.mfg_input_qty > 0 ? formatWithComma(report.mfg_input_qty) : "");
+
+                    setJudgeRow(1, report.item1_result, report.item1_reason, report.item1_remark);
+                    setJudgeRow(2, report.item2_result, report.item2_reason, report.item2_remark);
+                    setJudgeRow(3, report.item3_result, report.item3_reason, report.item3_remark);
+                    setJudgeRow(4, report.item4_result, report.item4_reason, report.item4_remark);
+
+                    $("#f-work-hours").text(report.work_hours > 0 ? formatWithComma(report.work_hours) : "");
+                    $("#f-work-person-count").text(report.work_person_count > 0 ? report.work_person_count : "");
+                    $("#f-mfg-qty-kg").text(report.mfg_qty_kg > 0 ? formatWithComma(report.mfg_qty_kg) : "");
+                    $("#f-produced-qty-kg").text(report.produced_qty_kg > 0 ? formatWithComma(report.produced_qty_kg) : "");
+                    $("#f-status-order-qty-ea").text(report.status_order_qty_ea > 0 ? formatWithComma(report.status_order_qty_ea) : "");
+                    $("#f-production-qty").text(report.production_qty > 0 ? formatWithComma(report.production_qty) : "");
+                    $("#f-waste-qty").text(report.waste_qty > 0 ? formatWithComma(report.waste_qty) : "");
+                    $("#f-release-qty").text(report.release_qty > 0 ? formatWithComma(report.release_qty) : "");
+                    $("#f-yield-rate").text(report.yield_rate > 0 ? formatWithComma(report.yield_rate) : "");
+                    $("#f-defect-rate").text(report.defect_rate > 0 ? formatWithComma(report.defect_rate) : "");
+                    $("#f-writer-name").text(report.writer_name || "");
+
+                    let verdict = report.verdict || "적합";
+                    $("#f-verdict-fit").prop("checked", verdict === "적합");
+                    $("#f-verdict-unfit").prop("checked", verdict === "부적합");
+                }
+
+                // 포장재 투입 행
+                let rowsHtml = "";
+                items.forEach(function (it) {
+                    let materialLabel = (it.item_name || "") + (it.subsidiary_type ? ("(" + it.subsidiary_type + ")") : "");
+                    rowsHtml += '<tr>'
+                        + '<td>' + (it.work_content || "") + '</td>'
+                        + '<td>' + (it.machine_name || "") + '</td>'
+                        + '<td colspan="2">' + materialLabel + '</td>'
+                        + '<td>' + (it.out_qty > 0 ? formatWithComma(it.out_qty) + ' ea' : '') + '</td>'
+                        + '<td>' + (it.worker_name || "") + '</td>'
+                        + '<td>' + (it.defect_qty > 0 ? formatWithComma(it.defect_qty) + ' ea' : '') + '</td>'
+                        + '</tr>';
+                });
+                $("#f-items-tbody").append(rowsHtml);
+            },
+            error: function () {
+                console.log("포장 지시 및 기록서 데이터를 불러오지 못했습니다.");
+            }
+        });
+    }
+
+    // 항목1~4 : 라디오는 체크 상태만 반영(비활성 유지), 내용/비고는 텍스트로 표시
+    function setJudgeRow(idx, result, reason, remark) {
+        let isUnfit = (result === "부적합");
+        $("#f-item" + idx + "-fit").prop("checked", !isUnfit);
+        $("#f-item" + idx + "-unfit").prop("checked", isUnfit);
+        $("#f-item" + idx + "-reason").text(isUnfit ? (reason || "") : "");
+        $("#f-item" + idx + "-remark").text(remark || "");
+    }
+
+    // ============================================================
+    // 인쇄 : 두 탭을 각각 A4 한 장씩 (요구사항 3)
+    // ============================================================
+    function printBothTabsFitToA4() {
+        // 측정/인쇄을 위해 두 탭 모두 강제로 보이게 함 (인라인 스타일, 인쇄 후 원복)
+        $(".tab-content").css("display", "block");
+        $(".road_data").css("zoom", "1");
+
+        $(".road_data").each(function () {
+            let contentHeightPx = this.scrollHeight;
+            let contentWidthPx = this.scrollWidth;
+            const A4_HEIGHT_PX = Math.round((297 - 20) * 3.78);
+            const A4_WIDTH_PX = Math.round((210 - 20) * 3.78);
+            let scale = Math.min(A4_HEIGHT_PX / contentHeightPx, A4_WIDTH_PX / contentWidthPx, 1);
+            if (scale < 1) $(this).css("zoom", scale);
+        });
+
+        window.print();
+
+        function restore() {
+            $(".road_data").css("zoom", "1");
+            $(".tab-content").css("display", ""); // 사용자 CSS(active 탭 표시 규칙)로 복귀
+        }
+        window.onafterprint = restore;
+        setTimeout(restore, 1000);
+    }
+
+    // ============================================================
+    // 엑셀저장 : 제조 지시서 / 포장 지시 및 기록서 → 엑셀 시트(탭) 2개 (요구사항 4)
+    // ============================================================
+    function escXml(s) {
+        return (s || "").toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    function buildSheetXML(sheetName, $table) {
+        let xml = '<Worksheet ss:Name="' + escXml(sheetName) + '"><Table>';
+        $table.find("tr").each(function () {
+            xml += "<Row>";
+            $(this).find("th, td").each(function () {
+                let text = escXml($(this).text().trim());
+                xml += '<Cell><Data ss:Type="String">' + text + "</Data></Cell>";
+            });
+            xml += "</Row>";
+        });
+        xml += "</Table></Worksheet>";
+        return xml;
+    }
+
+    function exportToExcelTabs() {
+        let excelXML = '<?xml version="1.0" encoding="UTF-8"?>'
+            + '<?mso-application progid="Excel.Sheet"?>'
+            + '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"'
+            + ' xmlns:o="urn:schemas-microsoft-com:office:office"'
+            + ' xmlns:x="urn:schemas-microsoft-com:office:excel"'
+            + ' xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"'
+            + ' xmlns:html="http://www.w3.org/TR/REC-html40">';
+
+        excelXML += buildSheetXML("제조 지시서", $("#makingTabContent table.requestTable"));
+        excelXML += buildSheetXML("포장 지시 및 기록서", $("#fillingTabContent table.requestTable"));
+
+        excelXML += "</Workbook>";
+
+        let blob = new Blob([excelXML], { type: "application/vnd.ms-excel;charset=utf-8;" });
+        let link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = buildFileNameBase() + ".xls";
+        link.click();
+    }
+
+    // ============================================================
+    // PDF저장 : 두 탭을 각 1페이지씩 하나의 PDF로 저장 (요구사항 5)
+    // ============================================================
+    function pxToMm(px) {
+        return px * 0.264583;
+    }
+
+    function exportToPdf() {
+        if (typeof html2canvas === "undefined" || typeof window.jspdf === "undefined") {
+            alert("PDF 라이브러리를 불러오지 못했습니다. 네트워크 상태를 확인해 주세요.");
+            return;
+        }
+
+        $(".tab-content").css("display", "block");
+
+        let $el1 = $("#makingTabContent .road_data");
+        let $el2 = $("#fillingTabContent .road_data");
+        let targets = [
+            { el: $el1[0], w: $el1[0].offsetWidth, h: $el1[0].offsetHeight },
+            { el: $el2[0], w: $el2[0].offsetWidth, h: $el2[0].offsetHeight }
+        ];
+
+        Promise.all(targets.map(function (t) { return html2canvas(t.el, { scale: 2, useCORS: true }); }))
+            .then(function (canvases) {
+                $(".tab-content").css("display", "");
+
+                const { jsPDF } = window.jspdf;
+                let pdf = new jsPDF("p", "mm", "a4");
+                const pageW = 210, pageH = 297, margin = 10;
+                const maxW = pageW - margin * 2;
+                const maxH = pageH - margin * 2;
+
+                canvases.forEach(function (canvas, idx) {
+                    let imgData = canvas.toDataURL("image/png");
+                    let wMm = pxToMm(targets[idx].w);
+                    let hMm = pxToMm(targets[idx].h);
+                    let scale = Math.min(maxW / wMm, maxH / hMm, 1);
+                    let drawW = wMm * scale;
+                    let drawH = hMm * scale;
+
+                    if (idx > 0) pdf.addPage();
+                    pdf.addImage(imgData, "PNG", margin, margin, drawW, drawH);
+                });
+
+                pdf.save(buildFileNameBase() + ".pdf");
+            })
+            .catch(function (err) {
+                $(".tab-content").css("display", "");
+                alert("PDF 생성 중 오류가 발생했습니다.");
+                console.error(err);
+            });
+    }
 </script>
 <jsp:include page="/app/include/FooterDocType.jsp" />
