@@ -105,9 +105,9 @@
                         </table>
                     </div>
                     <div class="bottom_btns">
-                        <button type="button" id="cancelBtn" class="Button bgGray" data-width="180">취소</button>
-                        <button type="button" id="requestBtn" class="Button bgBlue" data-width="180">요청</button>
-                        <button type="button" id="modifyBtn" class="Button brdrGreen" data-width="180">수정</button>
+                        <button type="button" id="cancelBtn" class="Button iconButton cancel" data-width="180">취소</button>
+                        <button type="button" id="requestBtn" class="Button iconButton request" data-width="180">요청</button>
+                        <button type="button" id="modifyBtn" class="Button iconButton modify" data-width="180">수정</button>
                     </div>
                 </div>
                 <!--//Step2-->

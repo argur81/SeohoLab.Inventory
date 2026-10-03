@@ -351,9 +351,9 @@
                     </section>
 
                     <div class="bottom_btns">
-                        <button type="button" class="Button bgGray" data-width="180" onclick="history.back();">취소</button>
-                        <button type="button" id="tempSaveBtn" class="Button brdrYellow" data-width="180">임시저장</button>
-                        <button type="submit" class="Button bgBlue" data-width="180"><%= (orderId == 0) ? "신규등록" : "수정완료" %></button>
+                        <button type="button" class="Button iconButton cancel" data-width="180" onclick="history.back();">취소</button>
+                        <button type="button" class="Button iconButton save" id="tempSaveBtn" data-width="180">임시저장</button>
+                        <button type="submit" class="Button iconButton regist" data-width="180"><%= (orderId == 0) ? "신규등록" : "수정완료" %></button>
                     </div>
                 </form>
             </div>

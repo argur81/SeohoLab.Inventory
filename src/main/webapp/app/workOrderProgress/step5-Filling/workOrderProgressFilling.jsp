@@ -345,8 +345,8 @@
                         </table>
                     </fieldset>
                     <div class="bottom_btns">
-                        <button type="button" class="Button bgGray" data-width="180" onclick="location.href='../workOrderProgressList.jsp';">목록</button>
-                        <button type="submit" id="btnComplete" class="Button bgBlue" data-width="180">충진완료</button>
+                        <button type="button" class="Button iconButton list" data-width="180" onclick="location.href='../workOrderProgressList.jsp';">목록</button>
+                        <button type="submit" id="btnComplete" class="Button iconButton complete" data-width="180">충진완료</button>
                     </div>
                 </form>
             </section>

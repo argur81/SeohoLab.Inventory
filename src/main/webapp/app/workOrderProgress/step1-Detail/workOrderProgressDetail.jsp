@@ -98,9 +98,9 @@
                     </table>
                 </div>
                 <div class="bottom_btns">
-                    <button type="button" id="backListBtn" class="Button bgGray" data-width="180">목록</button>
-                    <button type="button" id="startProgressBtn" class="Button bgBlue" data-width="180">제조시작</button>
-                    <button type="button" id="deleteBtn" class="Button brdrGray" data-width="180">삭제</button>
+                    <button type="button" id="backListBtn" class="Button iconButton list" data-width="180">목록</button>
+                    <button type="button" id="startProgressBtn" class="Button iconButton start" data-width="180">제조시작</button>
+                    <button type="button" id="deleteBtn" class="Button iconButton delete" data-width="180">삭제</button>
                 </div>
             </section>
         </div>
@@ -129,7 +129,7 @@
             </table>
         </div>
         <div class="bottom_btns">
-            <button type="button" id="btnDiffCancel" class="Button bgGray" data-width="180">취소</button>
+            <button type="button" id="btnDiffCancel" class="Button iconButton cancel" data-width="180">취소</button>
             <button type="button" id="btnDiffProceed" class="Button bgBlue" data-width="180">계속 진행</button>
         </div>
     </div>

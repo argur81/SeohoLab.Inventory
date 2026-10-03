@@ -34,8 +34,8 @@
                             </dd>
                         </dl>
                         <div class="bottom_btns">
-                            <button type="button" class="Button bgGray" data-width="180" onclick="history.back();">취소</button>
-                            <button type="submit" class="Button bgBlue" data-width="180">출고등록</button>
+                            <button type="button" class="Button iconButton cancel" data-width="180" onclick="history.back();">취소</button>
+                            <button type="submit" class="Button iconButton regist" data-width="180">출고등록</button>
                         </div>
                         <!--Lot 리스트 팝업-->
                         <div class="layer_popup" id="itemLotPopup" style="display: none;">
@@ -100,8 +100,8 @@
                             </dd>
                         </dl>
                         <div class="bottom_btns">
-                            <button type="button" class="Button bgGray" data-width="180" onclick="history.back();">취소</button>
-                            <button type="submit" class="Button bgBlue" data-width="180">출고등록</button>
+                            <button type="button" class="Button iconButton cancel" data-width="180" onclick="history.back();">취소</button>
+                            <button type="submit" class="Button iconButton regist" data-width="180">출고등록</button>
                         </div>
                         <!-- 제품 Lot 리스트 팝업 추가 -->
                         <div class="layer_popup" id="productLotPopup" style="display: none;">

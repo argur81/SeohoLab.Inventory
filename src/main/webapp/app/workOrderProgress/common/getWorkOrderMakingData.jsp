@@ -54,9 +54,9 @@
             json.append("\"specific_gravity_result\":\"").append(esc(rs.getString("specific_gravity_result"))).append("\",");
             json.append("\"ph_result\":\"").append(esc(rs.getString("ph_result"))).append("\",");
             json.append("\"actual_qty\":").append(rs.getDouble("actual_qty")).append(",");
-            json.append("\"yield_rate_actual\":").append(rs.getDouble("yield_rate_actual"));
+            json.append("\"yield_rate_actual\":").append(rs.getDouble("yield_rate_actual")).append(",");
             json.append("\"product_capacity\":").append(rs.getObject("product_capacity") != null ? rs.getDouble("product_capacity") : 0).append(",");
-            json.append("\"capacity_unit\":\"").append(esc(rs.getString("capacity_unit"))).append("\",");
+            json.append("\"capacity_unit\":\"").append(esc(rs.getString("capacity_unit"))).append("\"");
             json.append("},");
         } else {
             json.append("\"making\":null,");

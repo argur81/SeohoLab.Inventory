@@ -186,10 +186,10 @@
                 <!-- //Lot 선택 팝업 -->
 
                 <div class="bottom_btns">
-                    <button type="button" id="backListBtn" class="Button bgGray" data-width="180">목록</button>
-                    <button type="button" id="completedProgressBtn" class="Button bgBlue" data-width="180">제조완료</button>
-                    <button type="button" id="deleteBtn" class="Button brdrGray" data-width="180">삭제</button>
-                    <button type="button" id="printBtn" class="Button brdrGreen" data-width="180">인쇄</button>
+                    <button type="button" id="backListBtn" class="Button iconButton list" data-width="180">목록</button>
+                    <button type="button" id="completedProgressBtn" class="Button iconButton dropper" data-width="180">제조완료</button>
+                    <button type="button" id="printBtn" class="Button iconButton print" data-width="180">인쇄</button>
+                    <button type="button" id="deleteBtn" class="Button iconButton delete" data-width="180">삭제</button>
                 </div>
             </section>
         </div>

@@ -54,6 +54,203 @@ button {
             }
         }
     }
+    &.iconButton {
+        @include flexLayout(row, center, center);
+        gap: 5px;
+        background-color: #fff;
+        &::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            mask-size: 20px 20px;
+            mask-repeat: no-repeat;
+            mask-position: center center;
+            transition: all .4s;
+        }
+        &:hover {
+            color: #fff !important;
+            &::before {
+                background-color: #fff !important;
+            }
+        }
+        &.cancel {
+            border: 1px solid #e51668;
+            color: #e51668;
+            &::before {
+                mask-image: url(/images/svg/buttonIcon/cancel.svg);
+                background-color: #e51668;
+            }
+            &:hover {
+                background-color: #e51668;
+                color: #fff;
+            }
+        }
+        &.save {
+            border: 1px solid #2c81b7;
+            color: #2c81b7;
+            &::before {
+                mask-image: url(/images/svg/buttonIcon/save.svg);
+                background-color: #2c81b7;
+            }
+            &:hover {
+                background-color: #2c81b7;
+            }
+        }
+        &.regist {
+            border: 1px solid #10ac84;
+            color: #10ac84;
+            &::before {
+                mask-image: url(/images/svg/buttonIcon/regist.svg);
+                background-color: #10ac84;
+            }
+            &:hover {
+                background-color: #10ac84;
+            }
+        }
+        &.modify {
+            border: 1px solid #9b58b5;
+            color: #9b58b5;
+            &::before {
+                mask-image: url(/images/svg/buttonIcon/modify.svg);
+                background-color: #9b58b5;
+            }
+            &:hover {
+                background-color: #9b58b5;
+            }
+        }
+        &.newSave {
+            border: 1px solid #6027ce;
+            color: #6027ce;
+            &::before {
+                mask-image: url(/images/svg/buttonIcon/newsave.svg);
+                background-color: #6027ce;
+            }
+            &:hover {
+                background-color: #6027ce;
+            }
+        }
+        &.delete {
+            border: 1px solid #596575;
+            color: #596575;
+            &::before {
+                mask-image: url(/images/svg/buttonIcon/del.svg);
+                background-color: #596575;
+            }
+            &:hover {
+                background-color: #596575;
+            }
+        }
+        &.list {
+            border: 1px solid #7e8c8d;
+            color: #7e8c8d;
+            &::before {
+                mask-image: url(/images/svg/buttonIcon/list.svg);
+                background-color: #7e8c8d;
+            }
+            &:hover {
+                background-color: #7e8c8d;
+            }
+        }
+        &.request {
+            border: 1px solid #34495e;
+            color: #34495e;
+            &::before {
+                mask-image: url(/images/svg/buttonIcon/request.svg);
+                background-color: #34495e;
+            }
+            &:hover {
+                background-color: #34495e;
+            }
+        }
+        &.start {
+            border: 1px solid #3faf4b;
+            color: #3faf4b;
+            &::before {
+                mask-image: url(/images/svg/buttonIcon/start.svg);
+                background-color: #3faf4b;
+            }
+            &:hover {
+                background-color: #3faf4b;
+            }
+        }
+        &.dropper {
+            border: 1px solid #81308d;
+            color: #81308d;
+            &::before {
+                mask-image: url(/images/svg/buttonIcon/dropper.svg);
+                background-color: #81308d;
+            }
+            &:hover {
+                background-color: #81308d;
+            }
+        }
+        &.print {
+            border: 1px solid #12b0df;
+            color: #12b0df;
+            &::before {
+                mask-image: url(/images/svg/buttonIcon/print.svg);
+                background-color: #12b0df;
+            }
+            &:hover {
+                background-color: #12b0df;
+            }
+        }
+        &.correction {
+            border: 1px solid #9b58b5;
+            color: #9b58b5;
+            &::before {
+                mask-image: url(/images/svg/buttonIcon/correction.svg);
+                background-color: #9b58b5;
+            }
+            &:hover {
+                background-color: #9b58b5;
+            }
+        }
+        &.approval {
+            border: 1px solid #10ac84;
+            color: #10ac84;
+            &::before {
+                mask-image: url(/images/svg/buttonIcon/approval.svg);
+                background-color: #10ac84;
+            }
+            &:hover {
+                background-color: #10ac84;
+            }
+        }
+        &.dispose {
+            border: 1px solid #ec1b30;
+            color: #ec1b30;
+            &::before {
+                mask-image: url(/images/svg/buttonIcon/dispose.svg);
+                background-color: #ec1b30;
+            }
+            &:hover {
+                background-color: #ec1b30;
+            }
+        }
+        &.complete {
+            border: 1px solid #ba1e82;
+            color: #ba1e82;
+            &::before {
+                mask-image: url(/images/svg/buttonIcon/complete.svg);
+                background-color: #ba1e82;
+            }
+            &:hover {
+                background-color: #ba1e82;
+            }
+        }
+        &.pdf {
+            border: 1px solid #12b0df;
+            color: #12b0df;
+            &::before {
+                mask-image: url(/images/svg/buttonIcon/pdf.svg);
+                background-color: #12b0df;
+            }
+            &:hover {
+                background-color: #12b0df;
+            }
+        }
+    }
 }
 @include mediaQuery(mobile) {
     button {

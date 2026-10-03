@@ -122,11 +122,11 @@
                 </div>
 
                 <div class="bottom_btns">
-                    <button type="button" id="backListBtn" class="Button bgGray" data-width="180">목록</button>
-                    <button type="button" id="reviseBtn" class="Button brdrYellow" data-width="180">보정</button>
-                    <button type="button" id="approveBtn" class="Button bgBlue" data-width="180">승인</button>
-                    <button type="button" id="discardBtn" class="Button brdrGray" data-width="180">폐기</button>
-                    <button type="button" id="deleteBtn" class="Button brdrGray" data-width="180">삭제</button>
+                    <button type="button" id="backListBtn" class="Button iconButton list" data-width="180">목록</button>
+                    <button type="button" id="reviseBtn" class="Button iconButton correction" data-width="180">보정</button>
+                    <button type="button" id="approveBtn" class="Button iconButton approval" data-width="180">승인</button>
+                    <button type="button" id="discardBtn" class="Button iconButton dispose" data-width="180">폐기</button>
+                    <button type="button" id="deleteBtn" class="Button iconButton delete" data-width="180">삭제</button>
                 </div>
             </section>
         </div>

@@ -250,7 +250,7 @@
                             </tfoot>
                         </table>
                         <div class="add_btn cellAdd">
-                            <button type="button" id="addRowBtn" class="Button">원료 행 추가</button>
+                            <button type="button" id="addRowBtn" class="Button iconButton">원료 행 추가</button>
                         </div>
                     </section>
                     <section class="radius">
@@ -350,17 +350,17 @@
                         </div>
                     </section>
                     <div class="bottom_btns">
-                        <button type="button" class="Button bgGray" data-width="180" onclick="location.href='workOrderMgmtList.jsp';">목록</button>
-                        <button type="button" class="Button brdrYellow" data-width="180" id="tempSaveBtn">임시저장</button>
+                        <button type="button" class="Button iconButton list" data-width="180" onclick="location.href='workOrderMgmtList.jsp';">목록</button>
+                        <button type="button" class="Button iconButton save" data-width="180" id="tempSaveBtn">임시저장</button>
                         
-                        <button type="submit" class="Button bgBlue" data-width="180"><%= isEditMode ? "수정" : "등록" %></button>
+                        <button type="submit" class="Button iconButton modify" data-width="180"><%= isEditMode ? "수정" : "등록" %></button>
                         
                         <% if (isEditMode) { %>
-                        <button type="button" class="Button brdrGreen" data-width="180" id="saveAsNewBtn">새 이름으로 저장</button>
+                        <button type="button" class="Button iconButton newSave" data-width="180" id="saveAsNewBtn">새 이름으로 저장</button>
                         <% } %>
 
                         <% if (isEditMode) { %>
-                        <button type="button" class="Button brdrGray" data-width="180" id="deleteBtn">삭제</button>
+                        <button type="button" class="Button iconButton delete" data-width="180" id="deleteBtn">삭제</button>
                         <% } %>
                     </div>
                 </form>
