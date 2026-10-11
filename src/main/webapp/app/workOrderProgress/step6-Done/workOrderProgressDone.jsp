@@ -7,13 +7,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-    /* ── 인쇄: 기능 동작에 필요한 최소 규칙만 (디자인은 별도 CSS로 추가 예정) ── */
     @media print {
         body * { visibility: hidden; }
-        .tab-content, .tab-content * { visibility: visible; }
-        .tab-content { page-break-after: always; }
-        .tab-content:last-of-type { page-break-after: auto; }
-        #loadingOverlay, .top_btn, .bottom_btns, header, .tab_buttons, .no-print { display: none !important; }
+        .tab-content, .tab-content section { display: block !important; }
+        .road_data, .road_data * { visibility: visible; }
+        .road_data { page-break-after: always; page-break-inside: avoid; }
+        .road_data:last-of-type { page-break-after: auto; }
+        .road_data table { width: 100% !important; table-layout: fixed !important; }
+        .workOrderMakingTable colgroup col:nth-child(2){width: auto;}
+        #loadingOverlay, .top_btn, .bottom_btns, header, .tab_buttons, .doneTabButtons, .no-print { display: none !important; }
     }
     @page {
         size: A4;
@@ -37,7 +39,7 @@
             <button type="button" class="tab-btn" data-tab="fillingTabContent">포장 지시 및 기록서</button>
         </div>
         <!--제조 지시 및 공정 기록서-->
-        <div id="makingTabContent" class="content workOrderProgressDetail tab-content active">
+        <div id="makingTabContent" class="content workOrderProgressMaking tab-content active">
             <section class="radius">
                 <div class="road_data">
                     <table class="requestTable workOrderMakingTable">
@@ -193,6 +195,38 @@
                                 <tr>
                                     <th colspan="2">포장재 명</th>
                                     <th>수량</th>
+                                </tr>
+                                <tr class="f-blank-row">
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td colspan="2">&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr class="f-blank-row">
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td colspan="2">&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr class="f-blank-row">
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td colspan="2">&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr class="f-blank-row">
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td colspan="2">&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
                                 </tr>
                                 <!-- AJAX로 포장재 투입 행이 동적으로 삽입됩니다 -->
                             </tbody>
@@ -673,7 +707,7 @@
                         + '<td>' + (it.defect_qty > 0 ? formatWithComma(it.defect_qty) + ' ea' : '') + '</td>'
                         + '</tr>';
                 });
-                $("#f-items-tbody").append(rowsHtml);
+                $("#f-items-tbody").children().eq(2).before(rowsHtml);
             },
             error: function () {
                 console.log("포장 지시 및 기록서 데이터를 불러오지 못했습니다.");
@@ -696,21 +730,29 @@
     function printBothTabsFitToA4() {
         // 측정/인쇄을 위해 두 탭 모두 강제로 보이게 함 (인라인 스타일, 인쇄 후 원복)
         $(".tab-content").css("display", "block");
-        $(".road_data").css("zoom", "1");
+        $(".road_data").css({ transform: "none" });
 
+        // 표는 항상 페이지 가로폭을 100% 채우도록 강제 (colgroup의 고정 px 합과 무관하게)
+        $(".road_data table").css({ width: "100%", tableLayout: "fixed" });
+
+        // 가로는 항상 100%이므로 세로가 A4 한 장을 넘칠 때만 세로축만 축소 (가로는 절대 건드리지 않음)
         $(".road_data").each(function () {
             let contentHeightPx = this.scrollHeight;
-            let contentWidthPx = this.scrollWidth;
             const A4_HEIGHT_PX = Math.round((297 - 20) * 3.78);
-            const A4_WIDTH_PX = Math.round((210 - 20) * 3.78);
-            let scale = Math.min(A4_HEIGHT_PX / contentHeightPx, A4_WIDTH_PX / contentWidthPx, 1);
-            if (scale < 1) $(this).css("zoom", scale);
+            if (contentHeightPx > A4_HEIGHT_PX) {
+                let scaleY = A4_HEIGHT_PX / contentHeightPx;
+                $(this).css({
+                    transform: "scaleY(" + scaleY + ")",
+                    transformOrigin: "top left"
+                });
+            }
         });
 
         window.print();
 
         function restore() {
-            $(".road_data").css("zoom", "1");
+            $(".road_data").css({ transform: "" });
+            $(".road_data table").css({ width: "", tableLayout: "" });
             $(".tab-content").css("display", ""); // 사용자 CSS(active 탭 표시 규칙)로 복귀
         }
         window.onafterprint = restore;

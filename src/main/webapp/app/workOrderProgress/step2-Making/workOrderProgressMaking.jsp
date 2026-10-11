@@ -10,7 +10,18 @@
         .road_data, .road_data * { visibility: visible; }
         .road_data { position: absolute; left: 0; top: 0; width: 100%; }
         #loadingOverlay, .top_btn, .bottom_btns, header, .delExtraRowBtn, .no-print { display: none !important; }
-
+        .workOrderMakingTable { table-layout: fixed; width: 100%; }
+        .workOrderMakingTable colgroup col:first-child{width: 150px !important;}
+        .workOrderMakingTable colgroup col:nth-child(2){width: 45px !important;}
+        .workOrderMakingTable colgroup col:nth-child(3){width: auto !important;}
+        .workOrderMakingTable colgroup col:nth-child(4){width: 150px !important;}
+        .workOrderMakingTable colgroup col:nth-child(5){width: 150px !important;}
+        .workOrderMakingTable colgroup col:nth-child(6){width: 150px !important;}
+        .workOrderMakingTable colgroup col:nth-child(7){width: 150px !important;}
+        .workOrderMakingTable colgroup col:nth-child(8){width: 150px !important;}
+        .workOrderMakingTable colgroup col:nth-child(9){width: 200px !important;}
+        .workOrderMakingTable colgroup col:nth-child(10){width: 200px !important;}
+        .workOrderMakingTable tr td:nth-child(4){text-align: right;}
         /* input/select를 테두리 없는 순수 텍스트처럼 인쇄 (값만 보이게) */
         .road_data input.inputText,
         .road_data input[type="date"],
@@ -330,7 +341,7 @@
             $road.css("zoom", "1");
         };
         window.onafterprint = restore;
-        setTimeout(restore, 1000); // onafterprint 미지원 브라우저 대비 fallback
+        setTimeout(restore, 0); // onafterprint 미지원 브라우저 대비 fallback
     }
 
     $(document).ready(function () {

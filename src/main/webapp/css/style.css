@@ -1724,16 +1724,16 @@ button.iconButton.complete:hover {
   background-color: #ba1e82;
 }
 button.iconButton.pdf {
-  border: 1px solid #12b0df;
-  color: #12b0df;
+  border: 1px solid #9a57b4;
+  color: #9a57b4;
 }
 button.iconButton.pdf::before {
   -webkit-mask-image: url(/images/svg/buttonIcon/pdf.svg);
           mask-image: url(/images/svg/buttonIcon/pdf.svg);
-  background-color: #12b0df;
+  background-color: #9a57b4;
 }
 button.iconButton.pdf:hover {
-  background-color: #12b0df;
+  background-color: #9a57b4;
 }
 
 @media screen and (max-width: 960px) {
@@ -1742,6 +1742,16 @@ button.iconButton.pdf:hover {
     border-radius: 2rem;
     font-size: 2.6rem;
     padding: 0 3rem;
+  }
+  button.iconButton {
+    gap: 1rem;
+  }
+  button.iconButton::before {
+    content: "";
+    width: 4rem;
+    height: 4rem;
+    -webkit-mask-size: 4rem 4rem;
+            mask-size: 4rem 4rem;
   }
 }
 .Select {

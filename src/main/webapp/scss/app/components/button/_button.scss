@@ -240,14 +240,14 @@ button {
             }
         }
         &.pdf {
-            border: 1px solid #12b0df;
-            color: #12b0df;
+            border: 1px solid #9a57b4;
+            color: #9a57b4;
             &::before {
                 mask-image: url(/images/svg/buttonIcon/pdf.svg);
-                background-color: #12b0df;
+                background-color: #9a57b4;
             }
             &:hover {
-                background-color: #12b0df;
+                background-color: #9a57b4;
             }
         }
     }
@@ -259,6 +259,15 @@ button {
             border-radius: 2rem;
             font-size: 2.6rem;
             padding: 0 3rem;
+        }
+        &.iconButton {
+        gap: 1rem;
+            &::before {
+                content: '';
+                width: 4rem;
+                height: 4rem;
+                mask-size: 4rem 4rem;
+            }
         }
     }
 }

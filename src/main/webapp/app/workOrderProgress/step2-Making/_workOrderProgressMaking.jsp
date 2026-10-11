@@ -1,0 +1,1032 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%
+    String requestIdStr = request.getParameter("request_id");
+%>
+<jsp:include page="/app/include/HeaderDocType.jsp" />
+<style>
+    /* 인쇄 시 표(road_data) 영역만 출력 */
+    @media print {
+        body * { visibility: hidden; }
+        .road_data, .road_data * { visibility: visible; }
+        .road_data { position: absolute; left: 0; top: 0; width: 100%; }
+        /* colgroup의 <col width="..."> 값이 실제 열 너비로 정확히 반영되도록 고정 레이아웃 적용
+           (auto 레이아웃에서는 셀 내용 길이에 따라 브라우저가 col width를 무시/재계산함)
+           ※ col width 값의 합이 페이지 폭과 달라도 '비율' 그대로 페이지 가로폭에 맞춰 배분됨 */
+        .road_data table { width: 100% !important; table-layout: fixed !important; }
+        #loadingOverlay, .top_btn, .bottom_btns, header, .delExtraRowBtn, .no-print { display: none !important; }
+
+        /* input/select를 테두리 없는 순수 텍스트처럼 인쇄 (값만 보이게) */
+        .road_data input.inputText,
+        .road_data input[type="date"],
+        .road_data select.og_select {
+            border: none !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            -webkit-appearance: none;
+            appearance: none;
+            color: #000 !important;
+            font-size: inherit !important;
+        }
+    }
+    @page {
+        size: A4;
+        margin: 10mm;
+    }
+    tr.extra-row td { background: #fffceb; }
+    .delExtraRowBtn { padding: 4px 8px; font-size: 12px; }
+</style>
+<div id="loadingOverlay">
+    <div class="spinner"></div>
+    <p class="loading_text">Loading</p>
+</div>
+<div id="wrap">
+    <jsp:include page="/app/include/Header.jsp" />
+    <div id="container">
+        <div class="content workOrderProgressMaking">
+            <div class="title_set">
+                <h5 class="page_tit">
+                    <p>제조 지시서</p><i><img src="/images/svg/location_arrow.svg"></i><b>진행현황</b><i><img src="/images/svg/location_arrow.svg"></i>제조중</b>
+                    <button type="button" class="toggle"></button>
+                </h5>
+            </div>
+            <section class="radius">
+                <form id="makingForm">
+                <div class="road_data">
+                    <table class="requestTable workOrderMakingTable">
+                        <colgroup>
+                            <col width="100"><col width="45"><col width="220"><col width="130">
+                            <col width="110"><col width="120"><col width="120"><col width="170">
+                            <col width="140"><col width="170">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th colspan="7" rowspan="3" class="doc_name">제조 지시 및 공정 기록서</th>
+                                <th>작성</th><th>검토</th><th>승인</th>
+                            </tr>
+                            <tr>
+                                <td class="sign">&nbsp;</td><td class="sign">&nbsp;</td><td class="sign">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <th>제품명</th>
+                                <td colspan="5" id="load-product-name"></td>
+                                <th colspan="2">제조지시량</th>
+                                <td colspan="2"><span id="load-target-qty"></span> <span id="load-target-unit"></span></td>
+                            </tr>
+                            <tr>
+                                <th>제조번호</th>
+                                <td colspan="2"><input type="text" id="batch_no" name="batch_no" class="inputText" placeholder="자동생성 (제조완료 시 확정됩니다)" title="제조완료 버튼을 누르면 완료일 기준으로 확정됩니다"></td>
+                                <td colspan="3">
+                                    <div class="yy-mm-dd">
+                                        <select id="due_years" name="due_years" class="og_select">
+                                            <option value="">EXP</option>
+                                            <option value="1">1년</option>
+                                            <option value="2">2년</option>
+                                            <option value="3">3년</option>
+                                            <option value="4">4년</option>
+                                            <option value="5">5년</option>
+                                        </select>
+                                        <span id="due_date_display"></span>
+                                        <input type="hidden" id="due_date" name="due_date">
+                                    </div>
+                                </td>
+                                <th>제조지시자</th>
+                                <td id="load-manager-name"></td>
+                                <th>제조자</th>
+                                <td><input type="text" id="maker_name" name="maker_name" class="inputText" value="윤철우"></td>
+                            </tr>
+                            <tr>
+                                <th>제조기기</th>
+                                <td colspan="5" id="load-machine"></td>
+                                <th>제조지시일</th>
+                                <td id="load-request-date"></td>
+                                <th>제조일자</th>
+                                <td><input type="date" id="mfg_date" name="mfg_date" class="inputText"></td>
+                            </tr>
+                            <tr>
+                                <th>상</th>
+                                <th>No.</th>
+                                <th>원료명</th>
+                                <th>Lot</th>
+                                <th>함량(%)</th>
+                                <th>제조지시량(kg)</th>
+                                <th>제조지시량(g)</th>
+                                <th>투입량</th>
+                                <th>제조방법</th>
+                                <th>비고</th>
+                            </tr>
+                        </thead>
+                        <tbody id="load-items-tbody">
+                            <!-- AJAX로 원료 행이 동적으로 삽입됩니다 -->
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="4">합계 (지시서 원료 기준)</th>
+                                <td id="load-total-pct" class="al-right"></td>
+                                <td id="load-total-kg" class="al-right"></td>
+                                <td id="load-total-g" class="al-right"></td>
+                                <td colspan="3">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <th>항목</th>
+                                <th colspan="2">기준</th>
+                                <th colspan="3">결과</th>
+                                <th colspan="2">이론제조량</th>
+                                <td colspan="2"><span id="load-theor-qty"></span> <span id="load-theor-unit"></span></td>
+                            </tr>
+                            <tr>
+                                <th>성상</th>
+                                <td colspan="2" id="load-appearance"></td>
+                                <td colspan="3" data-roll="성상결과" class="result"><input type="text" id="appearance_result" name="appearance_result" class="inputText"></td>
+                                <th colspan="2">실제제조량</th>
+                                <td colspan="2">
+                                    <div class="unit"><input type="text" id="actual_qty" name="actual_qty" class="inputText" readonly><i>kg</i></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>향취</th>
+                                <td colspan="2" id="load-scent"></td>
+                                <td colspan="3" data-roll="향취결과" class="result"><input type="text" id="scent_result" name="scent_result" class="inputText"></td>
+                                <th colspan="2">제조수율</th>
+                                <td colspan="2"><input type="text" id="yield_rate_actual" name="yield_rate_actual" class="inputText" placeholder="숫자 입력"></td>
+                            </tr>
+                            <tr>
+                                <th>비중</th>
+                                <td colspan="2" id="load-specific-gravity"></td>
+                                <td colspan="3" data-roll="비중결과" class="result"><input type="text" id="specific_gravity_result" name="specific_gravity_result" class="inputText"></td>
+                                <th colspan="2">제조수율기준</th>
+                                <td colspan="2" id="load-yield-standard"></td>
+                            </tr>
+                            <tr>
+                                <th>ph</th>
+                                <td colspan="2" id="load-ph"></td>
+                                <td colspan="3" data-roll="ph결과" class="result"><input type="text" id="ph_result" name="ph_result" class="inputText"></td>
+                                <td colspan="4" class="al-center">제조수율 = (실제제조량/이론제조량) * 100</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                </form>
+
+                <div class="layer_popup" id="itemLotPopup" style="display: none;">
+                    <div class="pop_data people_pop" data-width="860">
+                        <div class="head">
+                            <h6 id="lotPopupTitle">원료 Lot 리스트</h6>
+                            <button type="button" class="close btn_close_pop" title="닫기"><img src="/images/svg/popup_close.svg"></button>
+                        </div>
+                        <div class="body">
+                            <ul id="lot_list_ul"></ul>
+                        </div>
+                        <div class="bottom_btns">
+                            <button type="button" id="btn_item_reset_lots" class="Button bgGray" data-width="180">초기화</button>
+                            <button type="button" id="btn_item_apply_lots" class="Button bgBlue" data-width="180">적용</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- //Lot 선택 팝업 -->
+
+                <div class="bottom_btns">
+                    <button type="button" id="backListBtn" class="Button iconButton list" data-width="180">목록</button>
+                    <button type="button" id="completedProgressBtn" class="Button iconButton dropper" data-width="180">제조완료</button>
+                    <button type="button" id="printBtn" class="Button iconButton print" data-width="180">인쇄</button>
+                    <button type="button" id="deleteBtn" class="Button iconButton delete" data-width="180">삭제</button>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentRequestId = "<%= requestIdStr != null ? requestIdStr : "" %>";
+
+    // 원료 행별 Lot 사용 데이터 (item_row_id 기준으로 보관)
+    // { lotNumbers: "L1, L2", inputQty: 1234.5, inputUnit: "g", lots: [{lot_number, t, kg, g, mg}, ...] }
+    let rowLotData = {};
+
+    // 행별 메타정보 (원료명 / 추가행 여부) - 지시서 원료 + 제조중 추가원료 공통 관리
+    let rowMeta = {}; // { [rowId]: { rawMaterialName, isExtra } }
+
+    let totalOriginalRows = 0; // 지시서 원료 행 개수
+    let nextExtraRowId = 0;    // 다음에 추가할 행 번호
+
+    // 현재 팝업이 열려있는 행 정보
+    let activePopupRowId = null;
+    let wasFullUseClicked = false; // 팝업 세션 동안 [전체사용]을 눌렀는지 여부 (조건4: g기준 강제)
+
+    // ★ 5초 자동저장 타이머 (완료 처리 중에는 경합 방지를 위해 일시 정지시킬 수 있도록 변수로 보관)
+    let autoSaveTimer = null;
+
+    const unitToGram = { t: 1000000, kg: 1000, g: 1, mg: 0.001 };
+
+    function formatWithComma(value) {
+        if (value === null || value === undefined || value === "") return "";
+        let parts = value.toString().split('.');
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return parts.join('.');
+    }
+
+    function parseNum(str) {
+        if (!str) return 0;
+        let v = parseFloat(str.toString().replace(/,/g, ''));
+        return isNaN(v) ? 0 : v;
+    }
+
+    function formatNumberAuto(num) {
+        if (num >= 1000000) {
+            return new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(num);
+        }
+        return new Intl.NumberFormat('en-US').format(num);
+    }
+
+    // 제조번호(Lot) 자동생성: M + 연도2자리 + 월코드(A=1월 ~ L=12월) + 일자2자리
+    // 예) 2026년 8월 15일 -> M26H15
+    const MONTH_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
+    function generateBatchNo(dateObj) {
+        let yy = String(dateObj.getFullYear()).slice(-2);
+        let monthLetter = MONTH_LETTERS[dateObj.getMonth()]; // getMonth()는 0(1월)~11(12월)
+        let dd = String(dateObj.getDate()).padStart(2, '0');
+        return 'M' + yy + monthLetter + dd;
+    }
+
+    // Date 객체 -> <input type="date">가 요구하는 "yyyy-mm-dd" 문자열로 변환
+    function formatDateForInput(dateObj) {
+        let yyyy = dateObj.getFullYear();
+        let mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+        let dd = String(dateObj.getDate()).padStart(2, '0');
+        return yyyy + '-' + mm + '-' + dd;
+    }
+
+    // Date 객체 -> "YYMMDD" 6자리 문자열 (EXP 표시용, 제조번호 스타일과 통일)
+    function formatYYMMDD(dateObj) {
+        let yy = String(dateObj.getFullYear()).slice(-2);
+        let mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+        let dd = String(dateObj.getDate()).padStart(2, '0');
+        return yy + mm + dd;
+    }
+
+    // 제조번호(M+YY+월코드+DD)를 역파싱하여 제조일 Date 객체로 복원 (예: M26H15 -> 2026-08-15)
+    function parseBatchNoDate(batchNo) {
+        if (!batchNo || batchNo.length !== 6 || batchNo.charAt(0) !== 'M') return null;
+        let yy = parseInt(batchNo.substring(1, 3), 10);
+        let monthLetter = batchNo.charAt(3);
+        let dd = parseInt(batchNo.substring(4, 6), 10);
+        let monthIdx = MONTH_LETTERS.indexOf(monthLetter);
+        if (isNaN(yy) || monthIdx === -1 || isNaN(dd)) return null;
+        return new Date(2000 + yy, monthIdx, dd);
+    }
+
+    // 사용기한(EXP) = 제조일 + N년 - 1일
+    function calcExpDate(mfgDate, years) {
+        if (!mfgDate || !years) return null;
+        let exp = new Date(mfgDate.getFullYear() + years, mfgDate.getMonth(), mfgDate.getDate());
+        exp.setDate(exp.getDate() - 1);
+        return exp;
+    }
+
+    // 제조번호 + 선택한 연수를 기준으로 EXP를 재계산하여 화면/저장값에 반영
+    function recalcDueDate() {
+        let years = parseInt($("#due_years").val());
+        let mfgDate = parseBatchNoDate($("#batch_no").val());
+
+        if (!mfgDate || !years) {
+            $("#due_date_display").text("");
+            $("#due_date").val("");
+            return;
+        }
+
+        let expDate = calcExpDate(mfgDate, years);
+        $("#due_date_display").text("EXP " + formatYYMMDD(expDate));
+        $("#due_date").val(formatDateForInput(expDate));
+    }
+
+    // 인쇄 시 표(.road_data)를 A4 가로폭에 꽉 채우고, colgroup의 <col width> 비율대로 열 너비를 배분한다.
+    // - 가로: 표를 width:100% + table-layout:fixed 로 강제 → colgroup 값이 '비율'로 정확히 반영됨
+    //         (colgroup 합계가 페이지 폭과 달라도 가로로 축소되지 않고 비율대로 꽉 참)
+    // - 세로: A4 한 장(여백 10mm 기준)을 넘칠 때만 세로축만 축소(scaleY)
+    // ※ 열 너비를 바꾸고 싶으면 위쪽 <colgroup>의 <col width="..."> 숫자만 조절하면 됨
+    function printFitToA4() {
+        let $road = $(".road_data");
+
+        // A4(210mm x 297mm), 여백 10mm 가정, 96dpi 환산(1mm ≈ 3.78px)
+        const A4_HEIGHT_PX = Math.round((297 - 20) * 3.78); // ≈ 1047px
+        const A4_WIDTH_PX = Math.round((210 - 20) * 3.78);  // ≈ 718px
+
+        // 측정 전 초기화 + 인쇄 시와 같은 조건(A4 가로폭, 고정 레이아웃)으로 맞춰서 높이를 측정
+        $road.css({ transform: "none", width: A4_WIDTH_PX + "px" });
+        $road.find("table").css({ width: "100%", tableLayout: "fixed" });
+
+        let contentHeightPx = $road[0].scrollHeight;
+
+        // 측정용 px 폭은 해제 (인쇄 시엔 @media print의 width:100%가 적용됨)
+        $road.css({ width: "" });
+
+        if (contentHeightPx > A4_HEIGHT_PX) {
+            $road.css({
+                transform: "scaleY(" + (A4_HEIGHT_PX / contentHeightPx) + ")",
+                transformOrigin: "top left"
+            });
+        }
+
+        window.print();
+
+        // 인쇄(또는 취소) 후 화면상 원상복구
+        let restore = function () {
+            $road.css({ transform: "", width: "" });
+            $road.find("table").css({ width: "", tableLayout: "" });
+        };
+        window.onafterprint = restore;
+        setTimeout(restore, 1000); // onafterprint 미지원 브라우저 대비 fallback
+    }
+
+    $(document).ready(function () {
+        if (!currentRequestId) {
+            alert("유효하지 않은 접근입니다. (요청 ID 누락)");
+            history.back();
+            return;
+        }
+
+        loadOrderData(currentRequestId);
+
+        // 사용기한 연수 선택이 바뀔 때마다 EXP 재계산
+        $(document).on("change", "#due_years", function () {
+            recalcDueDate();
+        });
+
+        // ===================== 하단 버튼 =====================
+        $("#backListBtn").on("click", function () {
+            location.href = "/app/workOrderProgress/workOrderProgressList.jsp";
+        });
+
+        $("#printBtn").on("click", function () {
+            printFitToA4();
+        });
+
+        $("#deleteBtn").on("click", function () {
+            if (!confirm("정말 이 제조요청을 삭제하시겠습니까?")) return;
+            $.ajax({
+                url: "/app/workOrderProgress/common/workOrderProgressDeleteAction.jsp",
+                type: "POST",
+                data: { request_id: currentRequestId },
+                dataType: "json",
+                success: function (res) {
+                    if (res && res.success) {
+                        alert("삭제되었습니다.");
+                        location.href = "/app/workOrderProgress/workOrderProgressList.jsp";
+                    } else {
+                        alert(res && res.message ? res.message : "삭제에 실패했습니다.");
+                    }
+                },
+                error: function () { alert("서버 통신 중 오류가 발생했습니다."); }
+            });
+        });
+
+        $("#completedProgressBtn").on("click", function () {
+            // ★ 필수값 체크: 사용기한(EXP)을 선택하지 않으면 due_date가 빈값으로 저장되므로
+            //   승인요청 화면에서 EXP가 표시되지 않는 문제의 원인이 됨. 여기서 미리 막는다.
+            if (!$("#due_years").val()) {
+                alert("사용기한(EXP)을 선택해 주세요.");
+                $("#due_years").focus();
+                return;
+            }
+
+            // 제조번호는 시작일이 아니라 "완료된 날짜" 기준으로 확정한다 (제조가 여러 날에 걸칠 수 있으므로)
+            let confirmedBatchNo = generateBatchNo(new Date());
+            $("#batch_no").val(confirmedBatchNo);
+
+            // 제조일자도 [제조완료]를 클릭한 날짜로 확정 (승인요청 화면에 그대로 표시됨)
+            $("#mfg_date").val(formatDateForInput(new Date()));
+
+            // 제조번호가 방금 확정되었으므로 EXP도 그 제조번호 기준으로 다시 계산
+            recalcDueDate();
+
+            if (!confirm("제조를 완료하고 승인요청 하시겠습니까?\n\n확정 제조번호: " + confirmedBatchNo)) return;
+
+            let $btn = $(this);
+            $btn.prop("disabled", true);
+
+            // ★ 완료 처리 중에는 5초 자동저장과의 경합(방금 확정한 제조번호/EXP를 옛 값으로
+            //   덮어쓰는 것)을 막기 위해 타이머를 잠시 정지시킨다.
+            if (autoSaveTimer) {
+                clearInterval(autoSaveTimer);
+                autoSaveTimer = null;
+            }
+
+            // 마지막 상태를 먼저 저장한 뒤 승인요청 상태로 전환 (재고 차감은 승인 단계에서 처리)
+            saveMakingData(function (saveSuccess) {
+                // ★ 저장 자체가 실패했다면 여기서 중단. 기존에는 실패해도 그냥 다음 단계로
+                //   진행되어, 승인요청 화면에서 제조번호/EXP가 빈 채로 보이는 원인이 되었음.
+                if (!saveSuccess) {
+                    alert("제조 데이터 저장에 실패했습니다. 네트워크 상태를 확인 후 다시 시도해 주세요.");
+                    $btn.prop("disabled", false);
+                    autoSaveTimer = setInterval(function () { saveMakingData(); }, 5000);
+                    return;
+                }
+
+                $.ajax({
+                    url: "/app/workOrderProgress/step3-Approval/workOrderProgressSubmitApprovalAction.jsp",
+                    type: "POST",
+                    data: { request_id: currentRequestId },
+                    dataType: "json",
+                    success: function (res) {
+                        if (res && res.success) {
+                            location.href = "/app/workOrderProgress/step3-Approval/workOrderProgressApproval.jsp?request_id=" + currentRequestId;
+                        } else {
+                            alert(res && res.message ? res.message : "처리에 실패했습니다.");
+                            $btn.prop("disabled", false);
+                            autoSaveTimer = setInterval(function () { saveMakingData(); }, 5000);
+                        }
+                    },
+                    error: function () {
+                        alert("서버 통신 중 오류가 발생했습니다.");
+                        $btn.prop("disabled", false);
+                        autoSaveTimer = setInterval(function () { saveMakingData(); }, 5000);
+                    }
+                });
+            });
+        });
+
+        // ===================== 원료 행 추가 (pH 조정 등) =====================
+        $(document).on("click", "#addExtraRowBtn", function () {
+            addExtraRow(null);
+        });
+
+        $(document).on("click", ".delExtraRowBtn", function () {
+            let rowId = parseInt($(this).data("row"));
+            if (!confirm("이 원료 행을 삭제하시겠습니까?")) return;
+
+            $('tr[data-row-id="' + rowId + '"]').remove();
+            delete rowLotData[rowId];
+            delete rowMeta[rowId];
+            recalcActualQty();
+        });
+
+        // ===================== Lot 팝업 =====================
+        $(document).on("click", ".lot-input", function () {
+            let $this = $(this);
+            let rowId = parseInt($this.data("row"));
+            let meta = rowMeta[rowId];
+
+            if (!meta || !meta.rawMaterialName) {
+                alert("원료명을 먼저 입력(선택)해 주세요.");
+                return;
+            }
+
+            activePopupRowId = rowId;
+            wasFullUseClicked = false;
+            openLotPopup(rowId, meta.rawMaterialName);
+        });
+
+        $(document).on("click", "#itemLotPopup .btn_close_pop", function () {
+            $("#itemLotPopup").hide();
+        });
+
+        // 전체사용
+        $(document).on("click", ".btn_all_use", function () {
+            let $li = $(this).closest("li");
+            let t = $(this).attr("data-t");
+            let kg = $(this).attr("data-kg");
+            let g = $(this).attr("data-g");
+            let mg = $(this).attr("data-mg");
+
+            $li.find(".unit_t input").val(Number(t) > 0 ? Number(t).toLocaleString('en-US') : "");
+            $li.find(".unit_kg input").val(Number(kg) > 0 ? Number(kg).toLocaleString('en-US') : "");
+            $li.find(".unit_g input").val(Number(g) > 0 ? Number(g).toLocaleString('en-US') : "");
+            $li.find(".unit_mg input").val(Number(mg) > 0 ? Number(mg).toLocaleString('en-US') : "");
+
+            wasFullUseClicked = true; // 조건4: 전체사용 선택 시 g기준으로 표기
+        });
+
+        // 팝업 내 숫자입력 콤마 포맷
+        $(document).on('input', '#itemLotPopup input[inputmode="decimal"]', function () {
+            let value = $(this).val().replace(/[^0-9.]/g, '');
+            $(this).val(formatWithComma(value));
+        });
+
+        // 초기화 버튼: 팝업에 표시된 모든 Lot의 입력값을 비움 (처음부터 다시 선택 가능)
+        $(document).on("click", "#btn_item_reset_lots", function () {
+            $("#itemLotPopup #lot_list_ul input").val("");
+            wasFullUseClicked = false;
+        });
+
+        // 적용 버튼
+        $(document).on("click", "#btn_item_apply_lots", function () {
+            if (activePopupRowId === null) { $("#itemLotPopup").hide(); return; }
+
+            let selectedLots = [];
+            let kgEnteredSum = 0, gEnteredSum = 0, tSum = 0, mgSum = 0;
+
+            $("#itemLotPopup #lot_list_ul li").each(function () {
+                let $li = $(this);
+                let lotNumber = $li.find(".lot dd").text().trim();
+                let t = parseNum($li.find(".unit_t input").val());
+                let kg = parseNum($li.find(".unit_kg input").val());
+                let g = parseNum($li.find(".unit_g input").val());
+                let mg = parseNum($li.find(".unit_mg input").val());
+
+                if (t > 0 || kg > 0 || g > 0 || mg > 0) {
+                    selectedLots.push({ lot_number: lotNumber, t: t, kg: kg, g: g, mg: mg });
+                    tSum += t; kgEnteredSum += kg; gEnteredSum += g; mgSum += mg;
+                }
+            });
+
+            if (selectedLots.length === 0) {
+                // 아무 값도 없이 적용 -> 해당 행의 Lot/투입량을 완전히 비움 (초기화 후 재적용 케이스)
+                delete rowLotData[activePopupRowId];
+                let $rowClear = $('tr[data-row-id="' + activePopupRowId + '"]');
+                $rowClear.find(".lot-input").val("");
+                $rowClear.find(".input-qty").val("");
+                recalcActualQty();
+                $("#itemLotPopup").hide();
+                activePopupRowId = null;
+                return;
+            }
+
+            let totalGrams = (tSum * unitToGram.t) + (kgEnteredSum * unitToGram.kg) + gEnteredSum + (mgSum * unitToGram.mg);
+
+            // ===== 투입량 단위 결정 로직 =====
+            // 조건4: 전체사용을 한번이라도 눌렀다면 g기준
+            // 조건2: kg란에만 입력했으면 kg기준, g란에만 입력했으면 g기준
+            // 그 외(혼용/애매) : g기준 (기본값)
+            let unit, value;
+            if (wasFullUseClicked) {
+                unit = "g"; value = totalGrams;
+            } else if (kgEnteredSum > 0 && gEnteredSum === 0 && tSum === 0 && mgSum === 0) {
+                unit = "kg"; value = kgEnteredSum;
+            } else if (gEnteredSum > 0 && kgEnteredSum === 0 && tSum === 0 && mgSum === 0) {
+                unit = "g"; value = gEnteredSum;
+            } else {
+                unit = "g"; value = totalGrams;
+            }
+
+            // 조건1: Lot 2개 이상이면 콤마로 구분
+            let lotNumbersStr = selectedLots.map(function (l) { return l.lot_number; }).join(', ');
+
+            rowLotData[activePopupRowId] = {
+                lotNumbers: lotNumbersStr,
+                inputQty: value,
+                inputUnit: unit,
+                lots: selectedLots
+            };
+
+            // 화면 반영
+            let $row = $('tr[data-row-id="' + activePopupRowId + '"]');
+            $row.find(".lot-input").val(lotNumbersStr);
+            $row.find(".input-qty").val(formatWithComma(Number(value.toFixed(4))));
+            $row.find(".input-unit").val(unit);
+
+            recalcActualQty();
+
+            $("#itemLotPopup").hide();
+            activePopupRowId = null;
+        });
+
+        // ===================== 자동저장 (5초) =====================
+        autoSaveTimer = setInterval(function () { saveMakingData(); }, 5000);
+    });
+
+    // 지시서 원본 데이터 로드 (마스터/원료목록/제조방법) + 이전 저장된 제조중 데이터 로드
+    function loadOrderData(requestId) {
+        $.ajax({
+            url: "/app/workOrderProgress/common/getWorkOrderProgressDetail.jsp",
+            type: "GET",
+            data: { request_id: requestId },
+            dataType: "json",
+            success: function (res) {
+                if (!res || !res.request) {
+                    alert("데이터를 불러오지 못했습니다.");
+                    return;
+                }
+
+                let req = res.request;
+                let m = res.master || {};
+                let items = res.items || [];
+                let phases = res.phases || [];
+
+                $("#load-product-name").text(req.product_name || "");
+                $("#load-target-qty").text(req.target_qty || 0);
+                $("#load-target-unit").text(req.target_unit || "kg");
+                $("#load-machine").text(m.machine || "");
+                $("#load-manager-name").text(m.manager_name || "");
+                if (req.request_date) {
+                    $("#load-request-date").text(req.request_date.substring(0, 10));
+                }
+                $("#load-appearance").text(m.appearance || "");
+                $("#load-scent").text(m.scent || "");
+                $("#load-specific-gravity").text(m.specific_gravity || "");
+                $("#load-ph").text(m.ph || "");
+                $("#load-theor-qty").text(m.theor_qty || 0);
+                $("#load-theor-unit").text(m.theor_unit || "kg");
+                $("#load-yield-standard").text(m.yield_standard || "");
+
+                renderItemsTable(items, phases);
+
+                // 저장되어 있던 제조중 데이터 불러와서 복원
+                $.ajax({
+                    url: "/app/workOrderProgress/common/getWorkOrderMakingData.jsp",
+                    type: "GET",
+                    data: { request_id: requestId },
+                    dataType: "json",
+                    success: function (mk) {
+                        applyMakingData(mk);
+                        $('#loadingOverlay').fadeOut(500);
+                    },
+                    error: function () {
+                        $('#loadingOverlay').fadeOut(500);
+                    }
+                });
+            },
+            error: function () {
+                alert("데이터를 가져오는 중 오류가 발생했습니다.");
+                $('#loadingOverlay').fadeOut(500);
+            }
+        });
+    }
+
+    // 원료 목록 테이블 렌더링 (지시서 원료, 상/제조방법/비고는 rowspan 처리)
+    function renderItemsTable(items, phases) {
+        let tbodyHtml = "";
+        let totalPct = 0, totalKg = 0, totalG = 0;
+
+        let rowPhaseMap = {};
+        phases.forEach(function (p) {
+            let start = parseInt(p.phase_select_start) || 1;
+            let end = parseInt(p.phase_select_end) || 1;
+            let spanCount = (end - start) + 1;
+            rowPhaseMap[start] = {
+                phaseName: p.phase_name, methodDesc: p.method_desc, noteDesc: p.note_desc, rowspan: spanCount
+            };
+            for (let r = start + 1; r <= end; r++) rowPhaseMap[r] = { skip: true };
+        });
+
+        items.forEach(function (item, idx) {
+            let rowNum = idx + 1;
+            totalPct += parseFloat(item.content_pct) || 0;
+            totalKg += parseFloat(item.order_qty_kg) || 0;
+            totalG += parseFloat(item.order_qty_g) || 0;
+
+            rowMeta[rowNum] = { rawMaterialName: item.raw_material_name || "", isExtra: false };
+
+            let safeName = (item.raw_material_name || '').replace(/"/g, '&quot;');
+
+            let lotCell = '<td data-roll="Lot" class="lot-cell lot"><input type="text" class="inputText lot-input" data-row="' + rowNum + '" placeholder="클릭하여 Lot 선택" readonly></td>';
+            let qtyCell = '<td data-roll="투입량" class="qty-cell enter"><div class="input_enter">'
+                + '<input type="text" class="inputText input-qty" data-row="' + rowNum + '" readonly>'
+                + '<select class="og_select input-unit" data-row="' + rowNum + '" disabled>'
+                + '<option value="kg">kg</option><option value="g">g</option>'
+                + '</select></div></td>';
+
+            let rowHtml = '<tr data-row-id="' + rowNum + '">';
+
+            if (rowPhaseMap[rowNum] && !rowPhaseMap[rowNum].skip) {
+                let pInfo = rowPhaseMap[rowNum];
+                let formattedMethod = (pInfo.methodDesc || '').replace(/\(/g, '<br>(');
+                rowHtml += '<td class="al-center phase" rowspan="' + pInfo.rowspan + '">' + (pInfo.phaseName || '') + '</td>';
+                rowHtml += '<td class="al-center no">' + rowNum + '</td>';
+                rowHtml += '<td class="name">' + (item.raw_material_name || '') + '</td>';
+                rowHtml += lotCell;
+                rowHtml += '<td data-roll="함량(%)" class="al-right content_pct">' + formatWithComma(item.content_pct || 0) + ' %</td>';
+                rowHtml += '<td data-roll="제조지시량(kg)" class="al-right kg">' + formatWithComma(item.order_qty_kg || 0) + ' kg</td>';
+                rowHtml += '<td data-roll="제조지시량(g)" class="al-right g">' + formatWithComma(item.order_qty_g || 0) + ' g</td>';
+                rowHtml += qtyCell;
+                rowHtml += '<td data-roll="제조방법" class="al-center method" rowspan="' + pInfo.rowspan + '">' + formattedMethod + '</td>';
+                rowHtml += '<td data-roll="비고" class="al-center note" rowspan="' + pInfo.rowspan + '">' + (pInfo.noteDesc || '') + '</td>';
+            } else if (rowPhaseMap[rowNum] && rowPhaseMap[rowNum].skip) {
+                rowHtml += '<td class="al-center no">' + rowNum + '</td>';
+                rowHtml += '<td class="name">' + (item.raw_material_name || '') + '</td>';
+                rowHtml += lotCell;
+                rowHtml += '<td data-roll="함량(%)" class="al-right content_pct">' + formatWithComma(item.content_pct || 0) + ' %</td>';
+                rowHtml += '<td data-roll="제조지시량(kg)" class="al-right kg">' + formatWithComma(item.order_qty_kg || 0) + ' kg</td>';
+                rowHtml += '<td data-roll="제조지시량(g)" class="al-right g">' + formatWithComma(item.order_qty_g || 0) + ' g</td>';
+                rowHtml += qtyCell;
+            } else {
+                rowHtml += '<td>-</td>';
+                rowHtml += '<td class="al-center no">' + rowNum + '</td>';
+                rowHtml += '<td>' + (item.raw_material_name || '') + '</td>';
+                rowHtml += lotCell;
+                rowHtml += '<td data-roll="함량(%)" class="al-right content_pct">' + formatWithComma(item.content_pct || 0) + ' %</td>';
+                rowHtml += '<td data-roll="제조지시량(kg)" class="al-right kg">' + formatWithComma(item.order_qty_kg || 0) + ' kg</td>';
+                rowHtml += '<td data-roll="제조지시량(g)" class="al-right g">' + formatWithComma(item.order_qty_g || 0) + ' g</td>';
+                rowHtml += qtyCell;
+                rowHtml += '<td></td><td></td>';
+            }
+
+            rowHtml += '</tr>';
+            tbodyHtml += rowHtml;
+        });
+
+        // 마지막 행: [원료 행 추가] 버튼 (인쇄 시에는 숨김)
+        tbodyHtml += '<tr id="addRowTr" class="no-print">'
+            + '<td colspan="10" class="al-center">'
+            + '<button type="button" id="addExtraRowBtn" class="Button">원료 행 추가</button>'
+            + '</td></tr>';
+
+        $("#load-items-tbody").html(tbodyHtml);
+        $("#load-total-pct").text(formatWithComma(Math.round(totalPct)) + " %");
+        $("#load-total-kg").text(formatWithComma(Math.round(totalKg)) + " kg");
+        $("#load-total-g").text(formatWithComma(Math.round(totalG)) + " g");
+        
+        //제조지시서 테이블 Mobile
+        $('.workOrderMakingTable tbody tr').each(function () {
+            var $lastTd = $(this).children('td').last();
+            if ($lastTd.hasClass('note') == true) {
+                $(this).addClass('has_rowspan');
+            }
+        });
+
+        function workOrderResponsiveTable() {
+            $('.workOrderMakingTable tr.has_rowspan').each(function () {
+                if ($(window).width() <= 960) {
+                    var thisPhaseHT = $(this).find('.phase').outerHeight();
+                    var thisMethodHT = $(this).find('.method').outerHeight();
+                    var thisNoteHT = $(this).find('.note').outerHeight();
+                    $(this).css('padding-top', thisPhaseHT + thisNoteHT + thisMethodHT);
+                    $(this).find('.method').css('top', thisPhaseHT);
+                    $(this).find('.note').css('top', thisPhaseHT + thisMethodHT);
+                } else {
+                    $(this).css('padding', 0);
+                }
+            });
+        }
+        workOrderResponsiveTable();
+        $(window).resize(function () {
+            workOrderResponsiveTable();
+        });
+
+        totalOriginalRows = items.length;
+        nextExtraRowId = totalOriginalRows;
+    }
+
+    // 제조 중 원료 행 추가 (pH 조정 등). prefill이 있으면 저장된 값 복원용으로 사용.
+    function addExtraRow(prefill) {
+        nextExtraRowId++;
+        let rowId = nextExtraRowId;
+
+        rowMeta[rowId] = { rawMaterialName: prefill ? prefill.rawMaterialName : "", isExtra: true };
+
+        let nameValue = prefill ? (prefill.rawMaterialName || '') : '';
+        let noteValue = prefill ? (prefill.note || '') : '';
+
+        let rowHtml = '<tr data-row-id="' + rowId + '" class="extra-row">'
+            + '<td class="al-center phase">-</td>'
+            + '<td class="al-center no">' + rowId + '</td>'
+            + '<td class="name"><input type="text" class="inputText item-autocomplete-extra" data-row="' + rowId + '" placeholder="원료명 입력 (자동완성)" value="' + nameValue.replace(/"/g, '&quot;') + '"></td>'
+            + '<td data-roll="Lot" class="lot-cell lot"><input type="text" class="inputText lot-input" data-row="' + rowId + '" placeholder="원료명 먼저 입력" readonly></td>'
+            + '<td data-roll="함량(%)" class="al-center content_pct">-</td>'
+            + '<td data-roll="제조지시량(kg)" class="al-center kg">-</td>'
+            + '<td data-roll="제조지시량(g)" class="al-center g">-</td>'
+            + '<td data-roll="투입량" class="al-right qty-cell enter"><div class="input_enter">'
+            +   '<input type="text" class="inputText input-qty" data-row="' + rowId + '" readonly>'
+            +   '<select class="og_select input-unit" data-row="' + rowId + '" disabled>'
+            +     '<option value="kg">kg</option><option value="g">g</option>'
+            +   '</select></div></td>'
+            + '<td>-</td>'
+            + '<td><div class="memo"><input type="text" class="inputText extra-note" data-row="' + rowId + '" placeholder="추가 사유" value="' + noteValue.replace(/"/g, '&quot;') + '">'
+            +   ' <button type="button" class="delExtraRowBtn" data-row="' + rowId + '">삭제</button></div></td>'
+            + '</tr>';
+
+        // [원료 행 추가] 버튼이 있는 tr(#addRowTr) 바로 위에 새 행을 삽입
+        if ($('#addRowTr').length > 0) {
+            $('#addRowTr').before(rowHtml);
+        } else {
+            $("#load-items-tbody").append(rowHtml);
+        }
+        initExtraAutocomplete($('tr[data-row-id="' + rowId + '"] .item-autocomplete-extra'));
+
+        return rowId;
+    }
+
+    // 추가원료 행의 원료명 자동완성 (workOrder 폴더의 기존 엔드포인트 재사용)
+    function initExtraAutocomplete($input) {
+        $input.autocomplete({
+            source: "/app/workOrder/getItemAutoComplete.jsp",
+            minLength: 1,
+            select: function (event, ui) {
+                let rowId = parseInt($(this).data("row"));
+                rowMeta[rowId] = rowMeta[rowId] || {};
+                rowMeta[rowId].rawMaterialName = ui.item.value;
+                rowMeta[rowId].isExtra = true;
+
+                $(this).val(ui.item.value);
+
+                // 원료명이 바뀌면 이미 선택해둔 Lot 정보는 초기화 (다른 원료의 Lot을 쓸 수 없으므로)
+                delete rowLotData[rowId];
+                let $row = $('tr[data-row-id="' + rowId + '"]');
+                $row.find(".lot-input").val("");
+                $row.find(".input-qty").val("");
+                recalcActualQty();
+
+                return false;
+            }
+        });
+    }
+
+    // 저장되어 있던 제조중 데이터를 화면에 복원 (지시서 원료 + 추가원료 모두)
+    function applyMakingData(mk) {
+        if (mk && mk.making) {
+            let hdr = mk.making;
+            $("#batch_no").val(hdr.batch_no || "");
+            $("#due_years").val(hdr.due_years || "");
+            $("#maker_name").val(hdr.maker_name || "윤철우");
+            $("#mfg_date").val(hdr.mfg_date || "");
+            $("#appearance_result").val(hdr.appearance_result || "");
+            $("#scent_result").val(hdr.scent_result || "");
+            $("#specific_gravity_result").val(hdr.specific_gravity_result || "");
+            $("#ph_result").val(hdr.ph_result || "");
+            $("#yield_rate_actual").val(hdr.yield_rate_actual > 0 ? hdr.yield_rate_actual : "");
+        }
+
+        // 저장된 제조번호가 없으면(최초 진입) 오늘 날짜 기준으로 임시 자동생성
+        // (제조완료 시점 날짜로 다시 확정되므로 여기서는 임시값)
+        if (!$("#batch_no").val()) {
+            $("#batch_no").val(generateBatchNo(new Date()));
+        }
+
+        // 제조번호 + 저장된 연수를 기준으로 EXP 표시를 복원
+        recalcDueDate();
+
+        if (mk && mk.items && mk.items.length > 0) {
+            // 1) 추가원료 행부터 먼저 화면에 만들어 둔다 (그래야 아래에서 tr을 찾을 수 있음)
+            mk.items.forEach(function (it) {
+                if (it.is_extra === 1) {
+                    let rowId = addExtraRow({ rawMaterialName: it.raw_material_name, note: it.note });
+                    // addExtraRow가 새 번호를 발급하므로, 저장된 item_row_id와 매핑을 다시 맞춰준다
+                    if (rowId !== it.item_row_id) {
+                        it._resolvedRowId = rowId;
+                    } else {
+                        it._resolvedRowId = it.item_row_id;
+                    }
+                }
+            });
+
+            // 2) 지시서 원료 + 추가원료 모두에 Lot/투입량 값 적용
+            mk.items.forEach(function (it) {
+                let rowId = (it.is_extra === 1) ? it._resolvedRowId : it.item_row_id;
+
+                rowLotData[rowId] = {
+                    lotNumbers: it.lot_numbers || "",
+                    inputQty: it.input_qty || 0,
+                    inputUnit: it.input_unit || "g",
+                    lots: (it.lots || []).map(function (l) {
+                        return { lot_number: l.lot_number, t: l.t, kg: l.kg, g: l.g, mg: l.mg };
+                    })
+                };
+
+                let $row = $('tr[data-row-id="' + rowId + '"]');
+                $row.find(".lot-input").val(it.lot_numbers || "");
+                $row.find(".input-qty").val(it.input_qty > 0 ? formatWithComma(it.input_qty) : "");
+                $row.find(".input-unit").val(it.input_unit || "g");
+            });
+        }
+
+        recalcActualQty();
+    }
+
+    // Lot 팝업 열기 (getItemLots.jsp 재사용, 이전 입력값 있으면 복원)
+    function openLotPopup(rowId, itemName) {
+        $("#lotPopupTitle").text(itemName + " - Lot 선택");
+
+        $.ajax({
+            url: "/app/totalRegist/getItemLots.jsp",
+            type: "GET",
+            data: { item_name: itemName, category: "RAW" },
+            dataType: "json",
+            success: function (lotList) {
+                let $ul = $("#lot_list_ul");
+                $ul.empty();
+
+                if (!lotList || lotList.length === 0) {
+                    $ul.html('<li style="text-align:center; padding: 15px;">등록된 Lot이 없습니다.</li>');
+                } else {
+                    let saved = rowLotData[rowId];
+                    let savedMap = {};
+                    if (saved && saved.lots) {
+                        saved.lots.forEach(function (l) { savedMap[l.lot_number] = l; });
+                    }
+
+                    $.each(lotList, function (idx, item) {
+                        let rawT = item.stock_qty_t || 0;
+                        let rawKg = item.stock_qty_kg || 0;
+                        let rawG = item.stock_qty_g || 0;
+                        let rawMg = item.stock_qty_mg || 0;
+
+                        let t = formatNumberAuto(rawT);
+                        let kg = formatNumberAuto(rawKg);
+                        let g = formatNumberAuto(rawG);
+                        let mg = formatNumberAuto(rawMg);
+
+                        let sv = savedMap[item.lot_number] || { t: '', kg: '', g: '', mg: '' };
+                        let svT = sv.t ? sv.t : '';
+                        let svKg = sv.kg ? sv.kg : '';
+                        let svG = sv.g ? sv.g : '';
+                        let svMg = sv.mg ? sv.mg : '';
+
+                        let html = '<li>'
+                            + '<dl class="lot"><dt>Lot번호</dt><dd>' + item.lot_number + '</dd></dl>'
+                            + '<dl class="stock"><dt>현재재고</dt><dd>'
+                            + '<i>' + t + '</i> t / <i>' + kg + '</i> kg / <i>' + g + '</i> g / <i>' + mg + '</i> mg'
+                            + '</dd></dl>'
+                            + '<dl class="volume">'
+                            + '<dt>사용량 <button type="button" class="btn_all_use"'
+                            + ' data-t="' + rawT + '" data-kg="' + rawKg + '" data-g="' + rawG + '" data-mg="' + rawMg + '">전체사용</button></dt>'
+                            + '<dd>'
+                            + '<div class="unit_t"><input type="text" class="inputText" data-unit="t" value="' + (svT || '') + '" inputmode="decimal"><i>t</i></div>'
+                            + '<div class="unit_kg"><input type="text" class="inputText" data-unit="kg" value="' + (svKg || '') + '" inputmode="decimal"><i>kg</i></div>'
+                            + '<div class="unit_g"><input type="text" class="inputText" data-unit="g" value="' + (svG || '') + '" inputmode="decimal"><i>g</i></div>'
+                            + '<div class="unit_mg"><input type="text" class="inputText" data-unit="mg" value="' + (svMg || '') + '" inputmode="decimal"><i>mg</i></div>'
+                            + '</dd></dl>'
+                            + '</li>';
+                        $ul.append(html);
+                    });
+                }
+                $("#itemLotPopup").show();
+            },
+            error: function () {
+                alert("Lot 목록을 불러오는 중 오류가 발생했습니다.");
+            }
+        });
+    }
+
+    // 실제제조량 실시간 계산 (모든 행의 투입량을 kg 기준으로 합산 - 지시서 원료 + 추가원료 모두 포함)
+    function recalcActualQty() {
+        let totalKg = 0;
+        Object.keys(rowLotData).forEach(function (rowId) {
+            let d = rowLotData[rowId];
+            if (!d) return;
+            totalKg += (d.inputUnit === 'kg') ? d.inputQty : (d.inputQty / 1000);
+        });
+        $("#actual_qty").val(formatWithComma(Number(totalKg.toFixed(4))));
+    }
+
+    // 5초 자동저장 (조용히 처리, 완료 콜백 선택적)
+    // ★ callback(success)의 success는 저장 API 호출 성공/실패 여부(boolean)를 전달한다.
+    //   기존에는 실패해도 무조건 callback()을 호출해 제조완료 처리가 그대로 진행되는 문제가 있었음.
+    function saveMakingData(callback) {
+        if (!currentRequestId) return;
+
+        // 동적 hidden input 정리 후 재생성
+        $("#makingForm .dynamic-save-input").remove();
+
+        let $form = $("#makingForm");
+        let idx = 0;
+        Object.keys(rowLotData).forEach(function (rowId) {
+            let d = rowLotData[rowId];
+            if (!d) return;
+            let meta = rowMeta[rowId] || {};
+            let noteVal = meta.isExtra ? $('tr[data-row-id="' + rowId + '"] .extra-note').val() : '';
+
+            $form.append('<input type="hidden" class="dynamic-save-input" name="itemRows[' + idx + '].item_row_id" value="' + rowId + '">');
+            $form.append('<input type="hidden" class="dynamic-save-input" name="itemRows[' + idx + '].raw_material_name" value="' + (meta.rawMaterialName || '').replace(/"/g, '&quot;') + '">');
+            $form.append('<input type="hidden" class="dynamic-save-input" name="itemRows[' + idx + '].is_extra" value="' + (meta.isExtra ? '1' : '0') + '">');
+            $form.append('<input type="hidden" class="dynamic-save-input" name="itemRows[' + idx + '].lot_numbers" value="' + (d.lotNumbers || '').replace(/"/g, '&quot;') + '">');
+            $form.append('<input type="hidden" class="dynamic-save-input" name="itemRows[' + idx + '].input_qty" value="' + d.inputQty + '">');
+            $form.append('<input type="hidden" class="dynamic-save-input" name="itemRows[' + idx + '].input_unit" value="' + d.inputUnit + '">');
+            $form.append('<input type="hidden" class="dynamic-save-input" name="itemRows[' + idx + '].note" value="' + (noteVal || '').replace(/"/g, '&quot;') + '">');
+            idx++;
+        });
+
+        let lIdx = 0;
+        Object.keys(rowLotData).forEach(function (rowId) {
+            let d = rowLotData[rowId];
+            if (!d || !d.lots) return;
+            let meta = rowMeta[rowId] || {};
+            d.lots.forEach(function (l) {
+                $form.append('<input type="hidden" class="dynamic-save-input" name="lotDetails[' + lIdx + '].item_row_id" value="' + rowId + '">');
+                $form.append('<input type="hidden" class="dynamic-save-input" name="lotDetails[' + lIdx + '].raw_material_name" value="' + (meta.rawMaterialName || '').replace(/"/g, '&quot;') + '">');
+                $form.append('<input type="hidden" class="dynamic-save-input" name="lotDetails[' + lIdx + '].lot_number" value="' + l.lot_number + '">');
+                $form.append('<input type="hidden" class="dynamic-save-input" name="lotDetails[' + lIdx + '].t" value="' + (l.t || 0) + '">');
+                $form.append('<input type="hidden" class="dynamic-save-input" name="lotDetails[' + lIdx + '].kg" value="' + (l.kg || 0) + '">');
+                $form.append('<input type="hidden" class="dynamic-save-input" name="lotDetails[' + lIdx + '].g" value="' + (l.g || 0) + '">');
+                $form.append('<input type="hidden" class="dynamic-save-input" name="lotDetails[' + lIdx + '].mg" value="' + (l.mg || 0) + '">');
+                lIdx++;
+            });
+        });
+
+        let payload = $form.serialize() + "&request_id=" + encodeURIComponent(currentRequestId)
+            + "&actual_qty=" + encodeURIComponent(parseNum($("#actual_qty").val()));
+
+        $.ajax({
+            url: "workOrderProgressMakingSaveAction.jsp",
+            type: "POST",
+            data: payload,
+            dataType: "json",
+            success: function (res) {
+                let ok = !!(res && res.success);
+                if (typeof callback === 'function') callback(ok);
+            },
+            error: function () {
+                console.log("자동저장 실패 (다음 주기에 재시도)");
+                if (typeof callback === 'function') callback(false);
+            }
+        });
+    }
+    $(document).ready(function () {
+        $('#container').stop().delay(10).animate({ 'padding-left': 0 });
+        $('header').stop().animate({ 'left': -280 });
+        $('h5.page_tit .toggle').fadeIn();
+    });
+</script>
+<jsp:include page="/app/include/FooterDocType.jsp" />
